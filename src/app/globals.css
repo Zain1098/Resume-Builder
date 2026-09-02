@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #f8fafc;
   --foreground: #0f172a;
@@ -32,7 +34,7 @@ body {
   background: #cbd5e1;
   border-radius: 9999px;
 }
-.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+html.dark .custom-scrollbar::-webkit-scrollbar-thumb {
   background: #334155;
 }
 
@@ -41,6 +43,13 @@ body {
   background-color: #ffffff !important;
   color: #0f172a !important;
   box-sizing: border-box;
+}
+
+/* Dark mode surface color helper */
+html.dark .dark-surface {
+  background-color: #0f172a;
+  border-color: #1e293b;
+  color: #f8fafc;
 }
 
 /* Print Optimization for PDF Export */
