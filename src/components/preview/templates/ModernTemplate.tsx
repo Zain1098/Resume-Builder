@@ -27,14 +27,25 @@ export function ModernTemplate({ data }: TemplateProps) {
     <div className={`w-full bg-white text-slate-800 ${fontClass} leading-relaxed p-8 sm:p-10`} style={{ minHeight: "1050px" }}>
       {/* Header Banner */}
       <header className="border-b-2 pb-5" style={{ borderColor: accentColor }}>
-        <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-2">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900" style={{ color: accentColor }}>
-              {personalInfo.fullName || "Your Full Name"}
-            </h1>
-            <p className="text-sm sm:text-base font-semibold text-slate-600 mt-0.5">
-              {personalInfo.jobTitle || "Your Professional Title"}
-            </p>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex items-center gap-4">
+            {personalInfo.avatarUrl && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={personalInfo.avatarUrl}
+                alt={personalInfo.fullName}
+                className="h-16 w-16 rounded-full object-cover border-2 shadow-sm shrink-0"
+                style={{ borderColor: accentColor }}
+              />
+            )}
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900" style={{ color: accentColor }}>
+                {personalInfo.fullName || "Your Full Name"}
+              </h1>
+              <p className="text-sm sm:text-base font-semibold text-slate-600 mt-0.5">
+                {personalInfo.jobTitle || "Your Professional Title"}
+              </p>
+            </div>
           </div>
         </div>
 

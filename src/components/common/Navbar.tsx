@@ -15,6 +15,7 @@ import confetti from "canvas-confetti";
 import { ImportExportModal } from "@/components/editor/ImportExportModal";
 import { RoleSelectorModal } from "@/components/editor/RoleSelectorModal";
 import { JobDescriptionMatcherModal } from "@/components/editor/JobDescriptionMatcherModal";
+import { ThemeToggle } from "@/components/common/ThemeToggle";
 import { exportResumeToPdf } from "@/lib/pdfExport";
 
 export function Navbar() {
@@ -147,6 +148,9 @@ export function Navbar() {
               <RotateCcw className="h-3.5 w-3.5" />
               <span className="hidden xl:inline">Reset</span>
             </button>
+
+            {/* Dark/Light Mode Switcher */}
+            <ThemeToggle />
 
             {/* Single Clean Download PDF Button */}
             <button
