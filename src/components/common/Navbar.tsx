@@ -9,32 +9,49 @@ import {
   RotateCcw,
   FileCode,
   Target,
+  Printer,
+  Loader2,
 } from "lucide-react";
 import confetti from "canvas-confetti";
 import { ImportExportModal } from "@/components/editor/ImportExportModal";
 import { RoleSelectorModal } from "@/components/editor/RoleSelectorModal";
 import { JobDescriptionMatcherModal } from "@/components/editor/JobDescriptionMatcherModal";
+import { exportResumeToPdf } from "@/lib/pdfExport";
 
 export function Navbar() {
-  const { clearResume, previewTab, setPreviewTab } = useResumeStore();
+  const { resume, clearResume, previewTab, setPreviewTab } = useResumeStore();
   const [modalOpen, setModalOpen] = useState(false);
   const [roleModalOpen, setRoleModalOpen] = useState(false);
   const [jdModalOpen, setJdModalOpen] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
 
-  // Trigger browser print with optimization
-  const handlePrint = () => {
-    setIsExporting(true);
-    confetti({
-      particleCount: 80,
-      spread: 60,
-      origin: { y: 0.6 },
-    });
+  // Direct High-Resolution PDF File Download
+  const handleDownloadPdf = async () => {
+    try {
+      setIsExporting(true);
+      const filename = `${resume.personalInfo.fullName.replace(/\s+/g, "_") || "Resume"}_CV.pdf`;
+      const success = await exportResumeToPdf("resume-print-canvas", filename);
 
-    setTimeout(() => {
+      if (success) {
+        confetti({
+          particleCount: 90,
+          spread: 70,
+          origin: { y: 0.6 },
+        });
+      } else {
+        // Fallback to native print if canvas export fails
+        window.print();
+      }
+    } catch {
       window.print();
+    } finally {
       setIsExporting(false);
-    }, 250);
+    }
+  };
+
+  // Browser Print Dialog
+  const handlePrint = () => {
+    window.print();
   };
 
   const handleReset = () => {
@@ -96,7 +113,7 @@ export function Navbar() {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center gap-1.5 sm:gap-2.5">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             {/* Role Profiles Picker */}
             <button
               onClick={() => setRoleModalOpen(true)}
@@ -137,14 +154,33 @@ export function Navbar() {
               <span className="hidden xl:inline">Reset</span>
             </button>
 
-            {/* Print / Download Button */}
+            {/* Print button */}
             <button
               onClick={handlePrint}
+              title="Print via browser dialog"
+              className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 shadow-sm transition hover:bg-slate-50 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+            >
+              <Printer className="h-3.5 w-3.5 text-slate-600 dark:text-slate-400" />
+              <span>Print</span>
+            </button>
+
+            {/* Download PDF Button */}
+            <button
+              onClick={handleDownloadPdf}
               disabled={isExporting}
               className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 px-3.5 py-2 text-xs sm:text-sm font-semibold text-white shadow-md shadow-blue-500/25 transition hover:from-blue-700 hover:to-indigo-700 active:scale-95 disabled:opacity-50"
             >
-              <Download className="h-4 w-4" />
-              <span>Download PDF</span>
+              {isExporting ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <span>Generating...</span>
+                </>
+              ) : (
+                <>
+                  <Download className="h-4 w-4" />
+                  <span>Download PDF</span>
+                </>
+              )}
             </button>
           </div>
         </div>

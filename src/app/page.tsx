@@ -37,6 +37,7 @@ export default function Home() {
       <main className="flex flex-1 overflow-hidden h-[calc(100vh-4rem)]">
         {/* Left Side: Dynamic Editor Form Panel */}
         <section
+          id="editor-panel-section"
           className={`w-full lg:w-1/2 lg:border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 ${
             previewTab === "preview" ? "hidden lg:flex" : "flex"
           } flex-col h-full`}
@@ -46,6 +47,7 @@ export default function Home() {
 
         {/* Right Side: High-Fidelity Live A4 Preview */}
         <section
+          id="resume-preview-container"
           className={`w-full lg:w-1/2 ${
             previewTab === "edit" ? "hidden lg:flex" : "flex"
           } flex-col h-full overflow-hidden`}

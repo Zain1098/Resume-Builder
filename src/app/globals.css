@@ -52,40 +52,69 @@ body {
 @media print {
   @page {
     size: A4 portrait;
-    margin: 0;
+    margin: 0mm;
   }
 
-  html, body {
+  *,
+  *::before,
+  *::after {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  html,
+  body {
     background: #ffffff !important;
     color: #000000 !important;
     margin: 0 !important;
     padding: 0 !important;
-    width: 210mm !important;
     height: auto !important;
+    min-height: auto !important;
+    overflow: visible !important;
   }
 
-  body * {
-    visibility: hidden;
+  /* Force display of main container and print tree */
+  main,
+  section,
+  #resume-print-wrapper,
+  #resume-preview-container {
+    display: block !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    position: static !important;
+    visibility: visible !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
   }
 
-  #resume-print-canvas,
-  #resume-print-canvas * {
-    visibility: visible;
+  /* Hide all editor forms, navbars, modals and toolbar controls */
+  header,
+  nav,
+  .print\:hidden,
+  #editor-panel-section,
+  button {
+    display: none !important;
+    visibility: hidden !important;
   }
 
   #resume-print-canvas {
-    position: absolute;
-    left: 0;
-    top: 0;
+    display: block !important;
+    visibility: visible !important;
+    position: static !important;
     width: 210mm !important;
-    margin: 0 !important;
+    min-height: 297mm !important;
+    margin: 0 auto !important;
     padding: 0 !important;
     box-shadow: none !important;
     border-radius: 0 !important;
     transform: none !important;
+    background: #ffffff !important;
   }
 
-  header, nav, .print\:hidden {
-    display: none !important;
+  #resume-print-canvas * {
+    visibility: visible !important;
   }
 }
