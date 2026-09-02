@@ -9,7 +9,6 @@ import {
   RotateCcw,
   FileCode,
   Target,
-  Printer,
   Loader2,
 } from "lucide-react";
 import confetti from "canvas-confetti";
@@ -47,11 +46,6 @@ export function Navbar() {
     } finally {
       setIsExporting(false);
     }
-  };
-
-  // Browser Print Dialog
-  const handlePrint = () => {
-    window.print();
   };
 
   const handleReset = () => {
@@ -154,21 +148,11 @@ export function Navbar() {
               <span className="hidden xl:inline">Reset</span>
             </button>
 
-            {/* Print button */}
-            <button
-              onClick={handlePrint}
-              title="Print via browser dialog"
-              className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 shadow-sm transition hover:bg-slate-50 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
-            >
-              <Printer className="h-3.5 w-3.5 text-slate-600 dark:text-slate-400" />
-              <span>Print</span>
-            </button>
-
-            {/* Download PDF Button */}
+            {/* Single Clean Download PDF Button */}
             <button
               onClick={handleDownloadPdf}
               disabled={isExporting}
-              className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 px-3.5 py-2 text-xs sm:text-sm font-semibold text-white shadow-md shadow-blue-500/25 transition hover:from-blue-700 hover:to-indigo-700 active:scale-95 disabled:opacity-50"
+              className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2 text-xs sm:text-sm font-semibold text-white shadow-md shadow-blue-500/25 transition hover:from-blue-700 hover:to-indigo-700 active:scale-95 disabled:opacity-50"
             >
               {isExporting ? (
                 <>
