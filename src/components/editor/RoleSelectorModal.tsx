@@ -3,7 +3,7 @@
 import React from "react";
 import { useResumeStore } from "@/store/useResumeStore";
 import { PRESET_PROFILES, PresetProfile } from "@/data/presetProfiles";
-import { X, CheckCircle2, ArrowRight } from "lucide-react";
+import { X, ArrowRight } from "lucide-react";
 
 interface RoleSelectorModalProps {
   isOpen: boolean;
