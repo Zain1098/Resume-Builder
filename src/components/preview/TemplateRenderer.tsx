@@ -6,6 +6,8 @@ import { ModernTemplate } from "./templates/ModernTemplate";
 import { ClassicTemplate } from "./templates/ClassicTemplate";
 import { MinimalistTemplate } from "./templates/MinimalistTemplate";
 import { TechTemplate } from "./templates/TechTemplate";
+import { ExecutiveTemplate } from "./templates/ExecutiveTemplate";
+import { StudentTemplate } from "./templates/StudentTemplate";
 
 interface TemplateRendererProps {
   data: ResumeData;
@@ -21,6 +23,10 @@ export function TemplateRenderer({ data }: TemplateRendererProps) {
       return <MinimalistTemplate data={data} />;
     case "tech":
       return <TechTemplate data={data} />;
+    case "executive":
+      return <ExecutiveTemplate data={data} />;
+    case "student":
+      return <StudentTemplate data={data} />;
     case "modern":
     default:
       return <ModernTemplate data={data} />;

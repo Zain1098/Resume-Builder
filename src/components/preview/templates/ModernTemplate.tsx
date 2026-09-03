@@ -289,6 +289,48 @@ export function ModernTemplate({ data }: TemplateProps) {
             </section>
           )}
 
+          {/* Languages */}
+          {data.languages && data.languages.length > 0 && (
+            <section>
+              <h2
+                className="text-xs font-bold uppercase tracking-wider pb-1 mb-2.5 border-b flex items-center gap-1.5"
+                style={{ color: accentColor, borderColor: `${accentColor}40` }}
+              >
+                <Globe className="h-3.5 w-3.5" />
+                Languages
+              </h2>
+              <div className="space-y-1.5 text-xs">
+                {data.languages.map((l) => (
+                  <div key={l.id} className="flex justify-between">
+                    <span className="font-semibold text-slate-800">{l.language}</span>
+                    <span className="text-[11px] text-slate-500">{l.proficiency}</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Honors & Awards */}
+          {data.awards && data.awards.length > 0 && (
+            <section>
+              <h2
+                className="text-xs font-bold uppercase tracking-wider pb-1 mb-2.5 border-b flex items-center gap-1.5"
+                style={{ color: accentColor, borderColor: `${accentColor}40` }}
+              >
+                <Award className="h-3.5 w-3.5" />
+                Honors & Awards
+              </h2>
+              <div className="space-y-1.5 text-xs">
+                {data.awards.map((a) => (
+                  <div key={a.id}>
+                    <span className="font-bold text-slate-900">{a.title}</span>
+                    {a.issuer && <span className="text-[11px] text-slate-600 block">by {a.issuer}</span>}
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
           {/* Custom Sections */}
           {customSections.map((sec) => (
             <section key={sec.id}>

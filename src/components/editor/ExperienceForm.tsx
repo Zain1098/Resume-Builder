@@ -1,8 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useResumeStore } from "@/store/useResumeStore";
 import { Plus, Trash2, Sparkles, Building2, MapPin } from "lucide-react";
+import { improveBulletPoint, BulletStyle } from "@/lib/aiService";
 
 export function ExperienceForm() {
   const {
@@ -15,31 +16,43 @@ export function ExperienceForm() {
     removeBulletPoint,
   } = useResumeStore();
 
+  const [activeStyle, setActiveStyle] = useState<BulletStyle>("achievement");
+  const [loadingIdx, setLoadingIdx] = useState<string | null>(null);
+
   const experiences = resume.experiences;
 
-  const handleAiActionVerb = (expId: string, bulletIdx: number, currentText: string) => {
-    if (!currentText.trim()) {
-      updateBulletPoint(
-        expId,
-        bulletIdx,
-        "Spearheaded key architecture improvements, increasing performance and team delivery velocity by 25%."
-      );
-      return;
+  const handleAiActionVerb = async (expId: string, bulletIdx: number, currentText: string) => {
+    const key = `${expId}-${bulletIdx}`;
+    setLoadingIdx(key);
+    try {
+      const result = await improveBulletPoint(currentText, activeStyle);
+      updateBulletPoint(expId, bulletIdx, result.improved);
+    } finally {
+      setLoadingIdx(null);
     }
-    const actionVerbs = [
-      "Architected and implemented",
-      "Spearheaded cross-functional delivery of",
-      "Engineered high-throughput solutions for",
-      "Optimized system reliability and scaled",
-      "Orchestrated end-to-end development of",
-    ];
-    const randomVerb = actionVerbs[Math.floor(Math.random() * actionVerbs.length)];
-    const updated = `${randomVerb} ${currentText.charAt(0).toLowerCase() + currentText.slice(1)}`;
-    updateBulletPoint(expId, bulletIdx, updated);
   };
 
   return (
     <div className="space-y-4">
+      {/* Bullet Style Picker Bar */}
+      <div className="flex items-center justify-between p-2.5 rounded-xl border border-slate-200/80 bg-slate-50 dark:border-slate-800 dark:bg-slate-850">
+        <div className="flex items-center gap-1.5 text-[11px] font-semibold text-slate-700 dark:text-slate-300">
+          <Sparkles className="h-3.5 w-3.5 text-amber-500" />
+          <span>AI Bullet Improver Mode:</span>
+        </div>
+        <select
+          value={activeStyle}
+          onChange={(e) => setActiveStyle(e.target.value as BulletStyle)}
+          className="rounded-lg border border-slate-200 bg-white px-2 py-1 text-[11px] font-medium text-slate-800 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+        >
+          <option value="achievement">Achievement-Focused</option>
+          <option value="technical">Technical Rigor</option>
+          <option value="concise">Concise Impact</option>
+          <option value="executive">Executive Leadership</option>
+          <option value="professional">Standard Professional</option>
+        </select>
+      </div>
+
       {experiences.map((exp, expIdx) => (
         <div
           key={exp.id}
@@ -101,7 +114,7 @@ export function ExperienceForm() {
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
               <div>
                 <label className="block text-[11px] font-semibold text-slate-600 dark:text-slate-400">
-                  Location
+                  Location (City, Country or Remote)
                 </label>
                 <div className="relative mt-1">
                   <MapPin className="absolute left-2.5 top-2 h-3.5 w-3.5 text-slate-400" />
@@ -111,7 +124,7 @@ export function ExperienceForm() {
                     onChange={(e) =>
                       updateExperience(exp.id, { location: e.target.value })
                     }
-                    placeholder="e.g. New York, NY / Remote"
+                    placeholder="e.g. San Francisco, CA or Remote"
                     className="w-full rounded-lg border border-slate-200 bg-white py-1.5 pl-8 pr-3 text-xs text-slate-900 focus:border-blue-500 focus:outline-none dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                   />
                 </div>
@@ -173,43 +186,47 @@ export function ExperienceForm() {
             {/* Bullet Points */}
             <div className="mt-3 pt-2">
               <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
-                Key Responsibilities & Achievements
+                Key Responsibilities &amp; Achievements
               </label>
               <div className="space-y-2">
-                {exp.bulletPoints.map((bullet, bIdx) => (
-                  <div key={bIdx} className="flex items-start gap-2">
-                    <span className="text-slate-400 text-xs mt-2">•</span>
-                    <textarea
-                      rows={2}
-                      value={bullet}
-                      onChange={(e) =>
-                        updateBulletPoint(exp.id, bIdx, e.target.value)
-                      }
-                      placeholder="Start with an action verb (e.g. Spearheaded, Engineered, Scaled...)"
-                      className="w-full rounded-lg border border-slate-200 bg-white p-2 text-xs text-slate-900 focus:border-blue-500 focus:outline-none dark:border-slate-700 dark:bg-slate-800 dark:text-white"
-                    />
-                    <div className="flex flex-col gap-1 shrink-0">
-                      <button
-                        type="button"
-                        onClick={() => handleAiActionVerb(exp.id, bIdx, bullet)}
-                        title="Enhance with Action Verb"
-                        className="rounded p-1 text-slate-400 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-950/40 dark:hover:text-blue-400"
-                      >
-                        <Sparkles className="h-3.5 w-3.5 text-amber-500" />
-                      </button>
-                      {exp.bulletPoints.length > 1 && (
+                {exp.bulletPoints.map((bullet, bIdx) => {
+                  const isBusy = loadingIdx === `${exp.id}-${bIdx}`;
+                  return (
+                    <div key={bIdx} className="flex items-start gap-2">
+                      <span className="text-slate-400 text-xs mt-2">•</span>
+                      <textarea
+                        rows={2}
+                        value={bullet}
+                        onChange={(e) =>
+                          updateBulletPoint(exp.id, bIdx, e.target.value)
+                        }
+                        placeholder="Start with an action verb (e.g. Spearheaded, Engineered, Scaled...)"
+                        className="w-full rounded-lg border border-slate-200 bg-white p-2 text-xs text-slate-900 focus:border-blue-500 focus:outline-none dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                      />
+                      <div className="flex flex-col gap-1 shrink-0">
                         <button
                           type="button"
-                          onClick={() => removeBulletPoint(exp.id, bIdx)}
-                          title="Remove Bullet Point"
-                          className="rounded p-1 text-slate-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-950/40"
+                          disabled={isBusy}
+                          onClick={() => handleAiActionVerb(exp.id, bIdx, bullet)}
+                          title={`Enhance with AI (${activeStyle})`}
+                          className="rounded p-1 text-slate-400 hover:bg-amber-50 hover:text-amber-600 dark:hover:bg-amber-950/40 dark:hover:text-amber-400 disabled:opacity-50"
                         >
-                          <Trash2 className="h-3.5 w-3.5" />
+                          <Sparkles className="h-3.5 w-3.5 text-amber-500" />
                         </button>
-                      )}
+                        {exp.bulletPoints.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => removeBulletPoint(exp.id, bIdx)}
+                            title="Remove Bullet Point"
+                            className="rounded p-1 text-slate-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-950/40"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
               <button

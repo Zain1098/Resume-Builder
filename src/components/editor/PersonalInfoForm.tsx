@@ -45,19 +45,17 @@ export function PersonalInfoForm() {
     }
   };
 
-  const handleAiPolishSummary = () => {
-    if (!info.summary.trim()) {
-      updatePersonalInfo({
-        summary:
-          "High-performing professional with demonstrated expertise in leading technical initiatives, delivering resilient architectures, and driving measurable impact through innovative problem solving.",
-      });
-      return;
+  const [isPolishing, setIsPolishing] = React.useState(false);
+
+  const handleAiPolishSummary = async () => {
+    setIsPolishing(true);
+    try {
+      const { generateProfessionalSummary } = await import("@/lib/aiService");
+      const summary = await generateProfessionalSummary(resume, info.jobTitle);
+      updatePersonalInfo({ summary });
+    } finally {
+      setIsPolishing(false);
     }
-    // Polish the current text
-    const polished = `Results-driven and strategic ${
-      info.jobTitle || "professional"
-    } with extensive experience delivering scalable solutions. ${info.summary.trim()}`;
-    updatePersonalInfo({ summary: polished });
   };
 
   return (
@@ -271,11 +269,12 @@ export function PersonalInfoForm() {
           </label>
           <button
             type="button"
+            disabled={isPolishing}
             onClick={handleAiPolishSummary}
-            className="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400"
+            className="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 disabled:opacity-50"
           >
             <Sparkles className="h-3 w-3 text-amber-500" />
-            Enhance with AI
+            {isPolishing ? "Enhancing..." : "Enhance with AI"}
           </button>
         </div>
         <textarea

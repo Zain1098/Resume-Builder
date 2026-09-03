@@ -11,6 +11,8 @@ import {
   Award,
   Layers,
   Palette,
+  Globe,
+  Heart,
 } from "lucide-react";
 import { AccordionSection } from "./AccordionSection";
 import { AtsScoreCard } from "./AtsScoreCard";
@@ -20,6 +22,9 @@ import { EducationForm } from "./EducationForm";
 import { SkillsForm } from "./SkillsForm";
 import { ProjectsForm } from "./ProjectsForm";
 import { CertificationsForm } from "./CertificationsForm";
+import { LanguagesForm } from "./LanguagesForm";
+import { AwardsForm } from "./AwardsForm";
+import { VolunteerForm } from "./VolunteerForm";
 import { CustomSectionForm } from "./CustomSectionForm";
 import { StyleCustomizer } from "./StyleCustomizer";
 
@@ -33,6 +38,9 @@ export function EditorPanel() {
     education: false,
     projects: false,
     certifications: false,
+    languages: false,
+    awards: false,
+    volunteer: false,
     custom: false,
   });
 
@@ -47,14 +55,14 @@ export function EditorPanel() {
 
   return (
     <div className="flex h-full flex-col space-y-4 overflow-y-auto p-4 sm:p-6 custom-scrollbar">
-      {/* ATS Analyzer Gauge */}
+      {/* ATS Analyzer Gauge Card */}
       <AtsScoreCard />
 
       {/* 1. Design & Templates Customizer */}
       <AccordionSection
         id="styling"
         title="Templates & Styling"
-        subtitle="Choose template, accent colors, and font styles"
+        subtitle="Choose from 6 ATS templates, paper size & accents"
         icon={Palette}
         isOpen={Boolean(openSections.styling)}
         onToggle={() => toggleSection("styling")}
@@ -129,8 +137,8 @@ export function EditorPanel() {
       {/* 7. Certifications */}
       <AccordionSection
         id="certifications"
-        title="Certifications & Awards"
-        subtitle="Professional credentials and licenses"
+        title="Certifications & Credentials"
+        subtitle="Professional licenses, cloud certs & credentials"
         icon={Award}
         badgeCount={resume.certifications.length}
         isOpen={Boolean(openSections.certifications)}
@@ -139,11 +147,50 @@ export function EditorPanel() {
         <CertificationsForm />
       </AccordionSection>
 
-      {/* 8. Custom Sections */}
+      {/* 8. Languages */}
+      <AccordionSection
+        id="languages"
+        title="Languages & Fluency"
+        subtitle="Spoken and written language proficiencies"
+        icon={Globe}
+        badgeCount={resume.languages?.length || 0}
+        isOpen={Boolean(openSections.languages)}
+        onToggle={() => toggleSection("languages")}
+      >
+        <LanguagesForm />
+      </AccordionSection>
+
+      {/* 9. Awards & Honors */}
+      <AccordionSection
+        id="awards"
+        title="Honors & Awards"
+        subtitle="Competitions, scholarships, hackathons & recognition"
+        icon={Award}
+        badgeCount={resume.awards?.length || 0}
+        isOpen={Boolean(openSections.awards)}
+        onToggle={() => toggleSection("awards")}
+      >
+        <AwardsForm />
+      </AccordionSection>
+
+      {/* 10. Volunteer & Community */}
+      <AccordionSection
+        id="volunteer"
+        title="Volunteering & Community"
+        subtitle="Non-profit, mentorship & leadership initiatives"
+        icon={Heart}
+        badgeCount={resume.volunteer?.length || 0}
+        isOpen={Boolean(openSections.volunteer)}
+        onToggle={() => toggleSection("volunteer")}
+      >
+        <VolunteerForm />
+      </AccordionSection>
+
+      {/* 11. Custom Sections */}
       <AccordionSection
         id="custom"
         title="Custom Sections"
-        subtitle="Languages, publications, volunteering"
+        subtitle="Publications, patents, speaking engagements"
         icon={Layers}
         badgeCount={resume.customSections.length}
         isOpen={Boolean(openSections.custom)}

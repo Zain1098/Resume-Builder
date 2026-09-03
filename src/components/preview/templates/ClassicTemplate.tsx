@@ -209,6 +209,40 @@ export function ClassicTemplate({ data }: TemplateProps) {
         </section>
       )}
 
+      {/* Languages */}
+      {data.languages && data.languages.length > 0 && (
+        <section className="mt-4">
+          <h2 className="text-xs font-bold uppercase tracking-wider pb-0.5 mb-1.5 border-b border-slate-400">
+            Languages
+          </h2>
+          <div className="space-y-1 text-xs">
+            {data.languages.map((l) => (
+              <div key={l.id} className="flex justify-between">
+                <span className="font-bold text-slate-900">{l.language}</span>
+                <span className="text-slate-700 text-[11px]">{l.proficiency}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Honors & Awards */}
+      {data.awards && data.awards.length > 0 && (
+        <section className="mt-4">
+          <h2 className="text-xs font-bold uppercase tracking-wider pb-0.5 mb-1.5 border-b border-slate-400">
+            Honors & Awards
+          </h2>
+          <div className="space-y-1.5 text-xs">
+            {data.awards.map((a) => (
+              <div key={a.id}>
+                <span className="font-bold text-slate-900">{a.title}</span>
+                {a.issuer && <span className="text-slate-700 text-[11px]"> — {a.issuer}</span>}
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* Custom Sections */}
       {customSections && customSections.length > 0 && (
         <div className="space-y-4 mt-4">

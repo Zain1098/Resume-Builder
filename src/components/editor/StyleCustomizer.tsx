@@ -2,8 +2,8 @@
 
 import React from "react";
 import { useResumeStore } from "@/store/useResumeStore";
-import { TemplateType, FontFamilyType } from "@/types/resume";
-import { Palette, Type, Layout, Check } from "lucide-react";
+import { TemplateType, FontFamilyType, PaperSize } from "@/types/resume";
+import { Palette, Type, Layout, Check, FileText, Camera } from "lucide-react";
 
 const TEMPLATES: { id: TemplateType; name: string; desc: string; badge: string }[] = [
   {
@@ -30,6 +30,18 @@ const TEMPLATES: { id: TemplateType; name: string; desc: string; badge: string }
     desc: "Compact tags and project metrics for engineers.",
     badge: "Dev Choice",
   },
+  {
+    id: "executive",
+    name: "Leadership Executive",
+    desc: "Strategic summary, competencies matrix & leadership impact.",
+    badge: "Executive",
+  },
+  {
+    id: "student",
+    name: "Student / Fresh Grad",
+    desc: "Education, academic capstones & honors upfront.",
+    badge: "Entry-Level",
+  },
 ];
 
 const COLOR_PALETTES = [
@@ -51,7 +63,7 @@ const FONT_OPTIONS: { id: FontFamilyType; name: string; preview: string; sampleC
 ];
 
 export function StyleCustomizer() {
-  const { resume, setTemplate, setPrimaryColor, setFontFamily, updateStyling } =
+  const { resume, setTemplate, setPrimaryColor, setFontFamily, updateStyling, setPaperSize } =
     useResumeStore();
   const styling = resume.styling;
 
@@ -61,7 +73,7 @@ export function StyleCustomizer() {
       <div>
         <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2.5">
           <Layout className="h-3.5 w-3.5 text-blue-600" />
-          <span>Resume Template</span>
+          <span>Resume Template (6 ATS-Compliant Layouts)</span>
         </div>
         <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
           {TEMPLATES.map((tpl) => {
@@ -71,7 +83,7 @@ export function StyleCustomizer() {
                 key={tpl.id}
                 type="button"
                 onClick={() => setTemplate(tpl.id)}
-                className={`relative flex flex-col items-start rounded-xl border p-3.5 text-left transition-all ${
+                className={`relative flex flex-col items-start rounded-xl border p-3 text-left transition-all ${
                   isSelected
                     ? "border-blue-600 bg-blue-50/50 shadow-sm ring-2 ring-blue-600/20 dark:border-blue-500 dark:bg-blue-950/40"
                     : "border-slate-200 bg-white hover:border-slate-300 dark:border-slate-800 dark:bg-slate-900"
@@ -99,7 +111,64 @@ export function StyleCustomizer() {
         </div>
       </div>
 
-      {/* 2. Primary Accent Color */}
+      {/* 2. Paper Size & Photo Options */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-200/60 dark:border-slate-800">
+        <div>
+          <label className="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1 flex items-center gap-1">
+            <FileText className="h-3.5 w-3.5 text-blue-600" />
+            <span>Paper Standard</span>
+          </label>
+          <div className="grid grid-cols-2 gap-2">
+            {(["a4", "letter"] as PaperSize[]).map((size) => (
+              <button
+                key={size}
+                type="button"
+                onClick={() => setPaperSize(size)}
+                className={`rounded-lg border py-1.5 text-center text-xs font-semibold uppercase transition ${
+                  (styling.paperSize || "a4") === size
+                    ? "border-blue-600 bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300"
+                    : "border-slate-200 bg-white text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
+                }`}
+              >
+                {size === "a4" ? "A4 (Global)" : "US Letter"}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1 flex items-center gap-1">
+            <Camera className="h-3.5 w-3.5 text-blue-600" />
+            <span>Profile Photo Layout</span>
+          </label>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={() => updateStyling({ showPhoto: false })}
+              className={`rounded-lg border py-1.5 text-center text-xs font-semibold transition ${
+                !styling.showPhoto
+                  ? "border-blue-600 bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300"
+                  : "border-slate-200 bg-white text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
+              }`}
+            >
+              ATS Clean (No Photo)
+            </button>
+            <button
+              type="button"
+              onClick={() => updateStyling({ showPhoto: true })}
+              className={`rounded-lg border py-1.5 text-center text-xs font-semibold transition ${
+                styling.showPhoto
+                  ? "border-blue-600 bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300"
+                  : "border-slate-200 bg-white text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
+              }`}
+            >
+              Photo Resume
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* 3. Primary Accent Color */}
       <div>
         <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2.5">
           <Palette className="h-3.5 w-3.5 text-blue-600" />
@@ -124,7 +193,6 @@ export function StyleCustomizer() {
             );
           })}
 
-          {/* Custom Hex input */}
           <div className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2 py-1 dark:border-slate-800 dark:bg-slate-900">
             <input
               type="color"
@@ -139,7 +207,7 @@ export function StyleCustomizer() {
         </div>
       </div>
 
-      {/* 3. Typography Selection */}
+      {/* 4. Typography Selection */}
       <div>
         <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2.5">
           <Type className="h-3.5 w-3.5 text-blue-600" />
@@ -171,7 +239,7 @@ export function StyleCustomizer() {
         </div>
       </div>
 
-      {/* 4. Density & Spacing */}
+      {/* 5. Density & Spacing */}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 pt-2 border-t border-slate-200/60 dark:border-slate-800">
         <div>
           <label className="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">

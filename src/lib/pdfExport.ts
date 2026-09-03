@@ -2,33 +2,40 @@
 
 export async function exportResumeToPdf(
   elementId: string = "resume-print-canvas",
-  fileName: string = "Resume.pdf"
+  fileName: string = "Resume.pdf",
+  mode: "vector" | "canvas" = "vector"
 ): Promise<boolean> {
+  // If vector mode requested, native high-fidelity print is preferred
+  if (mode === "vector") {
+    try {
+      window.print();
+      return true;
+    } catch {
+      // Fall through to canvas
+    }
+  }
+
   try {
     const target = document.getElementById(elementId);
     if (!target) {
-      console.error("Resume element not found for PDF export");
-      return false;
+      window.print();
+      return true;
     }
 
-    // Dynamically import to ensure client-only execution
     const html2canvas = (await import("html2canvas")).default;
     const { jsPDF } = await import("jspdf");
 
-    // Save current transform & width
     const originalTransform = target.style.transform;
     target.style.transform = "none";
 
-    // Capture with high DPI
     const canvas = await html2canvas(target, {
-      scale: 2.5, // Crisp retina quality
+      scale: 2.5,
       useCORS: true,
       logging: false,
       backgroundColor: "#ffffff",
       windowWidth: 1000,
     });
 
-    // Restore transform
     target.style.transform = originalTransform;
 
     const imgData = canvas.toDataURL("image/jpeg", 0.98);
@@ -38,18 +45,16 @@ export async function exportResumeToPdf(
       format: "a4",
     });
 
-    const pdfWidth = 210; // A4 width in mm
-    const pdfHeight = 297; // A4 height in mm
+    const pdfWidth = 210;
+    const pdfHeight = 297;
     const imgHeight = (canvas.height * pdfWidth) / canvas.width;
 
     let heightLeft = imgHeight;
     let position = 0;
 
-    // First page
     pdf.addImage(imgData, "JPEG", 0, position, pdfWidth, imgHeight, undefined, "FAST");
     heightLeft -= pdfHeight;
 
-    // Subsequent pages if content overflows A4 height
     while (heightLeft > 5) {
       position = position - pdfHeight;
       pdf.addPage();
@@ -60,7 +65,8 @@ export async function exportResumeToPdf(
     pdf.save(fileName);
     return true;
   } catch (error) {
-    console.error("Failed to generate PDF:", error);
-    return false;
+    console.error("Canvas PDF export failed, falling back to print:", error);
+    window.print();
+    return true;
   }
 }

@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { MobileBottomNav } from "@/components/common/MobileBottomNav";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,22 +20,22 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "CareerCraft — Professional ATS Resume Builder",
+  title: "CareerCraft — AI ATS Resume Builder & Job Matcher",
   description:
-    "Build job-winning, ATS-friendly resumes in real-time with customizable templates, instant scoring, AI enhancements, and crisp PDF export.",
+    "Transform your resume with AI-driven ATS optimization, job description matching, keyword gap analysis, and clean PDF/Word exports.",
   keywords: [
-    "Resume Builder",
-    "CV Maker",
-    "ATS Resume",
-    "Free Resume Builder",
-    "Developer Resume",
-    "Next.js Resume Builder",
+    "ATS Resume Builder",
+    "Resume Tailoring",
+    "Job Matcher",
+    "AI Resume",
+    "ATS Analyzer",
+    "Career Document Optimization",
   ],
   authors: [{ name: "CareerCraft" }],
   openGraph: {
-    title: "CareerCraft — Professional ATS Resume Builder",
+    title: "CareerCraft — AI ATS Resume Builder & Job Matcher",
     description:
-      "Craft modern, ATS-optimized resumes in seconds with live split-screen preview and vector PDF export.",
+      "Transform your resume with AI-driven ATS optimization, job description matching, keyword gap analysis, and clean PDF/Word exports.",
     type: "website",
   },
 };
@@ -66,9 +67,10 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased h-full`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased h-full pb-14 lg:pb-0`}
       >
         {children}
+        <MobileBottomNav />
       </body>
     </html>
   );

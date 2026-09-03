@@ -2,17 +2,25 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import {
   ResumeData,
+  ResumeDocument,
   PersonalInfo,
   Experience,
   Education,
   SkillCategory,
   Project,
   Certification,
+  LanguageItem,
+  VolunteerExperience,
+  Publication,
+  AwardItem,
   CustomSection,
   ResumeStyling,
   TemplateType,
   FontFamilyType,
+  PaperSize,
+  JobAnalysis,
 } from "@/types/resume";
+import { calculateAtsScore } from "@/lib/atsScoring";
 
 export const initialSampleResume: ResumeData = {
   personalInfo: {
@@ -81,7 +89,7 @@ export const initialSampleResume: ResumeData = {
       startDate: "2014-09",
       endDate: "2018-05",
       current: false,
-      gpaOrHonors: "3.85 GPA - Magna Cum Laude",
+      gpaOrHonors: "3.85 GPA • Magna Cum Laude",
       description: "Focus on Distributed Systems, Cloud Computing, and Algorithms.",
     },
   ],
@@ -140,15 +148,49 @@ export const initialSampleResume: ResumeData = {
       date: "2022-01",
     },
   ],
+  languages: [
+    { id: "lang-1", language: "English", proficiency: "Native" },
+    { id: "lang-2", language: "Spanish", proficiency: "Professional" },
+  ],
+  volunteer: [],
+  publications: [],
+  awards: [],
   customSections: [],
   styling: {
     template: "modern",
-    primaryColor: "#2563eb", // Royal blue
+    primaryColor: "#2563eb",
     fontFamily: "sans",
     fontSize: "normal",
     lineSpacing: "normal",
     sectionSpacing: "normal",
+    paperSize: "a4",
+    showPhoto: false,
   },
+  sectionVisibility: {
+    personal: true,
+    summary: true,
+    experience: true,
+    skills: true,
+    education: true,
+    projects: true,
+    certifications: true,
+    languages: true,
+    volunteer: false,
+    publications: false,
+    awards: false,
+    custom: true,
+  },
+  sectionOrder: [
+    "personal",
+    "summary",
+    "experience",
+    "skills",
+    "education",
+    "projects",
+    "certifications",
+    "languages",
+    "custom",
+  ],
 };
 
 export const emptyResume: ResumeData = {
@@ -169,6 +211,10 @@ export const emptyResume: ResumeData = {
   skillCategories: [],
   projects: [],
   certifications: [],
+  languages: [],
+  volunteer: [],
+  publications: [],
+  awards: [],
   customSections: [],
   styling: {
     template: "modern",
@@ -177,22 +223,68 @@ export const emptyResume: ResumeData = {
     fontSize: "normal",
     lineSpacing: "normal",
     sectionSpacing: "normal",
+    paperSize: "a4",
+    showPhoto: false,
+  },
+  sectionVisibility: {
+    personal: true,
+    summary: true,
+    experience: true,
+    skills: true,
+    education: true,
+    projects: true,
+    certifications: true,
+    languages: true,
+    volunteer: false,
+    publications: false,
+    awards: false,
+    custom: true,
   },
 };
 
+const defaultInitialDocument: ResumeDocument = {
+  id: "master-resume-1",
+  title: "Master Career Profile",
+  targetRole: "Senior Full Stack Software Engineer",
+  isMaster: true,
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
+  atsScore: 92,
+  data: initialSampleResume,
+};
+
 interface ResumeState {
-  resume: ResumeData;
+  resumes: ResumeDocument[];
+  activeResumeId: string;
+  masterResumeId: string;
   activeSection: string;
   zoomLevel: number;
   previewTab: "edit" | "preview";
-  
-  // Setters & Updaters
+  recentJobAnalyses: JobAnalysis[];
+
+  // Resume Document Management
+  createResume: (title: string, targetRole: string, copyFromMaster?: boolean) => string;
+  duplicateResume: (id: string) => string;
+  renameResume: (id: string, newTitle: string, newTargetRole?: string) => void;
+  deleteResume: (id: string) => void;
+  setMasterResume: (id: string) => void;
+  switchResume: (id: string) => void;
+  createTailoredResume: (jobAnalysis: JobAnalysis, tailoredData: ResumeData) => string;
+
+  // Active Resume Accessor
+  getActiveResume: () => ResumeDocument;
+  resume: ResumeData;
+
+  // UI state
   setActiveSection: (section: string) => void;
   setZoomLevel: (zoom: number) => void;
   setPreviewTab: (tab: "edit" | "preview") => void;
-  
+  toggleSectionVisibility: (sectionKey: string) => void;
+  reorderSections: (newOrder: string[]) => void;
+
+  // Active Resume Modifiers
   updatePersonalInfo: (info: Partial<PersonalInfo>) => void;
-  
+
   // Experiences
   addExperience: () => void;
   updateExperience: (id: string, exp: Partial<Experience>) => void;
@@ -200,29 +292,49 @@ interface ResumeState {
   addBulletPoint: (expId: string) => void;
   updateBulletPoint: (expId: string, index: number, text: string) => void;
   removeBulletPoint: (expId: string, index: number) => void;
-  
+
   // Educations
   addEducation: () => void;
   updateEducation: (id: string, edu: Partial<Education>) => void;
   removeEducation: (id: string) => void;
-  
+
   // Skills
   addSkillCategory: () => void;
   updateSkillCategory: (id: string, category: Partial<SkillCategory>) => void;
   removeSkillCategory: (id: string) => void;
   addSkillToCategory: (categoryId: string, skill: string) => void;
   removeSkillFromCategory: (categoryId: string, skillIndex: number) => void;
-  
+
   // Projects
   addProject: () => void;
   updateProject: (id: string, project: Partial<Project>) => void;
   removeProject: (id: string) => void;
-  
+
   // Certifications
   addCertification: () => void;
   updateCertification: (id: string, cert: Partial<Certification>) => void;
   removeCertification: (id: string) => void;
-  
+
+  // Languages
+  addLanguage: () => void;
+  updateLanguage: (id: string, lang: Partial<LanguageItem>) => void;
+  removeLanguage: (id: string) => void;
+
+  // Volunteer
+  addVolunteer: () => void;
+  updateVolunteer: (id: string, vol: Partial<VolunteerExperience>) => void;
+  removeVolunteer: (id: string) => void;
+
+  // Publications
+  addPublication: () => void;
+  updatePublication: (id: string, pub: Partial<Publication>) => void;
+  removePublication: (id: string) => void;
+
+  // Awards
+  addAward: () => void;
+  updateAward: (id: string, awd: Partial<AwardItem>) => void;
+  removeAward: (id: string) => void;
+
   // Custom Sections
   addCustomSection: () => void;
   updateCustomSection: (id: string, section: Partial<CustomSection>) => void;
@@ -230,46 +342,261 @@ interface ResumeState {
   addCustomSectionItem: (sectionId: string) => void;
   updateCustomSectionItem: (sectionId: string, itemId: string, item: Partial<CustomSection["items"][0]>) => void;
   removeCustomSectionItem: (sectionId: string, itemId: string) => void;
-  
+
   // Styling
   updateStyling: (styling: Partial<ResumeStyling>) => void;
   setTemplate: (template: TemplateType) => void;
   setPrimaryColor: (color: string) => void;
   setFontFamily: (font: FontFamilyType) => void;
-  
+  setPaperSize: (size: PaperSize) => void;
+
   // Global Actions
   loadSampleData: () => void;
   clearResume: () => void;
   importResume: (data: ResumeData) => void;
+  saveJobAnalysis: (analysis: JobAnalysis) => void;
+}
+
+// Helper to mutate active resume data and recalculate score
+function updateActiveDoc(
+  state: ResumeState,
+  modifier: (data: ResumeData) => ResumeData
+): Partial<ResumeState> {
+  const activeId = state.activeResumeId;
+  const currentDoc = state.resumes.find((r) => r.id === activeId) || state.resumes[0];
+  if (!currentDoc) return {};
+
+  const updatedData = modifier(currentDoc.data);
+  const newScore = calculateAtsScore(updatedData).overallScore;
+
+  const updatedResumes = state.resumes.map((doc) =>
+    doc.id === activeId
+      ? {
+          ...doc,
+          data: updatedData,
+          atsScore: newScore,
+          updatedAt: new Date().toISOString(),
+        }
+      : doc
+  );
+
+  return {
+    resumes: updatedResumes,
+    resume: updatedData,
+  };
 }
 
 export const useResumeStore = create<ResumeState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
+      resumes: [defaultInitialDocument],
+      activeResumeId: "master-resume-1",
+      masterResumeId: "master-resume-1",
       resume: initialSampleResume,
       activeSection: "personal",
       zoomLevel: 100,
       previewTab: "edit",
+      recentJobAnalyses: [],
+
+      getActiveResume: () => {
+        const state = get();
+        return (
+          state.resumes.find((r) => r.id === state.activeResumeId) ||
+          state.resumes[0] ||
+          defaultInitialDocument
+        );
+      },
+
+      createResume: (title, targetRole, copyFromMaster = true) => {
+        const state = get();
+        const masterDoc =
+          state.resumes.find((r) => r.id === state.masterResumeId) ||
+          state.resumes[0];
+        const baseData =
+          copyFromMaster && masterDoc
+            ? JSON.parse(JSON.stringify(masterDoc.data))
+            : emptyResume;
+
+        if (targetRole) {
+          baseData.personalInfo.jobTitle = targetRole;
+        }
+
+        const newId = `resume-${Date.now()}`;
+        const newDoc: ResumeDocument = {
+          id: newId,
+          title: title.trim() || "Untitled Resume",
+          targetRole: targetRole.trim() || baseData.personalInfo.jobTitle || "General",
+          isMaster: false,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          atsScore: calculateAtsScore(baseData).overallScore,
+          data: baseData,
+        };
+
+        set({
+          resumes: [newDoc, ...state.resumes],
+          activeResumeId: newId,
+          resume: baseData,
+        });
+
+        return newId;
+      },
+
+      duplicateResume: (id) => {
+        const state = get();
+        const target = state.resumes.find((r) => r.id === id);
+        if (!target) return "";
+
+        const copyData = JSON.parse(JSON.stringify(target.data));
+        const newId = `resume-${Date.now()}`;
+        const duplicated: ResumeDocument = {
+          id: newId,
+          title: `${target.title} (Copy)`,
+          targetRole: target.targetRole,
+          isMaster: false,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          atsScore: target.atsScore,
+          data: copyData,
+        };
+
+        set({
+          resumes: [duplicated, ...state.resumes],
+          activeResumeId: newId,
+          resume: copyData,
+        });
+
+        return newId;
+      },
+
+      renameResume: (id, newTitle, newTargetRole) => {
+        set((state) => ({
+          resumes: state.resumes.map((r) =>
+            r.id === id
+              ? {
+                  ...r,
+                  title: newTitle.trim() || r.title,
+                  targetRole: newTargetRole?.trim() || r.targetRole,
+                  updatedAt: new Date().toISOString(),
+                }
+              : r
+          ),
+        }));
+      },
+
+      deleteResume: (id) => {
+        const state = get();
+        if (state.resumes.length <= 1) return; // Prevent deleting the last remaining resume
+
+        const remaining = state.resumes.filter((r) => r.id !== id);
+        let nextActiveId = state.activeResumeId;
+        if (state.activeResumeId === id) {
+          nextActiveId = remaining[0].id;
+        }
+
+        let nextMasterId = state.masterResumeId;
+        if (state.masterResumeId === id) {
+          remaining[0].isMaster = true;
+          nextMasterId = remaining[0].id;
+        }
+
+        const nextActiveDoc = remaining.find((r) => r.id === nextActiveId) || remaining[0];
+
+        set({
+          resumes: remaining,
+          activeResumeId: nextActiveId,
+          masterResumeId: nextMasterId,
+          resume: nextActiveDoc.data,
+        });
+      },
+
+      setMasterResume: (id) => {
+        set((state) => ({
+          masterResumeId: id,
+          resumes: state.resumes.map((r) => ({
+            ...r,
+            isMaster: r.id === id,
+          })),
+        }));
+      },
+
+      switchResume: (id) => {
+        const state = get();
+        const doc = state.resumes.find((r) => r.id === id);
+        if (doc) {
+          set({
+            activeResumeId: id,
+            resume: doc.data,
+          });
+        }
+      },
+
+      createTailoredResume: (jobAnalysis, tailoredData) => {
+        const state = get();
+        const newId = `tailored-${Date.now()}`;
+        const score = calculateAtsScore(tailoredData, jobAnalysis.keywords).overallScore;
+
+        const newDoc: ResumeDocument = {
+          id: newId,
+          title: `Tailored: ${jobAnalysis.title} ${jobAnalysis.company ? `@ ${jobAnalysis.company}` : ""}`.trim(),
+          targetRole: jobAnalysis.title,
+          isMaster: false,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          atsScore: score,
+          data: tailoredData,
+        };
+
+        set({
+          resumes: [newDoc, ...state.resumes],
+          activeResumeId: newId,
+          resume: tailoredData,
+        });
+
+        return newId;
+      },
 
       setActiveSection: (section) => set({ activeSection: section }),
       setZoomLevel: (zoom) => set({ zoomLevel: zoom }),
       setPreviewTab: (tab) => set({ previewTab: tab }),
 
-      updatePersonalInfo: (info) =>
-        set((state) => ({
-          resume: {
-            ...state.resume,
-            personalInfo: { ...state.resume.personalInfo, ...info },
-          },
-        })),
+      toggleSectionVisibility: (sectionKey) => {
+        set((state) =>
+          updateActiveDoc(state, (data) => ({
+            ...data,
+            sectionVisibility: {
+              ...data.sectionVisibility,
+              [sectionKey]: !data.sectionVisibility?.[sectionKey],
+            },
+          }))
+        );
+      },
+
+      reorderSections: (newOrder) => {
+        set((state) =>
+          updateActiveDoc(state, (data) => ({
+            ...data,
+            sectionOrder: newOrder,
+          }))
+        );
+      },
+
+      updatePersonalInfo: (info) => {
+        set((state) =>
+          updateActiveDoc(state, (data) => ({
+            ...data,
+            personalInfo: { ...data.personalInfo, ...info },
+          }))
+        );
+      },
 
       // Experiences
-      addExperience: () =>
-        set((state) => ({
-          resume: {
-            ...state.resume,
+      addExperience: () => {
+        set((state) =>
+          updateActiveDoc(state, (data) => ({
+            ...data,
             experiences: [
-              ...state.resume.experiences,
+              ...data.experiences,
               {
                 id: `exp-${Date.now()}`,
                 company: "",
@@ -281,73 +608,79 @@ export const useResumeStore = create<ResumeState>()(
                 bulletPoints: [""],
               },
             ],
-          },
-        })),
+          }))
+        );
+      },
 
-      updateExperience: (id, exp) =>
-        set((state) => ({
-          resume: {
-            ...state.resume,
-            experiences: state.resume.experiences.map((item) =>
+      updateExperience: (id, exp) => {
+        set((state) =>
+          updateActiveDoc(state, (data) => ({
+            ...data,
+            experiences: data.experiences.map((item) =>
               item.id === id ? { ...item, ...exp } : item
             ),
-          },
-        })),
+          }))
+        );
+      },
 
-      removeExperience: (id) =>
-        set((state) => ({
-          resume: {
-            ...state.resume,
-            experiences: state.resume.experiences.filter((item) => item.id !== id),
-          },
-        })),
+      removeExperience: (id) => {
+        set((state) =>
+          updateActiveDoc(state, (data) => ({
+            ...data,
+            experiences: data.experiences.filter((item) => item.id !== id),
+          }))
+        );
+      },
 
-      addBulletPoint: (expId) =>
-        set((state) => ({
-          resume: {
-            ...state.resume,
-            experiences: state.resume.experiences.map((item) =>
+      addBulletPoint: (expId) => {
+        set((state) =>
+          updateActiveDoc(state, (data) => ({
+            ...data,
+            experiences: data.experiences.map((item) =>
               item.id === expId
                 ? { ...item, bulletPoints: [...item.bulletPoints, ""] }
                 : item
             ),
-          },
-        })),
+          }))
+        );
+      },
 
-      updateBulletPoint: (expId, index, text) =>
-        set((state) => ({
-          resume: {
-            ...state.resume,
-            experiences: state.resume.experiences.map((item) => {
+      updateBulletPoint: (expId, index, text) => {
+        set((state) =>
+          updateActiveDoc(state, (data) => ({
+            ...data,
+            experiences: data.experiences.map((item) => {
               if (item.id !== expId) return item;
               const newPoints = [...item.bulletPoints];
               newPoints[index] = text;
               return { ...item, bulletPoints: newPoints };
             }),
-          },
-        })),
+          }))
+        );
+      },
 
-      removeBulletPoint: (expId, index) =>
-        set((state) => ({
-          resume: {
-            ...state.resume,
-            experiences: state.resume.experiences.map((item) => {
+      removeBulletPoint: (expId, index) => {
+        set((state) =>
+          updateActiveDoc(state, (data) => ({
+            ...data,
+            experiences: data.experiences.map((item) => {
               if (item.id !== expId) return item;
               return {
                 ...item,
                 bulletPoints: item.bulletPoints.filter((_, i) => i !== index),
               };
             }),
-          },
-        })),
+          }))
+        );
+      },
 
       // Educations
-      addEducation: () =>
-        set((state) => ({
-          resume: {
-            ...state.resume,
+      addEducation: () => {
+        set((state) =>
+          updateActiveDoc(state, (data) => ({
+            ...data,
             educations: [
-              ...state.resume.educations,
+              ...data.educations,
               {
                 id: `edu-${Date.now()}`,
                 institution: "",
@@ -360,96 +693,102 @@ export const useResumeStore = create<ResumeState>()(
                 description: "",
               },
             ],
-          },
-        })),
+          }))
+        );
+      },
 
-      updateEducation: (id, edu) =>
-        set((state) => ({
-          resume: {
-            ...state.resume,
-            educations: state.resume.educations.map((item) =>
+      updateEducation: (id, edu) => {
+        set((state) =>
+          updateActiveDoc(state, (data) => ({
+            ...data,
+            educations: data.educations.map((item) =>
               item.id === id ? { ...item, ...edu } : item
             ),
-          },
-        })),
+          }))
+        );
+      },
 
-      removeEducation: (id) =>
-        set((state) => ({
-          resume: {
-            ...state.resume,
-            educations: state.resume.educations.filter((item) => item.id !== id),
-          },
-        })),
+      removeEducation: (id) => {
+        set((state) =>
+          updateActiveDoc(state, (data) => ({
+            ...data,
+            educations: data.educations.filter((item) => item.id !== id),
+          }))
+        );
+      },
 
       // Skills
-      addSkillCategory: () =>
-        set((state) => ({
-          resume: {
-            ...state.resume,
+      addSkillCategory: () => {
+        set((state) =>
+          updateActiveDoc(state, (data) => ({
+            ...data,
             skillCategories: [
-              ...state.resume.skillCategories,
+              ...data.skillCategories,
               {
                 id: `cat-${Date.now()}`,
-                name: "New Skill Group",
+                name: "New Competency Group",
                 skills: [],
               },
             ],
-          },
-        })),
+          }))
+        );
+      },
 
-      updateSkillCategory: (id, category) =>
-        set((state) => ({
-          resume: {
-            ...state.resume,
-            skillCategories: state.resume.skillCategories.map((item) =>
+      updateSkillCategory: (id, category) => {
+        set((state) =>
+          updateActiveDoc(state, (data) => ({
+            ...data,
+            skillCategories: data.skillCategories.map((item) =>
               item.id === id ? { ...item, ...category } : item
             ),
-          },
-        })),
+          }))
+        );
+      },
 
-      removeSkillCategory: (id) =>
-        set((state) => ({
-          resume: {
-            ...state.resume,
-            skillCategories: state.resume.skillCategories.filter(
-              (item) => item.id !== id
-            ),
-          },
-        })),
+      removeSkillCategory: (id) => {
+        set((state) =>
+          updateActiveDoc(state, (data) => ({
+            ...data,
+            skillCategories: data.skillCategories.filter((item) => item.id !== id),
+          }))
+        );
+      },
 
-      addSkillToCategory: (categoryId, skill) =>
-        set((state) => ({
-          resume: {
-            ...state.resume,
-            skillCategories: state.resume.skillCategories.map((item) => {
+      addSkillToCategory: (categoryId, skill) => {
+        set((state) =>
+          updateActiveDoc(state, (data) => ({
+            ...data,
+            skillCategories: data.skillCategories.map((item) => {
               if (item.id !== categoryId) return item;
               if (item.skills.includes(skill.trim())) return item;
               return { ...item, skills: [...item.skills, skill.trim()] };
             }),
-          },
-        })),
+          }))
+        );
+      },
 
-      removeSkillFromCategory: (categoryId, skillIndex) =>
-        set((state) => ({
-          resume: {
-            ...state.resume,
-            skillCategories: state.resume.skillCategories.map((item) => {
+      removeSkillFromCategory: (categoryId, skillIndex) => {
+        set((state) =>
+          updateActiveDoc(state, (data) => ({
+            ...data,
+            skillCategories: data.skillCategories.map((item) => {
               if (item.id !== categoryId) return item;
               return {
                 ...item,
                 skills: item.skills.filter((_, i) => i !== skillIndex),
               };
             }),
-          },
-        })),
+          }))
+        );
+      },
 
       // Projects
-      addProject: () =>
-        set((state) => ({
-          resume: {
-            ...state.resume,
+      addProject: () => {
+        set((state) =>
+          updateActiveDoc(state, (data) => ({
+            ...data,
             projects: [
-              ...state.resume.projects,
+              ...data.projects,
               {
                 id: `proj-${Date.now()}`,
                 name: "",
@@ -461,34 +800,37 @@ export const useResumeStore = create<ResumeState>()(
                 endDate: "",
               },
             ],
-          },
-        })),
+          }))
+        );
+      },
 
-      updateProject: (id, project) =>
-        set((state) => ({
-          resume: {
-            ...state.resume,
-            projects: state.resume.projects.map((item) =>
+      updateProject: (id, project) => {
+        set((state) =>
+          updateActiveDoc(state, (data) => ({
+            ...data,
+            projects: data.projects.map((item) =>
               item.id === id ? { ...item, ...project } : item
             ),
-          },
-        })),
+          }))
+        );
+      },
 
-      removeProject: (id) =>
-        set((state) => ({
-          resume: {
-            ...state.resume,
-            projects: state.resume.projects.filter((item) => item.id !== id),
-          },
-        })),
+      removeProject: (id) => {
+        set((state) =>
+          updateActiveDoc(state, (data) => ({
+            ...data,
+            projects: data.projects.filter((item) => item.id !== id),
+          }))
+        );
+      },
 
       // Certifications
-      addCertification: () =>
-        set((state) => ({
-          resume: {
-            ...state.resume,
+      addCertification: () => {
+        set((state) =>
+          updateActiveDoc(state, (data) => ({
+            ...data,
             certifications: [
-              ...state.resume.certifications,
+              ...data.certifications,
               {
                 id: `cert-${Date.now()}`,
                 name: "",
@@ -497,36 +839,194 @@ export const useResumeStore = create<ResumeState>()(
                 url: "",
               },
             ],
-          },
-        })),
+          }))
+        );
+      },
 
-      updateCertification: (id, cert) =>
-        set((state) => ({
-          resume: {
-            ...state.resume,
-            certifications: state.resume.certifications.map((item) =>
+      updateCertification: (id, cert) => {
+        set((state) =>
+          updateActiveDoc(state, (data) => ({
+            ...data,
+            certifications: data.certifications.map((item) =>
               item.id === id ? { ...item, ...cert } : item
             ),
-          },
-        })),
+          }))
+        );
+      },
 
-      removeCertification: (id) =>
-        set((state) => ({
-          resume: {
-            ...state.resume,
-            certifications: state.resume.certifications.filter(
-              (item) => item.id !== id
+      removeCertification: (id) => {
+        set((state) =>
+          updateActiveDoc(state, (data) => ({
+            ...data,
+            certifications: data.certifications.filter((item) => item.id !== id),
+          }))
+        );
+      },
+
+      // Languages
+      addLanguage: () => {
+        set((state) =>
+          updateActiveDoc(state, (data) => ({
+            ...data,
+            languages: [
+              ...(data.languages || []),
+              {
+                id: `lang-${Date.now()}`,
+                language: "",
+                proficiency: "Professional",
+              },
+            ],
+          }))
+        );
+      },
+
+      updateLanguage: (id, lang) => {
+        set((state) =>
+          updateActiveDoc(state, (data) => ({
+            ...data,
+            languages: (data.languages || []).map((l) =>
+              l.id === id ? { ...l, ...lang } : l
             ),
-          },
-        })),
+          }))
+        );
+      },
+
+      removeLanguage: (id) => {
+        set((state) =>
+          updateActiveDoc(state, (data) => ({
+            ...data,
+            languages: (data.languages || []).filter((l) => l.id !== id),
+          }))
+        );
+      },
+
+      // Volunteer
+      addVolunteer: () => {
+        set((state) =>
+          updateActiveDoc(state, (data) => ({
+            ...data,
+            volunteer: [
+              ...(data.volunteer || []),
+              {
+                id: `vol-${Date.now()}`,
+                organization: "",
+                role: "",
+                location: "",
+                startDate: "",
+                endDate: "",
+                current: false,
+                description: "",
+              },
+            ],
+          }))
+        );
+      },
+
+      updateVolunteer: (id, vol) => {
+        set((state) =>
+          updateActiveDoc(state, (data) => ({
+            ...data,
+            volunteer: (data.volunteer || []).map((v) =>
+              v.id === id ? { ...v, ...vol } : v
+            ),
+          }))
+        );
+      },
+
+      removeVolunteer: (id) => {
+        set((state) =>
+          updateActiveDoc(state, (data) => ({
+            ...data,
+            volunteer: (data.volunteer || []).filter((v) => v.id !== id),
+          }))
+        );
+      },
+
+      // Publications
+      addPublication: () => {
+        set((state) =>
+          updateActiveDoc(state, (data) => ({
+            ...data,
+            publications: [
+              ...(data.publications || []),
+              {
+                id: `pub-${Date.now()}`,
+                title: "",
+                publisher: "",
+                date: "",
+                description: "",
+              },
+            ],
+          }))
+        );
+      },
+
+      updatePublication: (id, pub) => {
+        set((state) =>
+          updateActiveDoc(state, (data) => ({
+            ...data,
+            publications: (data.publications || []).map((p) =>
+              p.id === id ? { ...p, ...pub } : p
+            ),
+          }))
+        );
+      },
+
+      removePublication: (id) => {
+        set((state) =>
+          updateActiveDoc(state, (data) => ({
+            ...data,
+            publications: (data.publications || []).filter((p) => p.id !== id),
+          }))
+        );
+      },
+
+      // Awards
+      addAward: () => {
+        set((state) =>
+          updateActiveDoc(state, (data) => ({
+            ...data,
+            awards: [
+              ...(data.awards || []),
+              {
+                id: `awd-${Date.now()}`,
+                title: "",
+                issuer: "",
+                date: "",
+                description: "",
+              },
+            ],
+          }))
+        );
+      },
+
+      updateAward: (id, awd) => {
+        set((state) =>
+          updateActiveDoc(state, (data) => ({
+            ...data,
+            awards: (data.awards || []).map((a) =>
+              a.id === id ? { ...a, ...awd } : a
+            ),
+          }))
+        );
+      },
+
+      removeAward: (id) => {
+        set((state) =>
+          updateActiveDoc(state, (data) => ({
+            ...data,
+            awards: (data.awards || []).filter((a) => a.id !== id),
+          }))
+        );
+      },
 
       // Custom Sections
-      addCustomSection: () =>
-        set((state) => ({
-          resume: {
-            ...state.resume,
+      addCustomSection: () => {
+        set((state) =>
+          updateActiveDoc(state, (data) => ({
+            ...data,
             customSections: [
-              ...state.resume.customSections,
+              ...data.customSections,
               {
                 id: `cust-${Date.now()}`,
                 heading: "Additional Information",
@@ -541,34 +1041,35 @@ export const useResumeStore = create<ResumeState>()(
                 ],
               },
             ],
-          },
-        })),
+          }))
+        );
+      },
 
-      updateCustomSection: (id, section) =>
-        set((state) => ({
-          resume: {
-            ...state.resume,
-            customSections: state.resume.customSections.map((item) =>
+      updateCustomSection: (id, section) => {
+        set((state) =>
+          updateActiveDoc(state, (data) => ({
+            ...data,
+            customSections: data.customSections.map((item) =>
               item.id === id ? { ...item, ...section } : item
             ),
-          },
-        })),
+          }))
+        );
+      },
 
-      removeCustomSection: (id) =>
-        set((state) => ({
-          resume: {
-            ...state.resume,
-            customSections: state.resume.customSections.filter(
-              (item) => item.id !== id
-            ),
-          },
-        })),
+      removeCustomSection: (id) => {
+        set((state) =>
+          updateActiveDoc(state, (data) => ({
+            ...data,
+            customSections: data.customSections.filter((item) => item.id !== id),
+          }))
+        );
+      },
 
-      addCustomSectionItem: (sectionId) =>
-        set((state) => ({
-          resume: {
-            ...state.resume,
-            customSections: state.resume.customSections.map((sec) =>
+      addCustomSectionItem: (sectionId) => {
+        set((state) =>
+          updateActiveDoc(state, (data) => ({
+            ...data,
+            customSections: data.customSections.map((sec) =>
               sec.id === sectionId
                 ? {
                     ...sec,
@@ -585,14 +1086,15 @@ export const useResumeStore = create<ResumeState>()(
                   }
                 : sec
             ),
-          },
-        })),
+          }))
+        );
+      },
 
-      updateCustomSectionItem: (sectionId, itemId, item) =>
-        set((state) => ({
-          resume: {
-            ...state.resume,
-            customSections: state.resume.customSections.map((sec) =>
+      updateCustomSectionItem: (sectionId, itemId, item) => {
+        set((state) =>
+          updateActiveDoc(state, (data) => ({
+            ...data,
+            customSections: data.customSections.map((sec) =>
               sec.id === sectionId
                 ? {
                     ...sec,
@@ -602,14 +1104,15 @@ export const useResumeStore = create<ResumeState>()(
                   }
                 : sec
             ),
-          },
-        })),
+          }))
+        );
+      },
 
-      removeCustomSectionItem: (sectionId, itemId) =>
-        set((state) => ({
-          resume: {
-            ...state.resume,
-            customSections: state.resume.customSections.map((sec) =>
+      removeCustomSectionItem: (sectionId, itemId) => {
+        set((state) =>
+          updateActiveDoc(state, (data) => ({
+            ...data,
+            customSections: data.customSections.map((sec) =>
               sec.id === sectionId
                 ? {
                     ...sec,
@@ -617,49 +1120,111 @@ export const useResumeStore = create<ResumeState>()(
                   }
                 : sec
             ),
-          },
-        })),
+          }))
+        );
+      },
 
       // Styling
-      updateStyling: (styling) =>
-        set((state) => ({
-          resume: {
-            ...state.resume,
-            styling: { ...state.resume.styling, ...styling },
-          },
-        })),
+      updateStyling: (styling) => {
+        set((state) =>
+          updateActiveDoc(state, (data) => ({
+            ...data,
+            styling: { ...data.styling, ...styling },
+          }))
+        );
+      },
 
-      setTemplate: (template) =>
-        set((state) => ({
-          resume: {
-            ...state.resume,
-            styling: { ...state.resume.styling, template },
-          },
-        })),
+      setTemplate: (template) => {
+        set((state) =>
+          updateActiveDoc(state, (data) => ({
+            ...data,
+            styling: { ...data.styling, template },
+          }))
+        );
+      },
 
-      setPrimaryColor: (color) =>
-        set((state) => ({
-          resume: {
-            ...state.resume,
-            styling: { ...state.resume.styling, primaryColor: color },
-          },
-        })),
+      setPrimaryColor: (color) => {
+        set((state) =>
+          updateActiveDoc(state, (data) => ({
+            ...data,
+            styling: { ...data.styling, primaryColor: color },
+          }))
+        );
+      },
 
-      setFontFamily: (font) =>
-        set((state) => ({
-          resume: {
-            ...state.resume,
-            styling: { ...state.resume.styling, fontFamily: font },
-          },
-        })),
+      setFontFamily: (font) => {
+        set((state) =>
+          updateActiveDoc(state, (data) => ({
+            ...data,
+            styling: { ...data.styling, fontFamily: font },
+          }))
+        );
+      },
 
-      // Global Actions
-      loadSampleData: () => set({ resume: initialSampleResume }),
-      clearResume: () => set({ resume: emptyResume }),
-      importResume: (data) => set({ resume: data }),
+      setPaperSize: (paperSize) => {
+        set((state) =>
+          updateActiveDoc(state, (data) => ({
+            ...data,
+            styling: { ...data.styling, paperSize },
+          }))
+        );
+      },
+
+      loadSampleData: () => {
+        set((state) =>
+          updateActiveDoc(state, () => JSON.parse(JSON.stringify(initialSampleResume)))
+        );
+      },
+
+      clearResume: () => {
+        set((state) =>
+          updateActiveDoc(state, () => JSON.parse(JSON.stringify(emptyResume)))
+        );
+      },
+
+      importResume: (data) => {
+        set((state) =>
+          updateActiveDoc(state, () => JSON.parse(JSON.stringify(data)))
+        );
+      },
+
+      saveJobAnalysis: (analysis) => {
+        set((state) => ({
+          recentJobAnalyses: [
+            analysis,
+            ...state.recentJobAnalyses.filter((a) => a.id !== analysis.id).slice(0, 5),
+          ],
+        }));
+      },
     }),
     {
-      name: "pro-resume-builder-storage-v1",
+      name: "pro-resume-builder-storage-v2",
+      migrate: (persistedState: unknown) => {
+        // Safe backward compatibility migration from v1 storage
+        const state = persistedState as { resume?: ResumeData; resumes?: ResumeDocument[] };
+        if (state && state.resume && (!state.resumes || state.resumes.length === 0)) {
+          const legacyResume = state.resume;
+          const score = calculateAtsScore(legacyResume).overallScore;
+          const masterDoc: ResumeDocument = {
+            id: "master-resume-migrated",
+            title: "Master Profile",
+            targetRole: legacyResume.personalInfo?.jobTitle || "Professional",
+            isMaster: true,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            atsScore: score,
+            data: legacyResume,
+          };
+          return {
+            ...state,
+            resumes: [masterDoc],
+            activeResumeId: "master-resume-migrated",
+            masterResumeId: "master-resume-migrated",
+            resume: legacyResume,
+          };
+        }
+        return persistedState;
+      },
     }
   )
 );
