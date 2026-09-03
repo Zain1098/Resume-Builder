@@ -9,8 +9,9 @@ interface TemplateProps {
 }
 
 export function MinimalistTemplate({ data }: TemplateProps) {
-  const { personalInfo, experiences, educations, skillCategories, projects, certifications, styling } = data;
+  const { personalInfo, experiences, educations, skillCategories, projects, certifications, customSections, styling } = data;
   const accentColor = styling.primaryColor || "#0f172a";
+  const isVis = (key: string) => data.sectionVisibility?.[key] !== false;
 
   const fontClass =
     styling.fontFamily === "serif"
@@ -24,42 +25,44 @@ export function MinimalistTemplate({ data }: TemplateProps) {
   return (
     <div className={`w-full bg-white text-slate-800 ${fontClass} p-8 sm:p-12 leading-relaxed`} style={{ minHeight: "1050px" }}>
       {/* Header */}
-      <header className="pb-6 border-b border-slate-100">
-        <h1 className="text-3xl sm:text-4xl font-light tracking-tight text-slate-900">
-          {personalInfo.fullName.split(" ")[0]}{" "}
-          <span className="font-bold" style={{ color: accentColor }}>
-            {personalInfo.fullName.split(" ").slice(1).join(" ")}
-          </span>
-        </h1>
-        <p className="text-sm font-medium tracking-wide uppercase text-slate-500 mt-1">
-          {personalInfo.jobTitle}
-        </p>
-
-        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-600">
-          {personalInfo.email && <span>{personalInfo.email}</span>}
-          {personalInfo.phone && <span>{personalInfo.phone}</span>}
-          {personalInfo.location && <span>{personalInfo.location}</span>}
-          {personalInfo.website && (
-            <a href={personalInfo.website} target="_blank" rel="noreferrer" className="text-slate-900 underline">
-              {personalInfo.website.replace(/^https?:\/\//, "")}
-            </a>
-          )}
-          {personalInfo.linkedin && (
-            <a href={personalInfo.linkedin} target="_blank" rel="noreferrer" className="text-slate-900 underline">
-              LinkedIn
-            </a>
-          )}
-        </div>
-
-        {personalInfo.summary && (
-          <p className="mt-4 text-xs sm:text-[13px] text-slate-600 leading-relaxed max-w-3xl">
-            {personalInfo.summary}
+      {isVis("personal") && (
+        <header className="pb-6 border-b border-slate-100">
+          <h1 className="text-3xl sm:text-4xl font-light tracking-tight text-slate-900">
+            {personalInfo.fullName.split(" ")[0]}{" "}
+            <span className="font-bold" style={{ color: accentColor }}>
+              {personalInfo.fullName.split(" ").slice(1).join(" ")}
+            </span>
+          </h1>
+          <p className="text-sm font-medium tracking-wide uppercase text-slate-500 mt-1">
+            {personalInfo.jobTitle}
           </p>
-        )}
-      </header>
+
+          <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-600">
+            {personalInfo.email && <span>{personalInfo.email}</span>}
+            {personalInfo.phone && <span>{personalInfo.phone}</span>}
+            {personalInfo.location && <span>{personalInfo.location}</span>}
+            {personalInfo.website && (
+              <a href={personalInfo.website} target="_blank" rel="noreferrer" className="text-slate-900 underline">
+                {personalInfo.website.replace(/^https?:\/\//, "")}
+              </a>
+            )}
+            {personalInfo.linkedin && (
+              <a href={personalInfo.linkedin} target="_blank" rel="noreferrer" className="text-slate-900 underline">
+                LinkedIn
+              </a>
+            )}
+          </div>
+
+          {isVis("summary") && personalInfo.summary && (
+            <p className="mt-4 text-xs sm:text-[13px] text-slate-600 leading-relaxed max-w-3xl">
+              {personalInfo.summary}
+            </p>
+          )}
+        </header>
+      )}
 
       {/* Experience Section */}
-      {experiences.length > 0 && (
+      {isVis("experience") && experiences.length > 0 && (
         <section className="mt-6">
           <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4">
             Experience
@@ -94,47 +97,49 @@ export function MinimalistTemplate({ data }: TemplateProps) {
       )}
 
       {/* Education & Skills Grid */}
-      <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-100">
-        {educations.length > 0 && (
-          <section>
-            <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">
-              Education
-            </h2>
-            <div className="space-y-3 text-xs">
-              {educations.map((edu) => (
-                <div key={edu.id}>
-                  <div className="font-bold text-slate-900">{edu.degree}</div>
-                  <div className="text-slate-600">{edu.institution}</div>
-                  <div className="text-[10px] text-slate-400 font-mono mt-0.5">
-                    {formatDate(edu.startDate)} – {edu.endDate ? formatDate(edu.endDate) : "Present"}
+      {((isVis("education") && educations.length > 0) || (isVis("skills") && skillCategories.length > 0)) && (
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-100">
+          {isVis("education") && educations.length > 0 && (
+            <section>
+              <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">
+                Education
+              </h2>
+              <div className="space-y-3 text-xs">
+                {educations.map((edu) => (
+                  <div key={edu.id}>
+                    <div className="font-bold text-slate-900">{edu.degree}</div>
+                    <div className="text-slate-600">{edu.institution}</div>
+                    <div className="text-[10px] text-slate-400 font-mono mt-0.5">
+                      {formatDate(edu.startDate)} – {edu.endDate ? formatDate(edu.endDate) : "Present"}
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
+                ))}
+              </div>
+            </section>
+          )}
 
-        {skillCategories.length > 0 && (
-          <section>
-            <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">
-              Expertise
-            </h2>
-            <div className="space-y-2 text-xs">
-              {skillCategories.map((cat) => (
-                <div key={cat.id}>
-                  <span className="font-semibold text-slate-900 block text-[11px]">
-                    {cat.name}
-                  </span>
-                  <span className="text-slate-600 text-xs">{cat.skills.join(", ")}</span>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-      </div>
+          {isVis("skills") && skillCategories.length > 0 && (
+            <section>
+              <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">
+                Expertise
+              </h2>
+              <div className="space-y-2 text-xs">
+                {skillCategories.map((cat) => (
+                  <div key={cat.id}>
+                    <span className="font-semibold text-slate-900 block text-[11px]">
+                      {cat.name}
+                    </span>
+                    <span className="text-slate-600 text-xs">{cat.skills.join(", ")}</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+        </div>
+      )}
 
       {/* Projects */}
-      {projects.length > 0 && (
+      {isVis("projects") && projects.length > 0 && (
         <section className="mt-6 pt-4 border-t border-slate-100">
           <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">
             Projects
@@ -156,7 +161,7 @@ export function MinimalistTemplate({ data }: TemplateProps) {
       )}
 
       {/* Certifications */}
-      {certifications && certifications.length > 0 && (
+      {isVis("certifications") && certifications && certifications.length > 0 && (
         <section className="mt-6 pt-4 border-t border-slate-100">
           <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">
             Certifications
@@ -170,6 +175,106 @@ export function MinimalistTemplate({ data }: TemplateProps) {
             ))}
           </div>
         </section>
+      )}
+
+      {/* Languages & Awards */}
+      {((isVis("languages") && data.languages && data.languages.length > 0) ||
+        (isVis("awards") && data.awards && data.awards.length > 0)) && (
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-100">
+          {isVis("languages") && data.languages && data.languages.length > 0 && (
+            <section>
+              <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">
+                Languages
+              </h2>
+              <div className="space-y-1.5 text-xs">
+                {data.languages.map((l) => (
+                  <div key={l.id} className="flex justify-between">
+                    <span className="font-semibold text-slate-800">{l.language}</span>
+                    <span className="text-slate-500 font-mono text-[11px]">{l.proficiency}</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {isVis("awards") && data.awards && data.awards.length > 0 && (
+            <section>
+              <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">
+                Honors &amp; Awards
+              </h2>
+              <div className="space-y-1.5 text-xs">
+                {data.awards.map((a) => (
+                  <div key={a.id}>
+                    <span className="font-semibold text-slate-800">{a.title}</span>
+                    {a.issuer && <span className="text-slate-500 text-[11px]"> / {a.issuer}</span>}
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+        </div>
+      )}
+
+      {/* Volunteering */}
+      {isVis("volunteer") && data.volunteer && data.volunteer.length > 0 && (
+        <section className="mt-6 pt-4 border-t border-slate-100">
+          <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">
+            Volunteering
+          </h2>
+          <div className="space-y-3 text-xs">
+            {data.volunteer.map((v) => (
+              <div key={v.id}>
+                <div className="flex justify-between font-semibold text-slate-800">
+                  <span>{v.role} <span className="text-slate-500 font-normal">/ {v.organization}</span></span>
+                  <span className="text-slate-400 font-mono text-[11px]">
+                    {v.startDate ? formatDate(v.startDate) : ""} {v.endDate ? `– ${formatDate(v.endDate)}` : v.current ? "– Present" : ""}
+                  </span>
+                </div>
+                {v.description && <p className="text-slate-600 text-xs mt-0.5">{v.description}</p>}
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Publications */}
+      {isVis("publications") && data.publications && data.publications.length > 0 && (
+        <section className="mt-6 pt-4 border-t border-slate-100">
+          <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">
+            Publications &amp; Research
+          </h2>
+          <div className="space-y-2 text-xs">
+            {data.publications.map((p) => (
+              <div key={p.id}>
+                <span className="font-semibold text-slate-900">{p.title}</span>
+                <span className="text-slate-500 text-[11px] ml-1.5">({p.publisher}{p.date ? `, ${formatDate(p.date)}` : ""})</span>
+                {p.description && <p className="text-slate-600 text-xs mt-0.5">{p.description}</p>}
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Custom Sections */}
+      {isVis("custom") && customSections && customSections.length > 0 && (
+        <div className="space-y-6 mt-6 pt-4 border-t border-slate-100">
+          {customSections.map((sec) => (
+            <section key={sec.id}>
+              <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">
+                {sec.heading}
+              </h2>
+              <div className="space-y-2 text-xs">
+                {sec.items.map((it) => (
+                  <div key={it.id}>
+                    <span className="font-semibold text-slate-900">{it.title}</span>
+                    {it.subtitle && <span className="text-slate-500 text-[11px] ml-1.5">({it.subtitle})</span>}
+                    {it.description && <p className="text-slate-600 text-xs mt-0.5">{it.description}</p>}
+                  </div>
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
       )}
     </div>
   );

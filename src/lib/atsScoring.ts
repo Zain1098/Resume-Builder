@@ -266,19 +266,47 @@ export function calculateAtsScore(
   }
   educationScore = Math.min(100, Math.max(educationScore, resume.educations.length > 0 ? 60 : 30));
 
-  // ==========================================
-  // 6. KEYWORDS & JOB MATCH (Weight: 35%)
-  // ==========================================
-  const resumeCorpus = [
-    personalInfo.fullName,
-    personalInfo.jobTitle,
-    personalInfo.summary,
-    ...resume.experiences.map((e) => `${e.company} ${e.position} ${e.bulletPoints.join(" ")}`),
-    ...resume.educations.map((e) => `${e.institution} ${e.degree} ${e.fieldOfStudy}`),
-    ...uniqueSkills,
-    ...resume.projects.map((p) => `${p.name} ${p.description} ${p.technologies.join(" ")}`),
-    ...resume.certifications.map((c) => `${c.name} ${c.issuer}`)
-  ].join(" ").toLowerCase();
+  const isVis = (key: string) => resume.sectionVisibility?.[key] !== false;
+
+  const corpusParts: string[] = [];
+  if (isVis("personal")) {
+    corpusParts.push(personalInfo.fullName, personalInfo.jobTitle);
+  }
+  if (isVis("summary") && personalInfo.summary) {
+    corpusParts.push(personalInfo.summary);
+  }
+  if (isVis("experience")) {
+    corpusParts.push(...resume.experiences.map((e) => `${e.company} ${e.position} ${e.bulletPoints.join(" ")}`));
+  }
+  if (isVis("education")) {
+    corpusParts.push(...resume.educations.map((e) => `${e.institution} ${e.degree} ${e.fieldOfStudy}`));
+  }
+  if (isVis("skills")) {
+    corpusParts.push(...uniqueSkills);
+  }
+  if (isVis("projects")) {
+    corpusParts.push(...resume.projects.map((p) => `${p.name} ${p.description} ${p.technologies.join(" ")}`));
+  }
+  if (isVis("certifications")) {
+    corpusParts.push(...resume.certifications.map((c) => `${c.name} ${c.issuer}`));
+  }
+  if (isVis("languages") && resume.languages) {
+    corpusParts.push(...resume.languages.map((l) => `${l.language} ${l.proficiency}`));
+  }
+  if (isVis("volunteer") && resume.volunteer) {
+    corpusParts.push(...resume.volunteer.map((v) => `${v.organization} ${v.role} ${v.description || ""}`));
+  }
+  if (isVis("publications") && resume.publications) {
+    corpusParts.push(...resume.publications.map((p) => `${p.title} ${p.publisher} ${p.description || ""}`));
+  }
+  if (isVis("awards") && resume.awards) {
+    corpusParts.push(...resume.awards.map((a) => `${a.title} ${a.issuer} ${a.description || ""}`));
+  }
+  if (isVis("custom") && resume.customSections) {
+    corpusParts.push(...resume.customSections.flatMap((c) => c.items.map((i) => `${i.title} ${i.subtitle || ""} ${i.description}`)));
+  }
+
+  const resumeCorpus = corpusParts.join(" ").toLowerCase();
 
   const titleLower = (personalInfo.jobTitle || "").toLowerCase();
   let roleKey = "software";

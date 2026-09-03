@@ -131,6 +131,26 @@ export default function AtsAnalyzerPage() {
           </div>
         </div>
 
+        {/* ATS Methodology & Honest Transparency Disclaimer */}
+        <div className="rounded-2xl border border-blue-200 bg-gradient-to-r from-blue-50/70 via-indigo-50/40 to-slate-50 p-4 sm:p-5 dark:border-blue-900/60 dark:bg-gradient-to-r dark:from-blue-950/40 dark:via-slate-900/40 dark:to-slate-900">
+          <div className="flex items-start gap-3.5">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-white shadow-sm shadow-blue-500/30 mt-0.5">
+              <ShieldCheck className="h-5 w-5" />
+            </div>
+            <div className="space-y-1 text-xs">
+              <h3 className="font-bold text-slate-900 dark:text-white text-sm">
+                About Our ATS Score &amp; Scoring Methodology
+              </h3>
+              <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
+                Applicant Tracking Systems (such as Greenhouse, Lever, Workday, Taleo, and iCIMS) parse resumes into structured data profiles before recruiter review. CareerCraft&apos;s ATS score is an <strong>explainable compatibility index</strong> measuring standard header labels, single-column parseability, keyword extraction, quantified achievements, and machine readability.
+              </p>
+              <p className="text-slate-500 dark:text-slate-400 text-[11px] pt-1">
+                <strong>Disclaimer:</strong> No software can promise guaranteed interview callbacks or claim to &quot;beat every ATS algorithm.&quot; Hiring decisions are ultimately made by human recruiters and hiring managers. Our scoring evaluates structural compliance, readability, and industry best practices.
+              </p>
+            </div>
+          </div>
+        </div>
+
         {/* 8-Factor Score Card Grid */}
         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-6 border-b border-slate-100 dark:border-slate-800">

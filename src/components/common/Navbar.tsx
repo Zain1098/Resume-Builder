@@ -23,6 +23,7 @@ import {
 import confetti from "canvas-confetti";
 import { ImportExportModal } from "@/components/editor/ImportExportModal";
 import { RoleSelectorModal } from "@/components/editor/RoleSelectorModal";
+import { ActionPromptModal } from "@/components/common/ActionPromptModal";
 import { ThemeToggle } from "@/components/common/ThemeToggle";
 import { exportResumeToPdf } from "@/lib/pdfExport";
 import { exportResumeToDocx } from "@/lib/docxExport";
@@ -46,6 +47,7 @@ export function Navbar() {
   const [downloadMenuOpen, setDownloadMenuOpen] = useState(false);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
+  const [newResumeModalOpen, setNewResumeModalOpen] = useState(false);
 
   const resumeMenuRef = useRef<HTMLDivElement>(null);
   const downloadMenuRef = useRef<HTMLDivElement>(null);
@@ -99,10 +101,13 @@ export function Navbar() {
   };
 
   const handleCreateNew = () => {
-    const title = prompt("Enter a title for the new resume version:", "Tailored Software Engineer");
+    setResumeMenuOpen(false);
+    setNewResumeModalOpen(true);
+  };
+
+  const handleConfirmCreateNew = (title?: string) => {
     if (title) {
       createResume(title, "");
-      setResumeMenuOpen(false);
       router.push("/builder");
     }
   };
@@ -425,6 +430,19 @@ export function Navbar() {
       <RoleSelectorModal
         isOpen={roleModalOpen}
         onClose={() => setRoleModalOpen(false)}
+      />
+
+      <ActionPromptModal
+        isOpen={newResumeModalOpen}
+        onClose={() => setNewResumeModalOpen(false)}
+        title="Create New Resume Version"
+        description="Provide a descriptive name (e.g. role title or target company) for this tailored resume."
+        mode="prompt"
+        inputLabel="Resume Title"
+        inputPlaceholder="e.g. Senior Frontend Engineer (Fintech)"
+        defaultValue="Tailored Software Engineer"
+        confirmText="Create & Open"
+        onConfirm={handleConfirmCreateNew}
       />
     </>
   );

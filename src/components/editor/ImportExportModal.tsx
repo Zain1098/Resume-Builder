@@ -11,11 +11,14 @@ interface ImportExportModalProps {
 }
 
 export function ImportExportModal({ isOpen, onClose }: ImportExportModalProps) {
-  const { resume, importResume } = useResumeStore();
+  const { resume, importResume, getActiveResume, createResumeFromData } = useResumeStore();
   const [jsonText, setJsonText] = useState("");
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
+
+  const activeDoc = getActiveResume();
+  const [importAsNewVersion, setImportAsNewVersion] = useState(activeDoc.isMaster);
 
   if (!isOpen) return null;
 
@@ -40,6 +43,22 @@ export function ImportExportModal({ isOpen, onClose }: ImportExportModalProps) {
     URL.revokeObjectURL(url);
   };
 
+  const applyImportedData = (data: ResumeData) => {
+    if (importAsNewVersion || activeDoc.isMaster) {
+      const title = `${data.personalInfo.fullName || "Imported"} Resume`;
+      createResumeFromData(title, data.personalInfo.jobTitle || "", data);
+      setSuccessMsg("Imported as a new resume version! Master profile preserved.");
+    } else {
+      importResume(data);
+      setSuccessMsg("Resume data successfully loaded!");
+    }
+    setError(null);
+    setTimeout(() => {
+      setSuccessMsg(null);
+      onClose();
+    }, 1200);
+  };
+
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -51,13 +70,7 @@ export function ImportExportModal({ isOpen, onClose }: ImportExportModalProps) {
         if (!parsed.personalInfo) {
           throw new Error("Invalid resume format: Missing personalInfo section.");
         }
-        importResume(parsed as ResumeData);
-        setSuccessMsg("Resume imported successfully from file!");
-        setError(null);
-        setTimeout(() => {
-          setSuccessMsg(null);
-          onClose();
-        }, 1200);
+        applyImportedData(parsed as ResumeData);
       } catch (err: unknown) {
         const message = err instanceof Error ? err.message : "Failed to parse JSON file.";
         setError(message);
@@ -76,13 +89,7 @@ export function ImportExportModal({ isOpen, onClose }: ImportExportModalProps) {
       if (!parsed.personalInfo) {
         throw new Error("Invalid resume schema: Missing personalInfo.");
       }
-      importResume(parsed as ResumeData);
-      setSuccessMsg("Resume data successfully loaded!");
-      setError(null);
-      setTimeout(() => {
-        setSuccessMsg(null);
-        onClose();
-      }, 1200);
+      applyImportedData(parsed as ResumeData);
     } catch {
       setError("Invalid JSON format. Please verify the syntax.");
     }
@@ -160,6 +167,21 @@ export function ImportExportModal({ isOpen, onClose }: ImportExportModalProps) {
           <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
             Import from File or Text
           </h4>
+
+          {activeDoc.isMaster && (
+            <div className="mt-2.5 rounded-lg border border-amber-200 bg-amber-50/80 p-2.5 dark:border-amber-800/80 dark:bg-amber-950/30 flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="protect-master-chk"
+                checked={importAsNewVersion}
+                onChange={(e) => setImportAsNewVersion(e.target.checked)}
+                className="rounded border-amber-300 text-blue-600 focus:ring-blue-500 h-4 w-4"
+              />
+              <label htmlFor="protect-master-chk" className="text-xs text-amber-900 dark:text-amber-200 font-medium cursor-pointer">
+                Import as new version (Recommended to keep Master Career Profile intact)
+              </label>
+            </div>
+          )}
 
           {/* File Upload Box */}
           <div className="mt-3 flex items-center justify-center rounded-xl border-2 border-dashed border-slate-200 p-4 text-center hover:border-blue-400 dark:border-slate-800 dark:hover:border-blue-500 transition">

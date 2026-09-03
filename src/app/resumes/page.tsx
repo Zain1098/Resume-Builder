@@ -13,6 +13,7 @@ import {
   Trash2,
   ArrowRightLeft,
 } from "lucide-react";
+import { ActionPromptModal } from "@/components/common/ActionPromptModal";
 
 export default function ResumesManagerPage() {
   const router = useRouter();
@@ -21,9 +22,9 @@ export default function ResumesManagerPage() {
     activeResumeId,
     switchResume,
     createResume,
-    duplicateResume,
     renameResume,
     deleteResume,
+    duplicateResume,
     setMasterResume,
   } = useResumeStore();
 
@@ -31,6 +32,22 @@ export default function ResumesManagerPage() {
   const [comparing, setComparing] = useState(false);
   const [resumeAId, setResumeAId] = useState<string>("");
   const [resumeBId, setResumeBId] = useState<string>("");
+
+  const [modalConfig, setModalConfig] = useState<{
+    isOpen: boolean;
+    title: string;
+    description?: string;
+    mode: "prompt" | "confirm";
+    defaultValue?: string;
+    isDestructive?: boolean;
+    confirmText?: string;
+    onConfirm: (val?: string) => void;
+  }>({
+    isOpen: false,
+    title: "",
+    mode: "prompt",
+    onConfirm: () => {},
+  });
 
   useEffect(() => {
     setIsMounted(true);
@@ -52,18 +69,50 @@ export default function ResumesManagerPage() {
   }
 
   const handleCreateNew = () => {
-    const title = prompt("Enter a title for this new resume:", "Target Role Resume");
-    if (title) {
-      createResume(title, "");
-      router.push("/builder");
-    }
+    setModalConfig({
+      isOpen: true,
+      title: "Create New Resume Version",
+      description: "Enter a title for this tailored resume version.",
+      mode: "prompt",
+      defaultValue: "Target Role Resume",
+      confirmText: "Create & Edit",
+      onConfirm: (val) => {
+        if (val) {
+          createResume(val, "");
+          router.push("/builder");
+        }
+      },
+    });
   };
 
   const handleRename = (id: string, currentTitle: string) => {
-    const nextTitle = prompt("Rename resume:", currentTitle);
-    if (nextTitle && nextTitle.trim()) {
-      renameResume(id, nextTitle.trim());
-    }
+    setModalConfig({
+      isOpen: true,
+      title: "Rename Resume",
+      description: `Enter a new name for "${currentTitle}".`,
+      mode: "prompt",
+      defaultValue: currentTitle,
+      confirmText: "Save Name",
+      onConfirm: (val) => {
+        if (val) {
+          renameResume(id, val);
+        }
+      },
+    });
+  };
+
+  const handleDelete = (id: string, title: string) => {
+    setModalConfig({
+      isOpen: true,
+      title: "Delete Resume",
+      description: `Are you sure you want to delete "${title}"? This action cannot be undone.`,
+      mode: "confirm",
+      isDestructive: true,
+      confirmText: "Delete",
+      onConfirm: () => {
+        deleteResume(id);
+      },
+    });
   };
 
   const docA = resumes.find((r) => r.id === resumeAId) || resumes[0];
@@ -329,11 +378,7 @@ export default function ResumesManagerPage() {
                     {!doc.isMaster && (
                       <button
                         type="button"
-                        onClick={() => {
-                          if (confirm(`Delete '${doc.title}'?`)) {
-                            deleteResume(doc.id);
-                          }
-                        }}
+                        onClick={() => handleDelete(doc.id, doc.title)}
                         className="rounded-lg p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-950/40"
                         title="Delete"
                       >
@@ -347,6 +392,18 @@ export default function ResumesManagerPage() {
           })}
         </div>
       </main>
+
+      <ActionPromptModal
+        isOpen={modalConfig.isOpen}
+        onClose={() => setModalConfig((prev) => ({ ...prev, isOpen: false }))}
+        title={modalConfig.title}
+        description={modalConfig.description}
+        mode={modalConfig.mode}
+        defaultValue={modalConfig.defaultValue}
+        isDestructive={modalConfig.isDestructive}
+        confirmText={modalConfig.confirmText}
+        onConfirm={modalConfig.onConfirm}
+      />
     </div>
   );
 }

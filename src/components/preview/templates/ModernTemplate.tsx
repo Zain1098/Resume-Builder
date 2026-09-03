@@ -2,7 +2,7 @@
 
 import React from "react";
 import { ResumeData } from "@/types/resume";
-import { Mail, Phone, MapPin, Globe, Award, Briefcase, GraduationCap, Sparkles } from "lucide-react";
+import { Mail, Phone, MapPin, Globe, Award, Briefcase, GraduationCap, Sparkles, BookOpen, Heart } from "lucide-react";
 import { GithubIcon, LinkedinIcon } from "@/components/common/SocialIcons";
 import { formatDate } from "@/lib/utils";
 
@@ -13,6 +13,7 @@ interface TemplateProps {
 export function ModernTemplate({ data }: TemplateProps) {
   const { personalInfo, experiences, educations, skillCategories, projects, certifications, customSections, styling } = data;
   const accentColor = styling.primaryColor || "#2563eb";
+  const isVis = (key: string) => data.sectionVisibility?.[key] !== false;
 
   const fontClass =
     styling.fontFamily === "serif"
@@ -26,91 +27,93 @@ export function ModernTemplate({ data }: TemplateProps) {
   return (
     <div className={`w-full bg-white text-slate-800 ${fontClass} leading-relaxed p-8 sm:p-10`} style={{ minHeight: "1050px" }}>
       {/* Header Banner */}
-      <header className="border-b-2 pb-5" style={{ borderColor: accentColor }}>
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div className="flex items-center gap-4">
-            {personalInfo.avatarUrl && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={personalInfo.avatarUrl}
-                alt={personalInfo.fullName}
-                className="h-16 w-16 rounded-full object-cover border-2 shadow-sm shrink-0"
-                style={{ borderColor: accentColor }}
-              />
-            )}
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900" style={{ color: accentColor }}>
-                {personalInfo.fullName || "Your Full Name"}
-              </h1>
-              <p className="text-sm sm:text-base font-semibold text-slate-600 mt-0.5">
-                {personalInfo.jobTitle || "Your Professional Title"}
-              </p>
+      {isVis("personal") && (
+        <header className="border-b-2 pb-5" style={{ borderColor: accentColor }}>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex items-center gap-4">
+              {personalInfo.avatarUrl && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={personalInfo.avatarUrl}
+                  alt={personalInfo.fullName}
+                  className="h-16 w-16 rounded-full object-cover border-2 shadow-sm shrink-0"
+                  style={{ borderColor: accentColor }}
+                />
+              )}
+              <div>
+                <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900" style={{ color: accentColor }}>
+                  {personalInfo.fullName || "Your Full Name"}
+                </h1>
+                <p className="text-sm sm:text-base font-semibold text-slate-600 mt-0.5">
+                  {personalInfo.jobTitle || "Your Professional Title"}
+                </p>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Contact Links Bar */}
-        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-slate-600">
-          {personalInfo.email && (
-            <span className="flex items-center gap-1.5">
-              <Mail className="h-3.5 w-3.5" style={{ color: accentColor }} />
-              <a href={`mailto:${personalInfo.email}`} className="hover:underline">
-                {personalInfo.email}
-              </a>
-            </span>
-          )}
-          {personalInfo.phone && (
-            <span className="flex items-center gap-1.5">
-              <Phone className="h-3.5 w-3.5" style={{ color: accentColor }} />
-              <span>{personalInfo.phone}</span>
-            </span>
-          )}
-          {personalInfo.location && (
-            <span className="flex items-center gap-1.5">
-              <MapPin className="h-3.5 w-3.5" style={{ color: accentColor }} />
-              <span>{personalInfo.location}</span>
-            </span>
-          )}
-          {personalInfo.website && (
-            <span className="flex items-center gap-1.5">
-              <Globe className="h-3.5 w-3.5" style={{ color: accentColor }} />
-              <a href={personalInfo.website} target="_blank" rel="noreferrer" className="hover:underline">
-                {personalInfo.website.replace(/^https?:\/\//, "")}
-              </a>
-            </span>
-          )}
-          {personalInfo.linkedin && (
-            <span className="flex items-center gap-1.5">
-              <LinkedinIcon className="h-3.5 w-3.5" style={{ color: accentColor }} />
-              <a href={personalInfo.linkedin} target="_blank" rel="noreferrer" className="hover:underline">
-                {personalInfo.linkedin.replace(/^https?:\/\/(www\.)?linkedin\.com\/in\//, "in/")}
-              </a>
-            </span>
-          )}
-          {personalInfo.github && (
-            <span className="flex items-center gap-1.5">
-              <GithubIcon className="h-3.5 w-3.5" style={{ color: accentColor }} />
-              <a href={personalInfo.github} target="_blank" rel="noreferrer" className="hover:underline">
-                {personalInfo.github.replace(/^https?:\/\/(www\.)?github\.com\//, "github/")}
-              </a>
-            </span>
-          )}
-        </div>
+          {/* Contact Links Bar */}
+          <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-slate-600">
+            {personalInfo.email && (
+              <span className="flex items-center gap-1.5">
+                <Mail className="h-3.5 w-3.5" style={{ color: accentColor }} />
+                <a href={`mailto:${personalInfo.email}`} className="hover:underline">
+                  {personalInfo.email}
+                </a>
+              </span>
+            )}
+            {personalInfo.phone && (
+              <span className="flex items-center gap-1.5">
+                <Phone className="h-3.5 w-3.5" style={{ color: accentColor }} />
+                <span>{personalInfo.phone}</span>
+              </span>
+            )}
+            {personalInfo.location && (
+              <span className="flex items-center gap-1.5">
+                <MapPin className="h-3.5 w-3.5" style={{ color: accentColor }} />
+                <span>{personalInfo.location}</span>
+              </span>
+            )}
+            {personalInfo.website && (
+              <span className="flex items-center gap-1.5">
+                <Globe className="h-3.5 w-3.5" style={{ color: accentColor }} />
+                <a href={personalInfo.website} target="_blank" rel="noreferrer" className="hover:underline">
+                  {personalInfo.website.replace(/^https?:\/\//, "")}
+                </a>
+              </span>
+            )}
+            {personalInfo.linkedin && (
+              <span className="flex items-center gap-1.5">
+                <LinkedinIcon className="h-3.5 w-3.5" style={{ color: accentColor }} />
+                <a href={personalInfo.linkedin} target="_blank" rel="noreferrer" className="hover:underline">
+                  {personalInfo.linkedin.replace(/^https?:\/\/(www\.)?linkedin\.com\/in\//, "in/")}
+                </a>
+              </span>
+            )}
+            {personalInfo.github && (
+              <span className="flex items-center gap-1.5">
+                <GithubIcon className="h-3.5 w-3.5" style={{ color: accentColor }} />
+                <a href={personalInfo.github} target="_blank" rel="noreferrer" className="hover:underline">
+                  {personalInfo.github.replace(/^https?:\/\/(www\.)?github\.com\//, "github/")}
+                </a>
+              </span>
+            )}
+          </div>
 
-        {/* Summary */}
-        {personalInfo.summary && (
-          <p className="mt-3 text-xs sm:text-[13px] text-slate-700 leading-relaxed text-justify">
-            {personalInfo.summary}
-          </p>
-        )}
-      </header>
+          {/* Summary */}
+          {isVis("summary") && personalInfo.summary && (
+            <p className="mt-3 text-xs sm:text-[13px] text-slate-700 leading-relaxed text-justify">
+              {personalInfo.summary}
+            </p>
+          )}
+        </header>
+      )}
 
       {/* 2-Column Body Layout */}
       <div className="mt-6 grid grid-cols-1 md:grid-cols-12 gap-6">
         {/* Left / Main Column (7 cols): Experience & Projects */}
         <div className="md:col-span-8 space-y-6">
           {/* Work Experience */}
-          {experiences.length > 0 && (
+          {isVis("experience") && experiences.length > 0 && (
             <section>
               <h2
                 className="text-xs font-bold uppercase tracking-wider pb-1 mb-3 border-b flex items-center gap-1.5"
@@ -148,7 +151,7 @@ export function ModernTemplate({ data }: TemplateProps) {
           )}
 
           {/* Key Projects */}
-          {projects.length > 0 && (
+          {isVis("projects") && projects.length > 0 && (
             <section>
               <h2
                 className="text-xs font-bold uppercase tracking-wider pb-1 mb-3 border-b flex items-center gap-1.5"
@@ -199,17 +202,17 @@ export function ModernTemplate({ data }: TemplateProps) {
           )}
         </div>
 
-        {/* Right Sidebar Column (4 cols): Skills, Education, Certs */}
+        {/* Right Sidebar Column (4 cols): Skills, Education, Certs, Languages, Awards, Volunteer, Publications */}
         <div className="md:col-span-4 space-y-6">
           {/* Skills */}
-          {skillCategories.length > 0 && (
+          {isVis("skills") && skillCategories.length > 0 && (
             <section>
               <h2
                 className="text-xs font-bold uppercase tracking-wider pb-1 mb-2.5 border-b flex items-center gap-1.5"
                 style={{ color: accentColor, borderColor: `${accentColor}40` }}
               >
                 <Sparkles className="h-3.5 w-3.5" />
-                Skills & Stack
+                Skills &amp; Stack
               </h2>
               <div className="space-y-2.5 text-xs">
                 {skillCategories.map((cat) => (
@@ -227,7 +230,7 @@ export function ModernTemplate({ data }: TemplateProps) {
           )}
 
           {/* Education */}
-          {educations.length > 0 && (
+          {isVis("education") && educations.length > 0 && (
             <section>
               <h2
                 className="text-xs font-bold uppercase tracking-wider pb-1 mb-2.5 border-b flex items-center gap-1.5"
@@ -265,7 +268,7 @@ export function ModernTemplate({ data }: TemplateProps) {
           )}
 
           {/* Certifications */}
-          {certifications.length > 0 && (
+          {isVis("certifications") && certifications.length > 0 && (
             <section>
               <h2
                 className="text-xs font-bold uppercase tracking-wider pb-1 mb-2.5 border-b flex items-center gap-1.5"
@@ -290,7 +293,7 @@ export function ModernTemplate({ data }: TemplateProps) {
           )}
 
           {/* Languages */}
-          {data.languages && data.languages.length > 0 && (
+          {isVis("languages") && data.languages && data.languages.length > 0 && (
             <section>
               <h2
                 className="text-xs font-bold uppercase tracking-wider pb-1 mb-2.5 border-b flex items-center gap-1.5"
@@ -311,14 +314,14 @@ export function ModernTemplate({ data }: TemplateProps) {
           )}
 
           {/* Honors & Awards */}
-          {data.awards && data.awards.length > 0 && (
+          {isVis("awards") && data.awards && data.awards.length > 0 && (
             <section>
               <h2
                 className="text-xs font-bold uppercase tracking-wider pb-1 mb-2.5 border-b flex items-center gap-1.5"
                 style={{ color: accentColor, borderColor: `${accentColor}40` }}
               >
                 <Award className="h-3.5 w-3.5" />
-                Honors & Awards
+                Honors &amp; Awards
               </h2>
               <div className="space-y-1.5 text-xs">
                 {data.awards.map((a) => (
@@ -331,8 +334,54 @@ export function ModernTemplate({ data }: TemplateProps) {
             </section>
           )}
 
+          {/* Volunteering */}
+          {isVis("volunteer") && data.volunteer && data.volunteer.length > 0 && (
+            <section>
+              <h2
+                className="text-xs font-bold uppercase tracking-wider pb-1 mb-2.5 border-b flex items-center gap-1.5"
+                style={{ color: accentColor, borderColor: `${accentColor}40` }}
+              >
+                <Heart className="h-3.5 w-3.5" />
+                Volunteering
+              </h2>
+              <div className="space-y-2 text-xs">
+                {data.volunteer.map((v) => (
+                  <div key={v.id}>
+                    <div className="font-bold text-slate-900 text-xs">{v.role}</div>
+                    <div className="text-slate-600 text-[11px]">{v.organization}</div>
+                    {v.description && <p className="text-slate-600 text-xs mt-0.5">{v.description}</p>}
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Publications */}
+          {isVis("publications") && data.publications && data.publications.length > 0 && (
+            <section>
+              <h2
+                className="text-xs font-bold uppercase tracking-wider pb-1 mb-2.5 border-b flex items-center gap-1.5"
+                style={{ color: accentColor, borderColor: `${accentColor}40` }}
+              >
+                <BookOpen className="h-3.5 w-3.5" />
+                Publications &amp; Research
+              </h2>
+              <div className="space-y-2 text-xs">
+                {data.publications.map((p) => (
+                  <div key={p.id}>
+                    <div className="font-bold text-slate-900 text-xs">{p.title}</div>
+                    <div className="text-slate-600 text-[11px]">
+                      <em>{p.publisher}</em> {p.date ? `(${formatDate(p.date)})` : ""}
+                    </div>
+                    {p.description && <p className="text-slate-600 text-xs mt-0.5">{p.description}</p>}
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
           {/* Custom Sections */}
-          {customSections.map((sec) => (
+          {isVis("custom") && customSections && customSections.length > 0 && customSections.map((sec) => (
             <section key={sec.id}>
               <h2
                 className="text-xs font-bold uppercase tracking-wider pb-1 mb-2.5 border-b"

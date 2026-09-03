@@ -1,9 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useResumeStore } from "@/store/useResumeStore";
 import { PRESET_PROFILES, PresetProfile } from "@/data/presetProfiles";
-import { X, ArrowRight } from "lucide-react";
+import { X, ArrowRight, ShieldAlert } from "lucide-react";
 
 interface RoleSelectorModalProps {
   isOpen: boolean;
@@ -11,12 +11,33 @@ interface RoleSelectorModalProps {
 }
 
 export function RoleSelectorModal({ isOpen, onClose }: RoleSelectorModalProps) {
-  const { importResume } = useResumeStore();
+  const { importResume, getActiveResume, createResumeFromData } = useResumeStore();
+  const [pendingPreset, setPendingPreset] = useState<PresetProfile | null>(null);
 
   if (!isOpen) return null;
 
+  const activeDoc = getActiveResume();
+
   const handleSelectProfile = (preset: PresetProfile) => {
-    importResume(preset.data);
+    if (activeDoc.isMaster) {
+      setPendingPreset(preset);
+    } else {
+      importResume(preset.data);
+      onClose();
+    }
+  };
+
+  const handleCreateAsNewVersion = () => {
+    if (!pendingPreset) return;
+    createResumeFromData(pendingPreset.title, pendingPreset.data.personalInfo.jobTitle, pendingPreset.data);
+    setPendingPreset(null);
+    onClose();
+  };
+
+  const handleOverwrite = () => {
+    if (!pendingPreset) return;
+    importResume(pendingPreset.data);
+    setPendingPreset(null);
     onClose();
   };
 
@@ -33,12 +54,56 @@ export function RoleSelectorModal({ isOpen, onClose }: RoleSelectorModalProps) {
             </p>
           </div>
           <button
-            onClick={onClose}
+            onClick={() => {
+              setPendingPreset(null);
+              onClose();
+            }}
             className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800 dark:hover:text-slate-200"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
+
+        {/* Master Profile Protection Confirmation Dialog */}
+        {pendingPreset && (
+          <div className="my-4 rounded-xl border border-amber-300 bg-amber-50/80 p-4 dark:border-amber-800 dark:bg-amber-950/40 space-y-3">
+            <div className="flex items-start gap-3">
+              <ShieldAlert className="h-5 w-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+              <div>
+                <h4 className="text-xs font-bold text-amber-900 dark:text-amber-200">
+                  Master Career Profile Protection
+                </h4>
+                <p className="text-xs text-amber-800 dark:text-amber-300 mt-1">
+                  You are currently editing your <strong>Master Career Profile</strong> (&quot;{activeDoc.title}&quot;). Overwriting it will replace your master archive with the sample data for &quot;{pendingPreset.title}&quot;.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-center justify-end gap-2 pt-2 border-t border-amber-200 dark:border-amber-900/60">
+              <button
+                type="button"
+                onClick={() => setPendingPreset(null)}
+                className="rounded-lg px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-white/60 dark:text-slate-300"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleOverwrite}
+                className="rounded-lg border border-red-300 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-100 dark:border-red-900/80 dark:bg-red-950/50 dark:text-red-300"
+              >
+                Overwrite Master
+              </button>
+              <button
+                type="button"
+                onClick={handleCreateAsNewVersion}
+                className="rounded-lg bg-blue-600 px-3.5 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-blue-700"
+              >
+                Create as New Version (Recommended)
+              </button>
+            </div>
+          </div>
+        )}
 
         <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-3.5">
           {PRESET_PROFILES.map((p) => (

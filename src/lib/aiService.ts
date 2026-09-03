@@ -99,37 +99,47 @@ export function localImproveBulletPoint(
   };
 }
 
+export function localGenerateProfessionalSummary(
+  resume: ResumeData,
+  targetRole?: string,
+  jobContext?: string
+): string {
+  const role = targetRole || resume.personalInfo.jobTitle || "Software Engineer";
+  const allSkills = resume.skillCategories.flatMap((c) => c.skills);
+  const topSkills = allSkills.slice(0, 5).join(", ");
+  const years = resume.experiences.length > 2 ? "6+" : resume.experiences.length > 1 ? "4+" : "2+";
+  const contextSnippet = jobContext ? ` tailored for ${jobContext.slice(0, 60)}` : "";
+
+  return `Results-driven ${role}${contextSnippet} with ${years} years of demonstrated experience engineering scalable architectures, resilient systems, and high-performance applications. Proficient in ${topSkills || "modern industry technologies"}, with a track record of driving cross-functional initiatives, optimizing team delivery cycles, and solving mission-critical business challenges.`;
+}
+
 export async function generateProfessionalSummary(
   resume: ResumeData,
   targetRole?: string,
   jobContext?: string
 ): Promise<string> {
-  try {
-    const res = await fetch("/api/ai", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        action: "generateSummary",
-        resume,
-        targetRole,
-        jobContext
-      })
-    });
-    if (res.ok) {
-      const data = await res.json();
-      if (data.summary) return data.summary;
+  if (typeof window !== "undefined") {
+    try {
+      const res = await fetch("/api/ai", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "generateSummary",
+          resume,
+          targetRole,
+          jobContext
+        })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.summary) return data.summary;
+      }
+    } catch {
+      // Fallback to deterministic local engine
     }
-  } catch {
-    // Fallback
   }
 
-  // Deterministic local generator
-  const role = targetRole || resume.personalInfo.jobTitle || "Software Engineer";
-  const allSkills = resume.skillCategories.flatMap((c) => c.skills);
-  const topSkills = allSkills.slice(0, 5).join(", ");
-  const years = resume.experiences.length > 2 ? "6+" : resume.experiences.length > 1 ? "4+" : "2+";
-
-  return `Results-driven ${role} with ${years} years of demonstrated experience engineering scalable architectures, resilient systems, and high-performance applications. Proficient in ${topSkills || "modern industry technologies"}, with a track record of driving cross-functional initiatives, optimizing team delivery cycles, and solving mission-critical business challenges.`;
+  return localGenerateProfessionalSummary(resume, targetRole, jobContext);
 }
 
 export function tailorResumeToJob(

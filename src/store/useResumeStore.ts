@@ -264,6 +264,7 @@ interface ResumeState {
 
   // Resume Document Management
   createResume: (title: string, targetRole: string, copyFromMaster?: boolean) => string;
+  createResumeFromData: (title: string, targetRole: string, data: ResumeData) => string;
   duplicateResume: (id: string) => string;
   renameResume: (id: string, newTitle: string, newTargetRole?: string) => void;
   deleteResume: (id: string) => void;
@@ -442,6 +443,34 @@ export const useResumeStore = create<ResumeState>()(
         return newId;
       },
 
+      createResumeFromData: (title, targetRole, data) => {
+        const state = get();
+        const clonedData: ResumeData = JSON.parse(JSON.stringify(data));
+        if (targetRole) {
+          clonedData.personalInfo.jobTitle = targetRole;
+        }
+
+        const newId = `resume-${Date.now()}`;
+        const newDoc: ResumeDocument = {
+          id: newId,
+          title: title.trim() || "Imported Resume",
+          targetRole: targetRole.trim() || clonedData.personalInfo.jobTitle || "General",
+          isMaster: false,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          atsScore: calculateAtsScore(clonedData).overallScore,
+          data: clonedData,
+        };
+
+        set({
+          resumes: [newDoc, ...state.resumes],
+          activeResumeId: newId,
+          resume: clonedData,
+        });
+
+        return newId;
+      },
+
       duplicateResume: (id) => {
         const state = get();
         const target = state.resumes.find((r) => r.id === id);
@@ -562,13 +591,16 @@ export const useResumeStore = create<ResumeState>()(
 
       toggleSectionVisibility: (sectionKey) => {
         set((state) =>
-          updateActiveDoc(state, (data) => ({
-            ...data,
-            sectionVisibility: {
-              ...data.sectionVisibility,
-              [sectionKey]: !data.sectionVisibility?.[sectionKey],
-            },
-          }))
+          updateActiveDoc(state, (data) => {
+            const currentVis = data.sectionVisibility?.[sectionKey] !== false;
+            return {
+              ...data,
+              sectionVisibility: {
+                ...data.sectionVisibility,
+                [sectionKey]: !currentVis,
+              },
+            };
+          })
         );
       },
 

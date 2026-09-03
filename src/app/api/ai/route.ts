@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
   localImproveBulletPoint,
-  generateProfessionalSummary,
+  localGenerateProfessionalSummary,
   generateCoverLetter,
   tailorResumeToJob,
   BulletStyle,
@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
 
     if (action === "generateSummary") {
       const { resume, targetRole, jobContext } = body;
-      const summary = await generateProfessionalSummary(resume, targetRole, jobContext);
+      const summary = localGenerateProfessionalSummary(resume, targetRole, jobContext);
       return NextResponse.json({ summary });
     }
 

@@ -211,16 +211,47 @@ export function matchResumeAgainstJob(
   missingSoft: string[];
   suggestedAdditions: string[];
 } {
-  const resumeText = [
-    resume.personalInfo.fullName,
-    resume.personalInfo.jobTitle,
-    resume.personalInfo.summary,
-    ...resume.experiences.map((e) => `${e.company} ${e.position} ${e.bulletPoints.join(" ")}`),
-    ...resume.educations.map((e) => `${e.institution} ${e.degree} ${e.fieldOfStudy}`),
-    ...resume.skillCategories.flatMap((c) => c.skills),
-    ...resume.projects.map((p) => `${p.name} ${p.description} ${p.technologies.join(" ")}`),
-    ...resume.certifications.map((c) => `${c.name} ${c.issuer}`)
-  ].join(" ");
+  const isVis = (key: string) => resume.sectionVisibility?.[key] !== false;
+
+  const corpusParts: string[] = [];
+  if (isVis("personal")) {
+    corpusParts.push(resume.personalInfo.fullName, resume.personalInfo.jobTitle);
+  }
+  if (isVis("summary") && resume.personalInfo.summary) {
+    corpusParts.push(resume.personalInfo.summary);
+  }
+  if (isVis("experience")) {
+    corpusParts.push(...resume.experiences.map((e) => `${e.company} ${e.position} ${e.bulletPoints.join(" ")}`));
+  }
+  if (isVis("education")) {
+    corpusParts.push(...resume.educations.map((e) => `${e.institution} ${e.degree} ${e.fieldOfStudy}`));
+  }
+  if (isVis("skills")) {
+    corpusParts.push(...resume.skillCategories.flatMap((c) => c.skills));
+  }
+  if (isVis("projects")) {
+    corpusParts.push(...resume.projects.map((p) => `${p.name} ${p.description} ${p.technologies.join(" ")}`));
+  }
+  if (isVis("certifications")) {
+    corpusParts.push(...resume.certifications.map((c) => `${c.name} ${c.issuer}`));
+  }
+  if (isVis("languages") && resume.languages) {
+    corpusParts.push(...resume.languages.map((l) => `${l.language} ${l.proficiency}`));
+  }
+  if (isVis("volunteer") && resume.volunteer) {
+    corpusParts.push(...resume.volunteer.map((v) => `${v.organization} ${v.role} ${v.description || ""}`));
+  }
+  if (isVis("publications") && resume.publications) {
+    corpusParts.push(...resume.publications.map((p) => `${p.title} ${p.publisher} ${p.description || ""}`));
+  }
+  if (isVis("awards") && resume.awards) {
+    corpusParts.push(...resume.awards.map((a) => `${a.title} ${a.issuer} ${a.description || ""}`));
+  }
+  if (isVis("custom") && resume.customSections) {
+    corpusParts.push(...resume.customSections.flatMap((c) => c.items.map((i) => `${i.title} ${i.subtitle || ""} ${i.description}`)));
+  }
+
+  const resumeText = corpusParts.join(" ");
 
   const matchedRequired: string[] = [];
   const missingRequired: string[] = [];

@@ -10,7 +10,8 @@ interface TemplateProps {
 
 export function ClassicTemplate({ data }: TemplateProps) {
   const { personalInfo, experiences, educations, skillCategories, projects, certifications, customSections, styling } = data;
-  const accentColor = styling.primaryColor || "#0f172a";
+  const accentColor = styling.primaryColor || "#1e293b";
+  const isVis = (key: string) => data.sectionVisibility?.[key] !== false;
 
   const fontClass =
     styling.fontFamily === "sans"
@@ -24,17 +25,18 @@ export function ClassicTemplate({ data }: TemplateProps) {
   return (
     <div className={`w-full bg-white text-slate-900 ${fontClass} p-8 sm:p-12 leading-relaxed`} style={{ minHeight: "1050px" }}>
       {/* Header Centered */}
-      <header className="text-center pb-4 border-b border-slate-900">
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-normal uppercase" style={{ color: accentColor }}>
-          {personalInfo.fullName || "Your Full Name"}
-        </h1>
-        {personalInfo.jobTitle && (
-          <p className="text-xs sm:text-sm font-semibold tracking-wider uppercase text-slate-700 mt-0.5">
-            {personalInfo.jobTitle}
-          </p>
-        )}
+      {isVis("personal") && (
+        <header className="text-center pb-4 border-b border-slate-900">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-normal uppercase" style={{ color: accentColor }}>
+            {personalInfo.fullName || "Your Full Name"}
+          </h1>
+          {personalInfo.jobTitle && (
+            <p className="text-xs sm:text-sm font-semibold tracking-wider uppercase text-slate-700 mt-0.5">
+              {personalInfo.jobTitle}
+            </p>
+          )}
 
-        <div className="mt-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-xs text-slate-700">
+          <div className="mt-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-xs text-slate-700">
           {personalInfo.location && <span>{personalInfo.location}</span>}
           {personalInfo.location && personalInfo.phone && <span>•</span>}
           {personalInfo.phone && <span>{personalInfo.phone}</span>}
@@ -70,9 +72,10 @@ export function ClassicTemplate({ data }: TemplateProps) {
           )}
         </div>
       </header>
+      )}
 
       {/* Summary */}
-      {personalInfo.summary && (
+      {isVis("summary") && personalInfo.summary && (
         <section className="mt-4">
           <h2 className="text-xs font-bold uppercase tracking-wider pb-0.5 mb-1.5 border-b border-slate-400">
             Professional Summary
@@ -84,7 +87,7 @@ export function ClassicTemplate({ data }: TemplateProps) {
       )}
 
       {/* Work Experience */}
-      {experiences.length > 0 && (
+      {isVis("experience") && experiences.length > 0 && (
         <section className="mt-4">
           <h2 className="text-xs font-bold uppercase tracking-wider pb-0.5 mb-2 border-b border-slate-400">
             Professional Experience
@@ -116,7 +119,7 @@ export function ClassicTemplate({ data }: TemplateProps) {
       )}
 
       {/* Education */}
-      {educations.length > 0 && (
+      {isVis("education") && educations.length > 0 && (
         <section className="mt-4">
           <h2 className="text-xs font-bold uppercase tracking-wider pb-0.5 mb-2 border-b border-slate-400">
             Education
@@ -143,10 +146,10 @@ export function ClassicTemplate({ data }: TemplateProps) {
       )}
 
       {/* Key Projects */}
-      {projects.length > 0 && (
+      {isVis("projects") && projects.length > 0 && (
         <section className="mt-4">
           <h2 className="text-xs font-bold uppercase tracking-wider pb-0.5 mb-2 border-b border-slate-400">
-            Projects & Research
+            Projects &amp; Research
           </h2>
           <div className="space-y-2.5">
             {projects.map((proj) => (
@@ -174,10 +177,10 @@ export function ClassicTemplate({ data }: TemplateProps) {
       )}
 
       {/* Skills */}
-      {skillCategories.length > 0 && (
+      {isVis("skills") && skillCategories.length > 0 && (
         <section className="mt-4">
           <h2 className="text-xs font-bold uppercase tracking-wider pb-0.5 mb-1.5 border-b border-slate-400">
-            Skills & Competencies
+            Skills &amp; Competencies
           </h2>
           <div className="space-y-1 text-xs">
             {skillCategories.map((cat) => (
@@ -191,7 +194,7 @@ export function ClassicTemplate({ data }: TemplateProps) {
       )}
 
       {/* Certifications */}
-      {certifications.length > 0 && (
+      {isVis("certifications") && certifications.length > 0 && (
         <section className="mt-4">
           <h2 className="text-xs font-bold uppercase tracking-wider pb-0.5 mb-1.5 border-b border-slate-400">
             Certifications
@@ -210,7 +213,7 @@ export function ClassicTemplate({ data }: TemplateProps) {
       )}
 
       {/* Languages */}
-      {data.languages && data.languages.length > 0 && (
+      {isVis("languages") && data.languages && data.languages.length > 0 && (
         <section className="mt-4">
           <h2 className="text-xs font-bold uppercase tracking-wider pb-0.5 mb-1.5 border-b border-slate-400">
             Languages
@@ -227,10 +230,10 @@ export function ClassicTemplate({ data }: TemplateProps) {
       )}
 
       {/* Honors & Awards */}
-      {data.awards && data.awards.length > 0 && (
+      {isVis("awards") && data.awards && data.awards.length > 0 && (
         <section className="mt-4">
           <h2 className="text-xs font-bold uppercase tracking-wider pb-0.5 mb-1.5 border-b border-slate-400">
-            Honors & Awards
+            Honors &amp; Awards
           </h2>
           <div className="space-y-1.5 text-xs">
             {data.awards.map((a) => (
@@ -243,8 +246,47 @@ export function ClassicTemplate({ data }: TemplateProps) {
         </section>
       )}
 
+      {/* Volunteering */}
+      {isVis("volunteer") && data.volunteer && data.volunteer.length > 0 && (
+        <section className="mt-4">
+          <h2 className="text-xs font-bold uppercase tracking-wider pb-0.5 mb-2 border-b border-slate-400">
+            Volunteering &amp; Community Service
+          </h2>
+          <div className="space-y-2.5 text-xs">
+            {data.volunteer.map((v) => (
+              <div key={v.id}>
+                <div className="flex justify-between font-bold text-slate-900">
+                  <span>{v.role} — <span className="font-normal">{v.organization}</span></span>
+                  <span className="font-normal text-[11px] text-slate-600">
+                    {v.startDate ? formatDate(v.startDate) : ""} {v.endDate ? `– ${formatDate(v.endDate)}` : v.current ? "– Present" : ""}
+                  </span>
+                </div>
+                {v.description && <p className="text-slate-800 text-xs mt-0.5">{v.description}</p>}
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Publications */}
+      {isVis("publications") && data.publications && data.publications.length > 0 && (
+        <section className="mt-4">
+          <h2 className="text-xs font-bold uppercase tracking-wider pb-0.5 mb-2 border-b border-slate-400">
+            Publications &amp; Research
+          </h2>
+          <div className="space-y-2 text-xs">
+            {data.publications.map((p) => (
+              <div key={p.id}>
+                <span className="font-bold text-slate-900">{p.title}</span> — <span className="italic">{p.publisher}</span> {p.date ? `(${formatDate(p.date)})` : ""}
+                {p.description && <p className="text-slate-800 text-xs mt-0.5">{p.description}</p>}
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* Custom Sections */}
-      {customSections && customSections.length > 0 && (
+      {isVis("custom") && customSections && customSections.length > 0 && (
         <div className="space-y-4 mt-4">
           {customSections.map((sec) => (
             <section key={sec.id}>

@@ -8,7 +8,22 @@ export function exportResumeToDocx(
   fileName: string = "Resume.doc"
 ): boolean {
   try {
-    const { personalInfo, experiences, educations, skillCategories, projects, certifications, customSections } = resume;
+    const {
+      personalInfo,
+      experiences,
+      educations,
+      skillCategories,
+      projects,
+      certifications,
+      customSections,
+      languages,
+      volunteer,
+      publications,
+      awards,
+      sectionVisibility
+    } = resume;
+
+    const isVis = (key: string) => sectionVisibility?.[key] !== false;
 
     // Word-compliant HTML with Office XML namespaces for seamless Word / ATS import
     const docContent = `
@@ -106,6 +121,7 @@ export function exportResumeToDocx(
 <body>
 
   <!-- Header -->
+  ${isVis("personal") ? `
   <div style="text-align: center;">
     <h1>${personalInfo.fullName || "Your Full Name"}</h1>
     ${personalInfo.jobTitle ? `<div class="subtitle">${personalInfo.jobTitle}</div>` : ""}
@@ -120,9 +136,10 @@ export function exportResumeToDocx(
       ].filter(Boolean).join("  •  ")}
     </div>
   </div>
+  ` : ""}
 
   <!-- Professional Summary -->
-  ${personalInfo.summary ? `
+  ${isVis("summary") && personalInfo.summary ? `
     <h2>Professional Summary</h2>
     <p style="font-size: 10pt; line-height: 1.35; margin-top: 2pt; margin-bottom: 8pt; text-align: justify;">
       ${personalInfo.summary}
@@ -130,7 +147,7 @@ export function exportResumeToDocx(
   ` : ""}
 
   <!-- Experience -->
-  ${experiences.length > 0 ? `
+  ${isVis("experience") && experiences.length > 0 ? `
     <h2>Professional Experience</h2>
     ${experiences.map(exp => `
       <div style="margin-bottom: 6pt;">
@@ -149,7 +166,7 @@ export function exportResumeToDocx(
   ` : ""}
 
   <!-- Education -->
-  ${educations.length > 0 ? `
+  ${isVis("education") && educations.length > 0 ? `
     <h2>Education</h2>
     ${educations.map(edu => `
       <div style="margin-bottom: 4pt;">
@@ -166,7 +183,7 @@ export function exportResumeToDocx(
   ` : ""}
 
   <!-- Skills -->
-  ${skillCategories.length > 0 ? `
+  ${isVis("skills") && skillCategories.length > 0 ? `
     <h2>Skills & Competencies</h2>
     ${skillCategories.map(cat => `
       <div class="skills-line">
@@ -177,7 +194,7 @@ export function exportResumeToDocx(
   ` : ""}
 
   <!-- Projects -->
-  ${projects.length > 0 ? `
+  ${isVis("projects") && projects.length > 0 ? `
     <h2>Projects</h2>
     ${projects.map(p => `
       <div style="margin-bottom: 4pt;">
@@ -189,7 +206,7 @@ export function exportResumeToDocx(
   ` : ""}
 
   <!-- Certifications -->
-  ${certifications.length > 0 ? `
+  ${isVis("certifications") && certifications.length > 0 ? `
     <h2>Certifications</h2>
     ${certifications.map(c => `
       <div style="font-size: 10pt; margin-bottom: 2pt;">
@@ -198,8 +215,56 @@ export function exportResumeToDocx(
     `).join("")}
   ` : ""}
 
+  <!-- Languages -->
+  ${isVis("languages") && languages && languages.length > 0 ? `
+    <h2>Languages</h2>
+    ${languages.map(l => `
+      <div style="font-size: 10pt; margin-bottom: 2pt;">
+        <strong>${l.language}</strong>: <span>${l.proficiency}</span>
+      </div>
+    `).join("")}
+  ` : ""}
+
+  <!-- Honors & Awards -->
+  ${isVis("awards") && awards && awards.length > 0 ? `
+    <h2>Honors & Awards</h2>
+    ${awards.map(a => `
+      <div style="font-size: 10pt; margin-bottom: 2pt;">
+        <strong>${a.title}</strong> ${a.issuer ? `— ${a.issuer}` : ""} ${a.date ? `(${formatDate(a.date)})` : ""}
+        ${a.description ? `<div style="font-size: 9.5pt; color: #4b5563;">${a.description}</div>` : ""}
+      </div>
+    `).join("")}
+  ` : ""}
+
+  <!-- Volunteering -->
+  ${isVis("volunteer") && volunteer && volunteer.length > 0 ? `
+    <h2>Volunteering & Community Service</h2>
+    ${volunteer.map(v => `
+      <div style="margin-bottom: 4pt;">
+        <table style="width: 100%; border: none; margin: 0; padding: 0;">
+          <tr>
+            <td class="item-title" style="text-align: left;">${v.role} — <span style="font-weight: normal;">${v.organization}</span></td>
+            <td style="text-align: right; font-size: 9.5pt; color: #4b5563;">${v.startDate ? formatDate(v.startDate) : ""} ${v.endDate ? `– ${formatDate(v.endDate)}` : v.current ? "– Present" : ""}</td>
+          </tr>
+        </table>
+        ${v.description ? `<p style="font-size: 9.5pt; margin: 2pt 0;">${v.description}</p>` : ""}
+      </div>
+    `).join("")}
+  ` : ""}
+
+  <!-- Publications -->
+  ${isVis("publications") && publications && publications.length > 0 ? `
+    <h2>Publications & Research</h2>
+    ${publications.map(p => `
+      <div style="font-size: 10pt; margin-bottom: 3pt;">
+        <strong>${p.title}</strong> — <em>${p.publisher}</em> ${p.date ? `(${formatDate(p.date)})` : ""}
+        ${p.description ? `<div style="font-size: 9.5pt; color: #4b5563;">${p.description}</div>` : ""}
+      </div>
+    `).join("")}
+  ` : ""}
+
   <!-- Custom Sections -->
-  ${customSections?.map(sec => `
+  ${isVis("custom") && customSections ? customSections.map(sec => `
     <h2>${sec.heading}</h2>
     ${sec.items.map(it => `
       <div style="margin-bottom: 3pt; font-size: 10pt;">
@@ -207,8 +272,7 @@ export function exportResumeToDocx(
         ${it.description ? `<div style="font-size: 9.5pt; margin-top: 1pt;">${it.description}</div>` : ""}
       </div>
     `).join("")}
-  `).join("") || ""}
-
+  `).join("") : ""}
 </body>
 </html>
     `;

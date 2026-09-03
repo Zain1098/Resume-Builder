@@ -20,6 +20,7 @@ import {
   CheckCircle2,
   AlertTriangle,
 } from "lucide-react";
+import { ActionPromptModal } from "@/components/common/ActionPromptModal";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -35,6 +36,21 @@ export default function DashboardPage() {
   } = useResumeStore();
 
   const [isMounted, setIsMounted] = useState(false);
+  const [modalConfig, setModalConfig] = useState<{
+    isOpen: boolean;
+    title: string;
+    description?: string;
+    mode: "prompt" | "confirm" | "alert";
+    defaultValue?: string;
+    isDestructive?: boolean;
+    confirmText?: string;
+    onConfirm: (val?: string) => void;
+  }>({
+    isOpen: false,
+    title: "",
+    mode: "prompt",
+    onConfirm: () => {},
+  });
 
   useEffect(() => {
     setIsMounted(true);
@@ -58,11 +74,20 @@ export default function DashboardPage() {
   const scoreBreakdown = calculateAtsScore(activeDoc ? activeDoc.data : resume);
 
   const handleCreateNew = () => {
-    const title = prompt("Enter a title for this new resume:", "Frontend Engineer Resume");
-    if (title) {
-      createResume(title, "");
-      router.push("/builder");
-    }
+    setModalConfig({
+      isOpen: true,
+      title: "Create New Resume Version",
+      description: "Enter a title for this new targeted resume version.",
+      mode: "prompt",
+      defaultValue: "Frontend Engineer Resume",
+      confirmText: "Create & Open",
+      onConfirm: (val) => {
+        if (val) {
+          createResume(val, "");
+          router.push("/builder");
+        }
+      },
+    });
   };
 
   const handleDuplicate = (id: string, e: React.MouseEvent) => {
@@ -73,12 +98,28 @@ export default function DashboardPage() {
   const handleDelete = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
     if (resumes.length <= 1) {
-      alert("You cannot delete the only remaining resume.");
+      setModalConfig({
+        isOpen: true,
+        title: "Cannot Delete Resume",
+        description: "You cannot delete the only remaining resume in your profile.",
+        mode: "alert",
+        confirmText: "Understood",
+        onConfirm: () => {},
+      });
       return;
     }
-    if (confirm("Are you sure you want to delete this resume?")) {
-      deleteResume(id);
-    }
+    const target = resumes.find((r) => r.id === id);
+    setModalConfig({
+      isOpen: true,
+      title: "Delete Resume",
+      description: `Are you sure you want to delete "${target?.title || "this resume"}"?`,
+      mode: "confirm",
+      isDestructive: true,
+      confirmText: "Delete",
+      onConfirm: () => {
+        deleteResume(id);
+      },
+    });
   };
 
   const handleDownload = (doc: typeof resumes[0], e: React.MouseEvent) => {
@@ -383,6 +424,18 @@ export default function DashboardPage() {
           </div>
         </div>
       </main>
+
+      <ActionPromptModal
+        isOpen={modalConfig.isOpen}
+        onClose={() => setModalConfig((prev) => ({ ...prev, isOpen: false }))}
+        title={modalConfig.title}
+        description={modalConfig.description}
+        mode={modalConfig.mode}
+        defaultValue={modalConfig.defaultValue}
+        isDestructive={modalConfig.isDestructive}
+        confirmText={modalConfig.confirmText}
+        onConfirm={modalConfig.onConfirm}
+      />
     </div>
   );
 }
