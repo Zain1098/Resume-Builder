@@ -53,6 +53,14 @@ export function SkillsForm() {
 
   return (
     <div className="space-y-4">
+      {categories.length === 0 && (
+        <div className="text-center py-6 px-4 rounded-xl border border-dashed border-border-default bg-surface-container-low">
+          <Tag className="h-7 w-7 mx-auto text-text-muted mb-2 opacity-60" />
+          <p className="text-xs font-semibold text-text-primary">No skill categories added yet</p>
+          <p className="text-[11px] text-text-muted mt-0.5 mb-3">Click the button below to add skill categories (e.g. Languages, Frameworks, Tools).</p>
+        </div>
+      )}
+
       {categories.map((cat) => (
         <div
           key={cat.id}

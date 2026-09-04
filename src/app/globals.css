@@ -21,6 +21,7 @@
   --color-status-success: var(--status-success);
   --color-status-warning: var(--status-warning);
   --color-status-error: var(--status-error);
+  --color-text-inverse: var(--text-inverse);
 }
 
 :root {
@@ -33,6 +34,7 @@
   --surface-container-highest: #E5E2DE;
   --text-primary: #20201E;
   --text-muted: #6F6B63;
+  --text-inverse: #FFFFFF;
   --border-default: #DEDAD2;
   --primary: #154539;
   --primary-container: #2F5D50;
@@ -58,6 +60,7 @@ html.dark {
   --surface-container-highest: #333A36;
   --text-primary: #F3F0ED;
   --text-muted: #9E9A92;
+  --text-inverse: #FFFFFF;
   --border-default: #2D3531;
   --primary: #4E8775;
   --primary-container: #2F5D50;

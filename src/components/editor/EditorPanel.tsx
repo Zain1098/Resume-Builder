@@ -45,24 +45,50 @@ const CANONICAL_SECTIONS = [
 ];
 
 export function EditorPanel() {
-  const { resume, toggleSectionVisibility, reorderSections } = useResumeStore();
+  const { resume, toggleSectionVisibility, reorderSections, activeSection } = useResumeStore();
   const [openSections, setOpenSections] = useState<{ [key: string]: boolean }>({
     styling: false,
     personal: true,
     experience: true,
     skills: true,
-    education: false,
-    projects: false,
-    certifications: false,
-    languages: false,
+    education: true,
+    projects: true,
+    certifications: true,
+    languages: true,
     awards: false,
     volunteer: false,
     publications: false,
     custom: false,
   });
 
+  React.useEffect(() => {
+    if (activeSection) {
+      setOpenSections((prev) => ({ ...prev, [activeSection]: true }));
+      const el = document.getElementById(activeSection);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+  }, [activeSection]);
+
   const toggleSection = (key: string) => {
     setOpenSections((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const handleExpandAll = () => {
+    const allOpen: { [key: string]: boolean } = { styling: true };
+    CANONICAL_SECTIONS.forEach((key) => {
+      allOpen[key] = true;
+    });
+    setOpenSections(allOpen);
+  };
+
+  const handleCollapseAll = () => {
+    const allClosed: { [key: string]: boolean } = { styling: false };
+    CANONICAL_SECTIONS.forEach((key) => {
+      allClosed[key] = false;
+    });
+    setOpenSections(allClosed);
   };
 
   const totalSkillsCount = resume.skillCategories.reduce(
@@ -352,6 +378,30 @@ export function EditorPanel() {
       >
         <StyleCustomizer />
       </AccordionSection>
+
+      {/* Quick Section Controls Bar */}
+      <div className="flex items-center justify-between px-1 text-xs pt-1 pb-0.5">
+        <span className="text-[11px] font-bold text-text-muted uppercase tracking-wider">
+          Resume Content Sections ({currentOrder.length})
+        </span>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={handleExpandAll}
+            className="text-[11px] font-semibold text-primary hover:underline transition"
+          >
+            Expand All
+          </button>
+          <span className="text-border-default">|</span>
+          <button
+            type="button"
+            onClick={handleCollapseAll}
+            className="text-[11px] font-medium text-text-muted hover:text-text-primary hover:underline transition"
+          >
+            Collapse All
+          </button>
+        </div>
+      </div>
 
       {/* Dynamic Ordered Resume Content Sections */}
       {currentOrder.map((sectionKey, index) => renderSectionItem(sectionKey, index))}

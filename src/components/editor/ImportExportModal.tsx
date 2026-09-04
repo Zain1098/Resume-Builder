@@ -378,10 +378,10 @@ export function ImportExportModal({ isOpen, onClose }: ImportExportModalProps) {
                   <button
                     type="button"
                     onClick={handleConfirmApply}
-                    className="inline-flex items-center gap-2 rounded-xl bg-primary text-text-inverse px-5 py-2.5 text-xs font-bold hover:opacity-95 shadow-sm transition"
+                    className="inline-flex items-center gap-2 rounded-xl bg-[#154539] hover:bg-[#1d5547] text-white font-bold px-5 py-2.5 text-xs shadow-md transition-all active:scale-[0.98]"
                   >
                     <span>Open in Resume Builder</span>
-                    <ArrowRight className="h-4 w-4" />
+                    <ArrowRight className="h-4 w-4 text-white" />
                   </button>
                 </div>
               </div>
@@ -492,16 +492,16 @@ TypeScript, React, Node.js, Python, PostgreSQL, AWS, Docker"
                         type="button"
                         onClick={handleProcessText}
                         disabled={isProcessing || !textInput.trim()}
-                        className="inline-flex items-center gap-2 rounded-xl bg-primary text-text-inverse px-5 py-2.5 text-xs font-semibold hover:opacity-95 shadow-xs transition disabled:opacity-50"
+                        className="inline-flex items-center gap-2 rounded-xl bg-[#154539] hover:bg-[#1d5547] text-white px-5 py-2.5 text-xs font-bold shadow-md transition disabled:opacity-50 active:scale-[0.98]"
                       >
                         {isProcessing ? (
                           <>
-                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                            <Loader2 className="h-3.5 w-3.5 animate-spin text-white" />
                             <span>Parsing Text...</span>
                           </>
                         ) : (
                           <>
-                            <Sparkles className="h-3.5 w-3.5" />
+                            <Sparkles className="h-3.5 w-3.5 text-amber-300" />
                             <span>Extract &amp; Structure Resume</span>
                           </>
                         )}
@@ -536,9 +536,9 @@ TypeScript, React, Node.js, Python, PostgreSQL, AWS, Docker"
                 <button
                   type="button"
                   onClick={handleDownloadJSON}
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-primary text-text-inverse px-4 py-2.5 text-xs font-semibold hover:opacity-95 transition shadow-xs"
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-[#154539] hover:bg-[#1d5547] text-white px-4 py-2.5 text-xs font-bold transition shadow-md active:scale-[0.98]"
                 >
-                  <Download className="h-3.5 w-3.5" />
+                  <Download className="h-3.5 w-3.5 text-white" />
                   <span>Download .JSON Backup File</span>
                 </button>
 

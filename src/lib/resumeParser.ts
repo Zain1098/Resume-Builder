@@ -274,9 +274,107 @@ export function normalizeJsonResume(raw: any): ResumeData {
     };
   }
 
-  throw new Error(
-    "Unrecognized resume JSON format. Please check the JSON format or paste as text."
-  );
+  // 3. Robust fallback for arbitrary / flat JSON shapes
+  const personalInfo: PersonalInfo = {
+    fullName: String(raw.fullName || raw.name || raw.candidateName || raw.candidate || "Candidate Name"),
+    jobTitle: String(raw.jobTitle || raw.title || raw.role || raw.position || "Professional"),
+    email: String(raw.email || raw.emailAddress || ""),
+    phone: String(raw.phone || raw.phoneNumber || raw.mobile || ""),
+    location: String(raw.location || raw.city || raw.address || ""),
+    website: String(raw.website || raw.url || raw.link || ""),
+    linkedin: String(raw.linkedin || raw.linkedIn || ""),
+    github: String(raw.github || raw.gitHub || ""),
+    avatarUrl: String(raw.avatarUrl || raw.photo || raw.image || ""),
+    summary: String(raw.summary || raw.about || raw.bio || raw.profile || ""),
+  };
+
+  const expSource = Array.isArray(raw.experiences)
+    ? raw.experiences
+    : Array.isArray(raw.experience)
+    ? raw.experience
+    : Array.isArray(raw.work)
+    ? raw.work
+    : [];
+
+  const experiences: Experience[] = expSource.map((exp: any, i: number) => ({
+    id: exp.id || `exp-${Date.now()}-${i}`,
+    company: String(exp.company || exp.organization || exp.employer || exp.name || "Company"),
+    position: String(exp.position || exp.role || exp.title || "Role"),
+    location: String(exp.location || ""),
+    startDate: String(exp.startDate || exp.start || ""),
+    endDate: String(exp.endDate || exp.end || "Present"),
+    current: Boolean(exp.current || !exp.endDate),
+    bulletPoints: Array.isArray(exp.bulletPoints)
+      ? exp.bulletPoints.map(String)
+      : Array.isArray(exp.highlights)
+      ? exp.highlights.map(String)
+      : exp.description
+      ? [String(exp.description)]
+      : [""],
+  }));
+
+  const eduSource = Array.isArray(raw.educations)
+    ? raw.educations
+    : Array.isArray(raw.education)
+    ? raw.education
+    : [];
+
+  const educations: Education[] = eduSource.map((edu: any, i: number) => ({
+    id: edu.id || `edu-${Date.now()}-${i}`,
+    institution: String(edu.institution || edu.school || edu.university || edu.college || "University"),
+    degree: String(edu.degree || edu.studyType || "Degree"),
+    fieldOfStudy: String(edu.fieldOfStudy || edu.area || edu.major || ""),
+    startDate: String(edu.startDate || edu.start || ""),
+    endDate: String(edu.endDate || edu.end || ""),
+    current: Boolean(edu.current),
+    gpaOrHonors: String(edu.gpaOrHonors || edu.gpa || edu.score || ""),
+    description: String(edu.description || ""),
+  }));
+
+  const skillCategories: SkillCategory[] = [];
+  if (Array.isArray(raw.skills)) {
+    if (raw.skills.length > 0 && typeof raw.skills[0] === "string") {
+      skillCategories.push({
+        id: `cat-${Date.now()}`,
+        name: "Technical Skills",
+        skills: raw.skills.map(String),
+      });
+    } else {
+      raw.skills.forEach((sk: any, i: number) => {
+        const keywords = Array.isArray(sk.keywords)
+          ? sk.keywords.map(String)
+          : Array.isArray(sk.skills)
+          ? sk.skills.map(String)
+          : [];
+        if (sk.name && keywords.length === 0) keywords.push(sk.name);
+        if (keywords.length > 0) {
+          skillCategories.push({
+            id: `cat-${Date.now()}-${i}`,
+            name: String(sk.name || "Skills"),
+            skills: keywords,
+          });
+        }
+      });
+    }
+  }
+
+  return {
+    personalInfo,
+    experiences,
+    educations,
+    skillCategories: skillCategories.length > 0 ? skillCategories : [
+      { id: `cat-${Date.now()}`, name: "Core Skills", skills: [] },
+    ],
+    projects: [],
+    certifications: [],
+    languages: [],
+    volunteer: [],
+    publications: [],
+    awards: [],
+    customSections: [],
+    styling: DEFAULT_STYLING,
+    sectionVisibility: DEFAULT_VISIBILITY,
+  };
 }
 
 /**
@@ -285,6 +383,17 @@ export function normalizeJsonResume(raw: any): ResumeData {
 export function parseResumeFromText(rawText: string): ResumeData {
   if (!rawText || rawText.trim().length === 0) {
     throw new Error("No resume text was provided for extraction.");
+  }
+
+  // Check if pasted raw text is valid JSON
+  const trimmedInput = rawText.trim();
+  if ((trimmedInput.startsWith("{") && trimmedInput.endsWith("}")) || (trimmedInput.startsWith("[") && trimmedInput.endsWith("]"))) {
+    try {
+      const parsed = JSON.parse(trimmedInput);
+      return normalizeJsonResume(parsed);
+    } catch {
+      // Fall through to heuristic text parsing
+    }
   }
 
   // Normalize line endings and whitespace
@@ -334,8 +443,15 @@ export function parseResumeFromText(rawText: string): ResumeData {
   let jobTitle = "Professional";
   let nameLineIndex = 0;
 
-  for (let i = 0; i < Math.min(lines.length, 5); i++) {
-    const line = lines[i];
+  for (let i = 0; i < Math.min(lines.length, 6); i++) {
+    const rawLine = lines[i];
+    // Strip JSON keys, quotes, braces, colons if any
+    const line = rawLine
+      .replace(/^["']?(?:name|full_?name|candidate_?name|title|job_?title)["']?\s*:\s*["']?/i, "")
+      .replace(/["',]+$/, "")
+      .replace(/[{}]/g, "")
+      .trim();
+
     if (
       line.length > 2 &&
       line.length < 45 &&

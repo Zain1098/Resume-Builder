@@ -12,6 +12,14 @@ export function EducationForm() {
 
   return (
     <div className="space-y-4">
+      {educations.length === 0 && (
+        <div className="text-center py-6 px-4 rounded-xl border border-dashed border-border-default bg-surface-container-low">
+          <GraduationCap className="h-7 w-7 mx-auto text-text-muted mb-2 opacity-60" />
+          <p className="text-xs font-semibold text-text-primary">No education records added yet</p>
+          <p className="text-[11px] text-text-muted mt-0.5 mb-3">Click the button below to add your degree, institution, and graduation dates.</p>
+        </div>
+      )}
+
       {educations.map((edu, eduIdx) => (
         <div
           key={edu.id}

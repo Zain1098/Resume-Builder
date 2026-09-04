@@ -12,6 +12,14 @@ export function CertificationsForm() {
 
   return (
     <div className="space-y-4">
+      {certs.length === 0 && (
+        <div className="text-center py-6 px-4 rounded-xl border border-dashed border-border-default bg-surface-container-low">
+          <Award className="h-7 w-7 mx-auto text-text-muted mb-2 opacity-60" />
+          <p className="text-xs font-semibold text-text-primary">No certifications added yet</p>
+          <p className="text-[11px] text-text-muted mt-0.5 mb-3">Click the button below to add credentials (e.g. AWS, Google Cloud, PMP).</p>
+        </div>
+      )}
+
       {certs.map((cert, cIdx) => (
         <div
           key={cert.id}

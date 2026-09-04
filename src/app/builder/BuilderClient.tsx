@@ -21,13 +21,38 @@ import {
 } from "lucide-react";
 
 export function BuilderClient() {
-  const { resume, previewTab } = useResumeStore();
+  const { resume, previewTab, setPreviewTab, setActiveSection } = useResumeStore();
   const [isMounted, setIsMounted] = useState(false);
   const [activeView, setActiveView] = useState<"split" | "editor" | "preview" | "outline">("split");
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  // Sync mobile view with previewTab (e.g. from Navbar Edit/Preview buttons)
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.innerWidth < 1024) {
+      setActiveView(previewTab === "preview" ? "preview" : "editor");
+    }
+  }, [previewTab]);
+
+  const handleMobileSwitch = (view: "outline" | "editor" | "preview") => {
+    setActiveView(view);
+    if (view === "editor") setPreviewTab("edit");
+    if (view === "preview") setPreviewTab("preview");
+  };
+
+  const handleOutlineClick = (secId: string) => {
+    setActiveView("editor");
+    setPreviewTab("edit");
+    setActiveSection(secId);
+    setTimeout(() => {
+      const el = document.getElementById(secId);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }, 60);
+  };
 
   const atsScore = calculateAtsScore(resume);
   const totalSkills = resume.skillCategories.reduce((acc, cat) => acc + cat.skills.length, 0);
@@ -158,34 +183,34 @@ export function BuilderClient() {
             {/* Mobile / Tablet Segmented Switcher */}
             <div className="flex lg:hidden items-center bg-surface-container-low p-0.5 rounded-lg border border-border-default">
               <button
-                onClick={() => setActiveView("outline")}
+                onClick={() => handleMobileSwitch("editor")}
+                className={`px-2.5 py-1 rounded text-[11px] font-medium transition ${
+                  activeView === "editor"
+                    ? "bg-surface text-primary shadow-xs font-bold"
+                    : "text-text-muted"
+                }`}
+              >
+                Edit Form
+              </button>
+              <button
+                onClick={() => handleMobileSwitch("preview")}
+                className={`px-2.5 py-1 rounded text-[11px] font-medium transition ${
+                  activeView === "preview"
+                    ? "bg-surface text-primary shadow-xs font-bold"
+                    : "text-text-muted"
+                }`}
+              >
+                Live Preview
+              </button>
+              <button
+                onClick={() => handleMobileSwitch("outline")}
                 className={`px-2.5 py-1 rounded text-[11px] font-medium transition ${
                   activeView === "outline"
-                    ? "bg-surface text-text-primary shadow-xs font-semibold"
+                    ? "bg-surface text-primary shadow-xs font-bold"
                     : "text-text-muted"
                 }`}
               >
                 Outline
-              </button>
-              <button
-                onClick={() => setActiveView("editor")}
-                className={`px-2.5 py-1 rounded text-[11px] font-medium transition ${
-                  activeView === "editor" || (activeView === "split" && previewTab === "edit")
-                    ? "bg-surface text-text-primary shadow-xs font-semibold"
-                    : "text-text-muted"
-                }`}
-              >
-                Editor
-              </button>
-              <button
-                onClick={() => setActiveView("preview")}
-                className={`px-2.5 py-1 rounded text-[11px] font-medium transition ${
-                  activeView === "preview" || (activeView === "split" && previewTab === "preview")
-                    ? "bg-surface text-text-primary shadow-xs font-semibold"
-                    : "text-text-muted"
-                }`}
-              >
-                Preview
               </button>
             </div>
 
@@ -223,7 +248,7 @@ export function BuilderClient() {
               return (
                 <div
                   key={sec.id}
-                  onClick={() => setActiveView("editor")}
+                  onClick={() => handleOutlineClick(sec.id)}
                   className="flex items-center justify-between p-2 rounded-lg text-xs hover:bg-surface-container-low cursor-pointer transition text-text-primary group"
                 >
                   <div className="flex items-center gap-2 truncate">
@@ -263,9 +288,13 @@ export function BuilderClient() {
         {/* CENTER PANE: Dynamic Editor Form Panel */}
         <section
           id="editor-panel-section"
-          className={`flex-1 overflow-y-auto border-r border-border-default bg-surface ${
-            activeView === "editor" || activeView === "split" ? "flex" : "hidden"
-          } flex-col h-full`}
+          className={`w-full lg:w-auto lg:flex-1 overflow-y-auto border-r border-border-default bg-surface flex-col h-full ${
+            activeView === "editor"
+              ? "flex"
+              : activeView === "split"
+              ? "hidden lg:flex"
+              : "hidden"
+          }`}
         >
           <EditorPanel />
         </section>
@@ -273,9 +302,13 @@ export function BuilderClient() {
         {/* RIGHT PANE: Live A4 Document Preview */}
         <section
           id="resume-preview-container"
-          className={`flex-1 overflow-hidden bg-bg-canvas ${
-            activeView === "preview" || activeView === "split" ? "flex" : "hidden"
-          } flex-col h-full`}
+          className={`w-full lg:w-auto lg:flex-1 overflow-hidden bg-bg-canvas flex-col h-full ${
+            activeView === "preview"
+              ? "flex"
+              : activeView === "split"
+              ? "hidden lg:flex"
+              : "hidden"
+          }`}
         >
           <PreviewPanel />
         </section>
