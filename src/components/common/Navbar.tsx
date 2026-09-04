@@ -66,6 +66,21 @@ export function Navbar() {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
+  // Handle open-resume-import event or ?action=import url param
+  useEffect(() => {
+    const handleOpen = () => setModalOpen(true);
+    window.addEventListener("open-resume-import", handleOpen);
+
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("action") === "import" || params.get("import") === "true") {
+        setModalOpen(true);
+      }
+    }
+
+    return () => window.removeEventListener("open-resume-import", handleOpen);
+  }, [pathname]);
+
   const activeDoc = resumes.find((r) => r.id === activeResumeId) || resumes[0];
 
   const handleDownloadPdf = async (mode: "vector" | "canvas" = "vector") => {

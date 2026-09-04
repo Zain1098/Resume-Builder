@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PDFParse } from "pdf-parse";
 import { parseResumeFromText, normalizeJsonResume } from "@/lib/resumeParser";
 
 export const runtime = "nodejs";
@@ -24,34 +23,7 @@ export async function POST(req: NextRequest) {
       const arrayBuffer = await file.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
 
-      // A. Handle PDF Files
-      if (fileName.endsWith(".pdf") || file.type === "application/pdf") {
-        const parser = new PDFParse({ data: buffer });
-        const parsedPdf = await parser.getText();
-        const extractedText = parsedPdf.text || "";
-        await parser.destroy();
-
-        if (!extractedText.trim()) {
-          return NextResponse.json(
-            {
-              error:
-                "Unable to extract selectable text from this PDF. It might be a scanned image. Please paste your resume text directly.",
-            },
-            { status: 422 }
-          );
-        }
-
-        const structuredResume = parseResumeFromText(extractedText);
-        return NextResponse.json({
-          success: true,
-          format: "pdf",
-          data: structuredResume,
-          extractedChars: extractedText.length,
-          summary: `Extracted ${structuredResume.experiences.length} experiences, ${structuredResume.educations.length} educations, and ${structuredResume.skillCategories.reduce((acc, c) => acc + c.skills.length, 0)} skills from ${file.name}.`,
-        });
-      }
-
-      // B. Handle JSON Files
+      // A. Handle JSON Files
       if (fileName.endsWith(".json") || file.type === "application/json") {
         const textContent = buffer.toString("utf-8");
         const jsonObject = JSON.parse(textContent);
@@ -65,7 +37,7 @@ export async function POST(req: NextRequest) {
         });
       }
 
-      // C. Handle Plain Text Files (.txt)
+      // B. Handle Plain Text Files (.txt)
       if (fileName.endsWith(".txt") || file.type.startsWith("text/")) {
         const textContent = buffer.toString("utf-8");
         const structuredResume = parseResumeFromText(textContent);
@@ -75,6 +47,52 @@ export async function POST(req: NextRequest) {
           format: "text",
           data: structuredResume,
           summary: `Extracted resume sections from ${file.name}.`,
+        });
+      }
+
+      // C. Handle PDF Files
+      if (fileName.endsWith(".pdf") || file.type === "application/pdf") {
+        let extractedText = "";
+
+        // Attempt safe extraction via dynamic import if available
+        try {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const pdfParseModule: any = await import("pdf-parse");
+          const PDFParser = pdfParseModule.PDFParse || pdfParseModule.default || pdfParseModule;
+          if (typeof PDFParser === "function") {
+            const parser = new PDFParser({ data: buffer });
+            const parsed = await parser.getText();
+            extractedText = parsed.text || "";
+            if (typeof parser.destroy === "function") {
+              await parser.destroy();
+            }
+          }
+        } catch (dynErr) {
+          console.warn("Server dynamic PDF parser fallback:", dynErr);
+        }
+
+        // Fallback: extract readable strings from raw PDF buffer
+        if (!extractedText || extractedText.trim().length < 20) {
+          extractedText = extractTextFromRawBuffer(buffer);
+        }
+
+        if (!extractedText.trim()) {
+          return NextResponse.json(
+            {
+              error:
+                "Unable to extract text from this PDF. It might be a scanned image or protected file. Please paste your resume text directly.",
+            },
+            { status: 422 }
+          );
+        }
+
+        const structuredResume = parseResumeFromText(extractedText);
+        return NextResponse.json({
+          success: true,
+          format: "pdf",
+          data: structuredResume,
+          extractedChars: extractedText.length,
+          summary: `Extracted ${structuredResume.experiences.length} experiences, ${structuredResume.educations.length} educations, and ${structuredResume.skillCategories.reduce((acc, c) => acc + c.skills.length, 0)} skills from ${file.name}.`,
         });
       }
 
@@ -137,4 +155,39 @@ export async function POST(req: NextRequest) {
     const message = error instanceof Error ? error.message : "Failed to parse resume.";
     return NextResponse.json({ error: message }, { status: 500 });
   }
+}
+
+function extractTextFromRawBuffer(buffer: Buffer): string {
+  const raw = buffer.toString("latin1");
+  const textPieces: string[] = [];
+
+  const tjRegex = /\(([^)]+)\)\s*Tj/g;
+  let match;
+  while ((match = tjRegex.exec(raw)) !== null) {
+    if (match[1]) textPieces.push(cleanPdfStr(match[1]));
+  }
+
+  const tjArrayRegex = /\[([^\]]+)\]\s*TJ/g;
+  while ((match = tjArrayRegex.exec(raw)) !== null) {
+    const inner = match[1];
+    const subRegex = /\(([^)]+)\)/g;
+    let subMatch;
+    const subParts: string[] = [];
+    while ((subMatch = subRegex.exec(inner)) !== null) {
+      if (subMatch[1]) subParts.push(cleanPdfStr(subMatch[1]));
+    }
+    if (subParts.length > 0) textPieces.push(subParts.join(""));
+  }
+
+  return textPieces.join(" ");
+}
+
+function cleanPdfStr(s: string): string {
+  return s
+    .replace(/\\n/g, "\n")
+    .replace(/\\r/g, "\r")
+    .replace(/\\t/g, "\t")
+    .replace(/\\\(/g, "(")
+    .replace(/\\\)/g, ")")
+    .replace(/\\\\/g, "\\");
 }

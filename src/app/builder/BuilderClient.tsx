@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { EditorPanel } from "@/components/editor/EditorPanel";
 import { PreviewPanel } from "@/components/preview/PreviewPanel";
+import { FirstTimeOnboardingModal } from "@/components/editor/FirstTimeOnboardingModal";
 import { useResumeStore } from "@/store/useResumeStore";
 import { calculateAtsScore } from "@/lib/atsScoring";
 import {
@@ -318,6 +319,15 @@ export function BuilderClient() {
           <PreviewPanel />
         </section>
       </div>
+
+      {/* Guided First-Time Onboarding Modal */}
+      <FirstTimeOnboardingModal
+        onOpenImport={() => {
+          if (typeof window !== "undefined") {
+            window.dispatchEvent(new CustomEvent("open-resume-import"));
+          }
+        }}
+      />
     </div>
   );
 }

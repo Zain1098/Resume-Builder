@@ -19,6 +19,7 @@ import {
 import confetti from "canvas-confetti";
 import { ResumeData } from "@/types/resume";
 import { parseResumeFromText, normalizeJsonResume } from "@/lib/resumeParser";
+import { extractTextFromPdfFile } from "@/lib/pdfClientExtractor";
 
 interface ImportExportModalProps {
   isOpen: boolean;
@@ -125,8 +126,8 @@ export function ImportExportModal({ isOpen, onClose }: ImportExportModalProps) {
     try {
       const fileName = file.name.toLowerCase();
 
-      // For JSON files, we can also parse client-side for zero-latency
-      if (fileName.endsWith(".json")) {
+      // 1. JSON Files: Parse client-side for zero latency and privacy
+      if (fileName.endsWith(".json") || file.type === "application/json") {
         const text = await file.text();
         const json = JSON.parse(text);
         const structured = normalizeJsonResume(json);
@@ -138,7 +139,37 @@ export function ImportExportModal({ isOpen, onClose }: ImportExportModalProps) {
         return;
       }
 
-      // For PDF and TXT, send to server API for high-fidelity extraction
+      // 2. Plain Text Files: Parse client-side directly
+      if (fileName.endsWith(".txt") || file.type.startsWith("text/")) {
+        const text = await file.text();
+        const structured = parseResumeFromText(text);
+        handleProcessParsedData(
+          structured,
+          `Successfully extracted resume sections from ${file.name}.`
+        );
+        setIsProcessing(false);
+        return;
+      }
+
+      // 3. PDF Files: Parse client-side using pdfjs-dist / stream extractor
+      if (fileName.endsWith(".pdf") || file.type === "application/pdf") {
+        try {
+          const extractedText = await extractTextFromPdfFile(file);
+          if (extractedText && extractedText.trim().length > 20) {
+            const structured = parseResumeFromText(extractedText);
+            handleProcessParsedData(
+              structured,
+              `Successfully extracted ${structured.experiences.length} experiences, ${structured.educations.length} educations, and ${structured.skillCategories.reduce((acc, c) => acc + c.skills.length, 0)} skills from ${file.name}.`
+            );
+            setIsProcessing(false);
+            return;
+          }
+        } catch (clientPdfErr) {
+          console.warn("Client-side PDF extraction encountered an issue, falling back to server:", clientPdfErr);
+        }
+      }
+
+      // 4. Server API Fallback for complex files
       const formData = new FormData();
       formData.append("file", file);
 
@@ -146,6 +177,13 @@ export function ImportExportModal({ isOpen, onClose }: ImportExportModalProps) {
         method: "POST",
         body: formData,
       });
+
+      const contentType = response.headers.get("content-type") || "";
+      if (!contentType.includes("application/json")) {
+        throw new Error(
+          "Could not automatically read text from this file. Please copy your resume text and paste it in the 'Paste Text or JSON' tab."
+        );
+      }
 
       const resJson = await response.json();
 

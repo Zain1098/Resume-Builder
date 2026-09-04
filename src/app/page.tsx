@@ -18,6 +18,7 @@ import {
   ArrowRight,
   HelpCircle,
   BookOpen,
+  Upload,
 } from "lucide-react";
 
 const siteUrl =
@@ -217,9 +218,16 @@ export default function LandingPage() {
             <div className="flex flex-col sm:flex-row items-center gap-3 mb-6 w-full sm:w-auto">
               <Link
                 href="/builder"
-                className="w-full sm:w-auto inline-flex items-center justify-center bg-primary-container text-on-primary text-xs sm:text-sm font-medium px-5 py-2.5 rounded-lg hover:bg-primary transition-colors shadow-xs"
+                className="w-full sm:w-auto inline-flex items-center justify-center bg-primary-container text-on-primary text-xs sm:text-sm font-semibold px-5 py-2.5 rounded-lg hover:bg-primary transition-colors shadow-xs"
               >
                 Launch Resume Studio
+              </Link>
+              <Link
+                href="/builder?action=import"
+                className="w-full sm:w-auto inline-flex items-center justify-center bg-surface border border-primary/40 text-primary hover:bg-primary-fixed/20 text-xs sm:text-sm font-semibold px-5 py-2.5 rounded-lg transition-colors shadow-xs gap-2"
+              >
+                <Upload className="h-4 w-4" />
+                <span>Upload Existing CV (PDF / JSON)</span>
               </Link>
               <Link
                 href="/ats-analyzer"
@@ -227,6 +235,46 @@ export default function LandingPage() {
               >
                 Run Free ATS Score Audit
               </Link>
+            </div>
+
+            {/* New User Guided Flow Steps (SEO + Human Friendly) */}
+            <div className="w-full max-w-2xl mx-auto mb-6 p-3.5 sm:p-4 rounded-xl border border-border-default bg-surface/90 text-left shadow-xs">
+              <div className="flex items-center justify-between gap-2 mb-2.5">
+                <span className="text-[11px] font-bold text-text-primary uppercase tracking-wider flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-status-success animate-pulse" />
+                  New Here? How To Build &amp; Optimize in 3 Simple Steps:
+                </span>
+                <span className="text-[10px] text-text-muted hidden sm:inline">No account required</span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
+                <div className="p-2.5 rounded-lg bg-surface-container-low border border-border-default/60">
+                  <div className="font-semibold text-primary flex items-center gap-1 mb-0.5">
+                    <span className="w-4 h-4 rounded-full bg-primary-fixed/40 text-primary flex items-center justify-center text-[10px] font-bold">1</span>
+                    <span>Import or Start Fresh</span>
+                  </div>
+                  <p className="text-text-muted text-[11px] leading-relaxed">
+                    Upload your existing PDF/JSON or pick a clean, single-column ATS template.
+                  </p>
+                </div>
+                <div className="p-2.5 rounded-lg bg-surface-container-low border border-border-default/60">
+                  <div className="font-semibold text-primary flex items-center gap-1 mb-0.5">
+                    <span className="w-4 h-4 rounded-full bg-primary-fixed/40 text-primary flex items-center justify-center text-[10px] font-bold">2</span>
+                    <span>Check &amp; Tailor Score</span>
+                  </div>
+                  <p className="text-text-muted text-[11px] leading-relaxed">
+                    Watch your ATS score reach 90%+ with real-time keyword and formatting checks.
+                  </p>
+                </div>
+                <div className="p-2.5 rounded-lg bg-surface-container-low border border-border-default/60">
+                  <div className="font-semibold text-primary flex items-center gap-1 mb-0.5">
+                    <span className="w-4 h-4 rounded-full bg-primary-fixed/40 text-primary flex items-center justify-center text-[10px] font-bold">3</span>
+                    <span>Download Clean PDF</span>
+                  </div>
+                  <p className="text-text-muted text-[11px] leading-relaxed">
+                    Export certified single-column vector PDF or portable career ledger JSON.
+                  </p>
+                </div>
+              </div>
             </div>
 
             {/* Trust Signals */}
