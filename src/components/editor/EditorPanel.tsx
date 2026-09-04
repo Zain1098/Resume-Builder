@@ -363,7 +363,7 @@ export function EditorPanel() {
   };
 
   return (
-    <div className="flex h-full flex-col space-y-4 overflow-y-auto p-4 sm:p-6 custom-scrollbar">
+    <div className="h-full overflow-y-auto p-4 sm:p-6 custom-scrollbar space-y-4">
       {/* ATS Analyzer Gauge Card */}
       <AtsScoreCard />
 

@@ -57,6 +57,11 @@ export function BuilderClient() {
   const atsScore = calculateAtsScore(resume);
   const totalSkills = resume.skillCategories.reduce((acc, cat) => acc + cat.skills.length, 0);
 
+  const cleanedFullName = (resume.personalInfo.fullName || "")
+    .replace(/^["'\s]*(name|fullName)\s*["']?\s*:\s*["']?/i, "")
+    .replace(/["',}]+$/g, "")
+    .trim() || "Untitled Candidate";
+
   const outlineSections = [
     {
       id: "personal",
@@ -129,7 +134,7 @@ export function BuilderClient() {
             <span className="w-2.5 h-2.5 rounded-full bg-status-success shrink-0"></span>
             <div className="min-w-0 flex items-center gap-2">
               <span className="font-semibold text-text-primary truncate">
-                {resume.personalInfo.fullName || "Untitled Candidate"}
+                {cleanedFullName}
               </span>
               <span className="text-text-muted hidden sm:inline truncate">
                 — {resume.personalInfo.jobTitle || "Executive Candidate"}

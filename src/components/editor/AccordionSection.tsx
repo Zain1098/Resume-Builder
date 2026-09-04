@@ -21,6 +21,7 @@ interface AccordionSectionProps {
 }
 
 export function AccordionSection({
+  id,
   title,
   subtitle,
   icon: Icon,
@@ -37,13 +38,14 @@ export function AccordionSection({
 }: AccordionSectionProps) {
   return (
     <div
-      className={`overflow-hidden rounded-xl border bg-surface shadow-xs transition-all duration-200 ${
+      id={id}
+      className={`shrink-0 w-full overflow-hidden rounded-xl border bg-surface shadow-xs transition-all duration-200 ${
         isVisible
           ? "border-border-default"
           : "border-dashed border-status-warning/60 bg-status-warning/5"
       }`}
     >
-      <div className="flex w-full items-center justify-between px-4 py-3 sm:px-5 sm:py-3.5">
+      <div className="flex w-full min-h-[52px] items-center justify-between px-4 py-3 sm:px-5 sm:py-3.5">
         {/* Left Side: Icon, Title, Subtitle, Status */}
         <button
           type="button"
