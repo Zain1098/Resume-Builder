@@ -7,7 +7,6 @@ import { useResumeStore } from "@/store/useResumeStore";
 import {
   Download,
   Sparkles,
-  FileCode,
   Loader2,
   ChevronDown,
   Plus,
@@ -19,6 +18,7 @@ import {
   Crown,
   Share2,
   FileText,
+  Upload,
 } from "lucide-react";
 import confetti from "canvas-confetti";
 import { ImportExportModal } from "@/components/editor/ImportExportModal";
@@ -289,11 +289,12 @@ export function Navbar() {
 
             <button
               onClick={() => setModalOpen(true)}
-              title="Backup JSON"
-              className="hidden md:inline-flex items-center gap-1.5 rounded-lg border border-border-default bg-surface px-2.5 py-1.5 text-xs font-medium text-text-primary hover:bg-surface-container-low transition"
+              title="Import Resume (PDF, JSON, Text) or Backup"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-border-default bg-surface px-2.5 py-1.5 text-xs font-medium text-text-primary hover:bg-surface-container-low hover:border-primary-container transition shadow-xs"
             >
-              <FileCode className="h-3.5 w-3.5 text-text-muted" />
-              <span>Backup</span>
+              <Upload className="h-3.5 w-3.5 text-primary" />
+              <span className="hidden sm:inline">Import / Backup</span>
+              <span className="sm:hidden">Import</span>
             </button>
 
             <ThemeToggle />
@@ -415,7 +416,7 @@ export function Navbar() {
                 }}
                 className="flex-1 rounded-lg border border-border-default bg-surface py-2 text-center text-xs font-medium text-text-primary hover:bg-surface-container-low"
               >
-                JSON Backup
+                Import / Backup
               </button>
             </div>
           </div>

@@ -13,8 +13,10 @@ import {
   ArrowRightLeft,
   ShieldCheck,
   Layers,
+  Upload,
 } from "lucide-react";
 import { ActionPromptModal } from "@/components/common/ActionPromptModal";
+import { ImportExportModal } from "@/components/editor/ImportExportModal";
 
 export function ResumesClient() {
   const router = useRouter();
@@ -34,6 +36,7 @@ export function ResumesClient() {
   const [comparing, setComparing] = useState(false);
   const [resumeAId, setResumeAId] = useState<string>("");
   const [resumeBId, setResumeBId] = useState<string>("");
+  const [importModalOpen, setImportModalOpen] = useState(false);
 
   const [modalConfig, setModalConfig] = useState<{
     isOpen: boolean;
@@ -170,6 +173,14 @@ export function ResumesClient() {
             >
               <ArrowRightLeft className="h-3.5 w-3.5" />
               <span>{comparing ? "Close Comparison" : "Compare Resumes"}</span>
+            </button>
+
+            <button
+              onClick={() => setImportModalOpen(true)}
+              className="inline-flex items-center gap-1.5 rounded-xl border border-border-default bg-surface px-3.5 py-2 text-xs font-medium text-text-primary hover:bg-surface-container-low transition shadow-xs"
+            >
+              <Upload className="h-3.5 w-3.5 text-primary" />
+              <span>Import CV (PDF / JSON)</span>
             </button>
 
             <button
@@ -500,6 +511,11 @@ export function ResumesClient() {
         isDestructive={modalConfig.isDestructive}
         confirmText={modalConfig.confirmText}
         onConfirm={modalConfig.onConfirm}
+      />
+
+      <ImportExportModal
+        isOpen={importModalOpen}
+        onClose={() => setImportModalOpen(false)}
       />
     </div>
   );
