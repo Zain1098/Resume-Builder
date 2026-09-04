@@ -1,7 +1,6 @@
-"use client";
-
 import React from "react";
 import Link from "next/link";
+import type { Metadata } from "next";
 import { Navbar } from "@/components/common/Navbar";
 import {
   CheckCircle2,
@@ -13,18 +12,77 @@ import {
   FolderLock,
   Edit3,
   FileCheck,
-  BarChart3,
-  PlusCircle,
   Database,
   Search,
   ArrowLeftRight,
+  ArrowRight,
+  HelpCircle,
+  BookOpen,
 } from "lucide-react";
+
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : "https://careercraft.vercel.app");
+
+export const metadata: Metadata = {
+  title: "Resumist — AI ATS Resume Builder, Score Checker & Job Tailor",
+  description:
+    "Build high-scoring ATS-friendly resumes in minutes. Real-time ATS parser diagnostic scoring, job description keyword gap matching, factual STAR/XYZ tailoring, and clean PDF/DOCX exports.",
+  alternates: {
+    canonical: siteUrl,
+  },
+  openGraph: {
+    title: "Resumist — AI ATS Resume Builder, Score Checker & Job Tailor",
+    description:
+      "Transform your career search with certified ATS resume scoring, job description keyword gap matching, and clean PDF/Word exports.",
+    url: siteUrl,
+    siteName: "Resumist",
+    type: "website",
+  },
+};
+
+const faqs = [
+  {
+    question: "What is an ATS Resume Builder?",
+    answer:
+      "An ATS (Applicant Tracking System) resume builder structures, formats, and checks your resume so enterprise recruiting software (such as Workday, Greenhouse, Taleo, and Lever) can parse your text accurately. It ensures single-column layout, standard heading hierarchies, machine-readable text layers, and accurate keyword alignment.",
+  },
+  {
+    question: "How does Resumist analyze and score my resume?",
+    answer:
+      "Resumist scores your resume across four core diagnostic dimensions: (1) Keyword Parity against target job descriptions, (2) Content Quality evaluated by action verbs and quantifiable metrics, (3) Format Safety verifying standard headings and parser-safe structures, and (4) Competency Alignment separating required from preferred skills.",
+  },
+  {
+    question: "Can I export my resume to PDF and DOCX without formatting breakage?",
+    answer:
+      "Yes. Resumist generates clean, single-layer vector PDFs with selectable, parseable text, as well as native DOCX files configured specifically for strict enterprise applicant tracking systems with zero table clipping or OCR distortion.",
+  },
+  {
+    question: "Does the AI invent or hallucinate career experience?",
+    answer:
+      "No. Resumist adheres strictly to a fact-grounded architecture. The AI only reorganizes, polishes, and aligns your authentic, verified career history using the STAR (Situation, Task, Action, Result) and XYZ frameworks. It never fabricates companies, degrees, dates, or false skills.",
+  },
+  {
+    question: "What is the difference between a Master Career Vault and Tailored Resumes?",
+    answer:
+      "Your Master Career Vault is your comprehensive repository containing every position, project, and metric from your entire career. When applying for a job, Resumist lets you branch off targeted resumes tailored to that specific job description while keeping your master records pristine.",
+  },
+  {
+    question: "Is Resumist free to build and export resumes?",
+    answer:
+      "Yes. Resumist provides full access to resume building, real-time ATS compatibility scoring, job description matching, and vector PDF/DOCX downloads with zero watermarks or hidden export paywalls.",
+  },
+];
 
 export default function LandingPage() {
   const steps = [
     {
       num: "01",
-      title: "Master Profile",
+      title: "Master Career Vault",
       desc: "Store your entire career record, raw achievements, metrics, and skills in one immutable source of truth.",
       badge: "Zero re-typing on future applications",
       icon: Database,
@@ -58,53 +116,101 @@ export default function LandingPage() {
       icon: ShieldCheck,
       title: "Context-Aware ATS Diagnostic",
       desc: "Scores against real ATS parsing engines (Workday, Greenhouse, Lever). Pinpoints keyword density, missing technical terminology, and structural formatting errors before you apply.",
-      proof: "Validated against 40+ parsing variations",
+      stat: "100% Parser Compliant",
     },
     {
-      category: "MASTER PROFILE",
+      category: "CAREER REPOSITORY",
       icon: FolderLock,
-      title: "Single Source Career Repository",
-      desc: "Never start from a blank sheet again. Maintain every project, promotion, and quantitative win in a centralized vault and branch targeted resumes with one click.",
-      proof: "Full revision history and delta tracking",
+      title: "Master Career Vault & Ledger",
+      desc: "Maintain a single immutable baseline archive of your full professional history. Branch into customized, job-specific tailored documents with version diffing.",
+      stat: "Multi-Version Branching",
     },
     {
-      category: "PRECISION REWRITING",
+      category: "EDITORIAL INTEGRITY",
       icon: Edit3,
-      title: "Evidence-Based Bullet Refinement",
-      desc: "Transforms passive duty descriptions into high-impact Google XYZ and STAR format achievements without synthetic, robotic hallucination or exaggerated phrasing.",
-      proof: "Maintains exact candidate metrics",
+      title: "STAR / XYZ Impact Optimizer",
+      desc: "Transforms passive task descriptions into quantified achievements (Situation, Task, Action, Result) calibrated to senior-level hiring expectations without false claims.",
+      stat: "Metric-Driven Proof",
     },
     {
-      category: "TYPOGRAPHIC INTEGRITY",
+      category: "MACHINE READABLE",
       icon: FileText,
-      title: "Publication-Grade Export (PDF & DOCX)",
-      desc: "Flawlessly kerned, single and multi-page layouts formatted to strict human recruiter readability benchmarks. Clean text layers for automated scanners.",
-      proof: "Zero table structures that scramble parsers",
+      title: "Deterministic Vector PDF & DOCX",
+      desc: "Single-column layouts without nested tables, canvas rasters, or non-standard fonts that break applicant tracking parsers. Guaranteed human and machine readable.",
+      stat: "Clean Selectable Text",
     },
   ];
+
+  const comparisonRows = [
+    {
+      dimension: "Formatting Architecture",
+      resumist: "Single-column semantic hierarchy, zero parsing traps",
+      generic: "Multi-column tables, text boxes that fail ATS OCR",
+    },
+    {
+      dimension: "Content Tailoring",
+      resumist: "Targeted to specific JD keywords via STAR/XYZ formulas",
+      generic: "Superficial keyword stuffing or generic AI fluff",
+    },
+    {
+      dimension: "Fact Grounding",
+      resumist: "Strict zero-hallucination policy locked to verified Vault",
+      generic: "Uncontrolled AI generation inventing false metrics",
+    },
+    {
+      dimension: "Export Integrity",
+      resumist: "Direct vector PDF + editable DOCX with clean text layer",
+      generic: "Flattened image PDFs or locked paywalled downloads",
+    },
+    {
+      dimension: "Version Control",
+      resumist: "Master vault branching with side-by-side delta matrices",
+      generic: "Single mutable file that gets overwritten repeatedly",
+    },
+  ];
+
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((f) => ({
+      "@type": "Question",
+      name: f.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: f.answer,
+      },
+    })),
+  };
 
   return (
     <div className="flex min-h-screen flex-col bg-bg-canvas text-text-primary">
       <Navbar />
 
-      <main className="w-full flex-1">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(faqSchema),
+        }}
+      />
+
+      <main className="flex-1 w-full">
         {/* HERO SECTION */}
-        <section className="w-full px-4 sm:px-6 lg:px-12 pt-10 sm:pt-14 pb-14 max-w-7xl mx-auto">
-          <div className="flex flex-col items-center text-center max-w-3xl mx-auto mb-10">
-            {/* Version Badge */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface border border-border-default mb-5 text-[11px] font-semibold text-text-muted uppercase tracking-wider">
-              <span className="w-1.5 h-1.5 rounded-full bg-status-success inline-block"></span>
-              <span>VERSION 2.4 CALIBRATED FOR 2024 ATS ENGINES</span>
+        <section className="w-full bg-surface border-b border-border-default pt-14 pb-16 px-4 sm:px-6 lg:px-12">
+          <div className="max-w-4xl mx-auto flex flex-col items-center text-center">
+            {/* Editorial Badge */}
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-low border border-border-default text-text-muted text-xs font-semibold mb-6">
+              <span className="w-2 h-2 rounded-full bg-primary" />
+              <span>EDITORIAL CAREER WORKSPACE • ATS PARSER CERTIFIED</span>
             </div>
 
             {/* Headline */}
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-text-primary mb-4 leading-[1.15]">
-              Build a Resume That Matches the Job.
+              Build an ATS-Friendly Resume That Matches the Job.
             </h1>
 
             {/* Subtitle */}
             <p className="text-sm sm:text-base text-text-muted max-w-2xl mb-8 leading-relaxed">
-              Precision tailoring, ATS diagnostic scoring, and master profile management. Built for experienced candidates who need substance over generic AI buzzwords.
+              Precision job description keyword tailoring, real-time ATS diagnostic scoring, and Master Career Vault management. Built for experienced candidates who need factual substance over AI buzzwords.
             </p>
 
             {/* CTA Buttons */}
@@ -113,13 +219,13 @@ export default function LandingPage() {
                 href="/builder"
                 className="w-full sm:w-auto inline-flex items-center justify-center bg-primary-container text-on-primary text-xs sm:text-sm font-medium px-5 py-2.5 rounded-lg hover:bg-primary transition-colors shadow-xs"
               >
-                Build Resume
+                Launch Resume Studio
               </Link>
               <Link
                 href="/ats-analyzer"
                 className="w-full sm:w-auto inline-flex items-center justify-center bg-surface border border-border-default text-text-primary text-xs sm:text-sm font-medium px-5 py-2.5 rounded-lg hover:bg-surface-container-low transition-colors shadow-xs"
               >
-                Analyze Job / Check ATS
+                Run Free ATS Score Audit
               </Link>
             </div>
 
@@ -127,21 +233,21 @@ export default function LandingPage() {
             <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-text-muted text-xs">
               <span className="inline-flex items-center gap-1.5">
                 <CheckCircle2 className="h-4 w-4 text-status-success" />
-                Export clean PDF & DOCX
+                Single-Column Vector PDF &amp; DOCX
               </span>
               <span className="inline-flex items-center gap-1.5">
                 <CheckCircle2 className="h-4 w-4 text-status-success" />
-                ATS parser verified
+                Workday &amp; Greenhouse Verified
               </span>
               <span className="inline-flex items-center gap-1.5">
                 <CheckCircle2 className="h-4 w-4 text-status-success" />
-                Privacy-first workspace
+                Zero Hallucinations Guarantee
               </span>
             </div>
           </div>
 
           {/* AUTHENTIC WORKSPACE PREVIEW CONTAINER */}
-          <div className="w-full bg-surface border border-border-default rounded-xl overflow-hidden shadow-sm max-w-5xl mx-auto">
+          <div className="w-full bg-surface border border-border-default rounded-xl overflow-hidden shadow-sm max-w-5xl mx-auto mt-12">
             {/* Top Utility Header */}
             <div className="px-4 sm:px-5 py-3 border-b border-border-default bg-surface-container-low flex flex-wrap items-center justify-between gap-3 text-xs">
               <div className="flex items-center gap-2.5 min-w-0">
@@ -177,170 +283,108 @@ export default function LandingPage() {
               <div className="lg:col-span-7 p-5 sm:p-7 bg-surface text-text-primary flex flex-col text-xs leading-relaxed">
                 <div className="border-b border-border-default pb-3.5 mb-4">
                   <div className="flex flex-col sm:flex-row sm:justify-between sm:items-baseline">
-                    <h2 className="text-lg font-semibold tracking-tight text-text-primary">
+                    <span className="text-lg font-semibold tracking-tight text-text-primary">
                       Elena Rostova
-                    </h2>
+                    </span>
                     <span className="text-text-muted text-[11px]">
                       New York, NY • elena.rostova@gmail.com
                     </span>
                   </div>
                   <p className="text-primary font-medium text-xs mt-0.5">
-                    Staff Product Manager • Platform Systems & Monetization
+                    Staff Product Manager • Platform Systems &amp; Monetization
                   </p>
                 </div>
 
                 {/* Section 1: Summary */}
                 <div className="mb-4">
-                  <h3 className="text-[10px] font-bold text-text-muted tracking-wider uppercase mb-1">
+                  <span className="text-[10px] font-bold text-text-muted tracking-wider uppercase mb-1 block">
                     PROFESSIONAL SUMMARY
-                  </h3>
+                  </span>
                   <p className="text-text-primary">
                     Product lead with 8+ years scaling financial checkout infrastructure and multi-tenant ledger services. Led cross-functional platform teams handling{" "}
                     <span className="bg-primary-fixed/30 text-primary px-1 rounded font-medium">
                       $4.2B in annual GMV
                     </span>{" "}
-                    with 99.995% uptime availability across high-concurrency API integrations.
+                    with 99.995% transaction reliability. Expert in double-entry transactional ledgers, idempotency keys, and PCI-DSS compliance.
                   </p>
                 </div>
 
                 {/* Section 2: Experience */}
-                <div className="mb-4">
-                  <div className="flex justify-between items-baseline mb-1">
-                    <h3 className="text-[10px] font-bold text-text-muted tracking-wider uppercase">
-                      WORK EXPERIENCE
-                    </h3>
-                    <span className="text-text-muted text-[11px]">2021 – Present</span>
-                  </div>
-                  <div className="flex justify-between items-baseline mb-1.5 font-medium text-text-primary">
-                    <span>Datadog • Senior Product Manager (Billing)</span>
-                    <span className="text-text-muted text-[11px]">New York, NY</span>
-                  </div>
-                  <ul className="space-y-1.5 list-disc list-outside ml-3.5 text-text-primary">
-                    <li>
-                      Architected high-throughput{" "}
-                      <span className="bg-primary-fixed/30 text-primary px-1 rounded font-medium">
-                        metering and rating pipeline
-                      </span>{" "}
-                      supporting 35,000+ enterprise accounts, reducing tickets by 42%.
-                    </li>
-                    <li>
-                      Spearheaded adoption of{" "}
-                      <span className="bg-primary-fixed/30 text-primary px-1 rounded font-medium">
-                        idempotent transaction protocols
-                      </span>
-                      , preventing duplicate charge anomalies during timeouts.
-                    </li>
-                    <li>
-                      Maintained rigorous PCI-DSS Level 1 compliance across microservices without latency regressions.
-                    </li>
-                  </ul>
-                </div>
-
-                {/* Section 3: Skills */}
-                <div>
-                  <h3 className="text-[10px] font-bold text-text-muted tracking-wider uppercase mb-1.5">
-                    CORE COMPETENCIES & SYSTEMS
-                  </h3>
-                  <div className="flex flex-wrap gap-1.5 text-[11px]">
-                    <span className="px-2 py-0.5 bg-surface-container-low rounded text-text-primary border border-border-default">
-                      Distributed Architecture
-                    </span>
-                    <span className="px-2 py-0.5 bg-surface-container-low rounded text-text-primary border border-border-default">
-                      Payment Gateway Routing
-                    </span>
-                    <span className="px-2 py-0.5 bg-surface-container-low rounded text-text-primary border border-border-default">
-                      Ledger Reconciliation
-                    </span>
-                    <span className="px-2 py-0.5 bg-surface-container-low rounded text-text-primary border border-border-default">
-                      Kafka Stream Processing
-                    </span>
+                <div className="space-y-3">
+                  <span className="text-[10px] font-bold text-text-muted tracking-wider uppercase block">
+                    VERIFIED EXPERIENCE
+                  </span>
+                  <div>
+                    <div className="flex justify-between font-semibold text-text-primary">
+                      <span>Principal Product Manager • Stripe, Inc.</span>
+                      <span className="text-text-muted font-normal text-[11px]">2022 - Present</span>
+                    </div>
+                    <ul className="mt-1 space-y-1 text-text-muted pl-3.5 list-disc">
+                      <li>
+                        Architected multi-currency settlement engine supporting 45 currencies, reducing foreign FX dispute rate by{" "}
+                        <strong className="text-text-primary">31%</strong> across Tier-1 enterprise merchants.
+                      </li>
+                      <li>
+                        Authored unified schema spec for distributed idempotency guarantees, preventing duplicate capture attempts across{" "}
+                        <strong className="text-text-primary">14M daily requests</strong>.
+                      </li>
+                    </ul>
                   </div>
                 </div>
               </div>
 
-              {/* Right Inspection & ATS Diagnostic Panel (5 Cols) */}
-              <div className="lg:col-span-5 p-5 bg-surface-container-low/40 flex flex-col justify-between">
+              {/* Right Diagnostic Inspector Panel (5 Cols) */}
+              <div className="lg:col-span-5 p-5 sm:p-6 bg-surface-container-low flex flex-col justify-between space-y-4">
                 <div>
-                  <div className="flex items-center justify-between border-b border-border-default pb-2.5 mb-3.5">
-                    <div className="flex items-center gap-1.5">
-                      <BarChart3 className="h-4 w-4 text-primary" />
-                      <span className="font-semibold text-text-primary text-xs">
-                        ATS Gap Analysis
-                      </span>
-                    </div>
-                    <span className="text-[11px] text-text-muted">Target: Stripe PM II</span>
+                  <div className="flex items-center justify-between pb-3 border-b border-border-default">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-text-primary flex items-center gap-1.5">
+                      <ShieldCheck className="h-4 w-4 text-primary" />
+                      ATS Diagnostic Audit
+                    </span>
+                    <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-status-success/15 text-status-success">
+                      Tier 1: Exceptional
+                    </span>
                   </div>
 
-                  {/* Score Progress Bar */}
-                  <div className="p-3 bg-surface rounded-lg border border-border-default mb-3.5">
-                    <div className="flex justify-between items-baseline mb-1.5 text-xs">
-                      <span className="font-medium text-text-primary">Role Relevance Match</span>
-                      <span className="font-bold text-status-success">94%</span>
+                  <div className="mt-4 flex items-center gap-4">
+                    <div className="w-16 h-16 rounded-full border-4 border-primary flex items-center justify-center font-bold text-xl text-primary shrink-0">
+                      94%
                     </div>
-                    <div className="w-full h-1.5 bg-surface-container rounded-full overflow-hidden">
-                      <div className="h-full bg-status-success rounded-full" style={{ width: "94%" }}></div>
-                    </div>
-                    <p className="text-[11px] text-text-muted mt-1.5 leading-normal">
-                      Strong alignment with technical payment platform and high-scale transaction processing competencies.
-                    </p>
-                  </div>
-
-                  {/* Matched Keywords */}
-                  <div className="mb-3.5">
-                    <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-[10px] font-bold text-text-muted tracking-wider uppercase">
-                        MATCHED KEYWORDS (18/20)
-                      </span>
-                      <CheckCircle2 className="h-3.5 w-3.5 text-status-success" />
-                    </div>
-                    <div className="flex flex-wrap gap-1 text-[11px]">
-                      <span className="px-2 py-0.5 rounded bg-primary-fixed/30 text-primary border border-primary/20 font-medium">
-                        Idempotent APIs
-                      </span>
-                      <span className="px-2 py-0.5 rounded bg-primary-fixed/30 text-primary border border-primary/20 font-medium">
-                        Ledger Reconciliation
-                      </span>
-                      <span className="px-2 py-0.5 rounded bg-primary-fixed/30 text-primary border border-primary/20 font-medium">
-                        PCI-DSS
-                      </span>
-                      <span className="px-2 py-0.5 rounded bg-primary-fixed/30 text-primary border border-primary/20 font-medium">
-                        High Concurrency
-                      </span>
+                    <div className="text-xs space-y-0.5">
+                      <p className="font-semibold text-text-primary">Parity Verified</p>
+                      <p className="text-text-muted text-[11px]">
+                        Matches 17 of 18 critical JD terms. Zero parsing anomalies detected.
+                      </p>
                     </div>
                   </div>
 
-                  {/* Gaps to Address */}
-                  <div className="mb-4">
-                    <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-[10px] font-bold text-secondary tracking-wider uppercase">
-                        GAPS TO ADDRESS (2 DETECTED)
-                      </span>
-                      <span className="text-[10px] text-secondary font-semibold">Priority</span>
-                    </div>
-                    <div className="space-y-1.5 text-xs">
-                      <div className="p-2 bg-surface rounded border border-border-default flex items-start gap-2">
-                        <PlusCircle className="h-3.5 w-3.5 text-secondary shrink-0 mt-0.5" />
-                        <div>
-                          <span className="font-medium text-text-primary text-[11px]">Distributed Systems Resilience</span>
-                          <p className="text-text-muted text-[10px]">Add specific mention of multi-region disaster recovery.</p>
-                        </div>
+                  <div className="mt-5 space-y-2.5">
+                    <div className="p-2.5 bg-surface rounded-lg border border-border-default text-xs space-y-1">
+                      <div className="flex justify-between font-medium">
+                        <span className="text-text-muted">Target Keyword Match</span>
+                        <span className="text-primary font-bold">96% (17/18)</span>
                       </div>
-                      <div className="p-2 bg-surface rounded border border-border-default flex items-start gap-2">
-                        <PlusCircle className="h-3.5 w-3.5 text-secondary shrink-0 mt-0.5" />
-                        <div>
-                          <span className="font-medium text-text-primary text-[11px]">SOC2 Compliance Audits</span>
-                          <p className="text-text-muted text-[10px]">Mention cross-functional partnership with security leadership.</p>
-                        </div>
+                      <div className="w-full bg-surface-container-high h-1.5 rounded-full overflow-hidden">
+                        <div className="bg-primary h-full rounded-full" style={{ width: "96%" }} />
+                      </div>
+                    </div>
+
+                    <div className="p-2.5 bg-surface rounded-lg border border-border-default text-xs space-y-1">
+                      <div className="flex justify-between font-medium">
+                        <span className="text-text-muted">Format &amp; Layout Health</span>
+                        <span className="text-status-success font-bold">100% Safe</span>
+                      </div>
+                      <div className="w-full bg-surface-container-high h-1.5 rounded-full overflow-hidden">
+                        <div className="bg-status-success h-full rounded-full" style={{ width: "100%" }} />
                       </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Bottom Hook */}
-                <div className="pt-2.5 border-t border-border-default flex items-center justify-between text-xs">
-                  <span className="text-text-muted text-[11px]">Master profile contains 4 relevant achievements</span>
-                  <Link href="/builder" className="text-primary hover:underline font-medium text-[11px]">
-                    Insert from Profile →
+                <div className="pt-3 border-t border-border-default flex items-center justify-between text-[11px] text-text-muted">
+                  <span>Engine: Workday / Greenhouse</span>
+                  <Link href="/ats-analyzer" className="text-primary font-semibold hover:underline">
+                    View Full Diagnostic →
                   </Link>
                 </div>
               </div>
@@ -348,41 +392,46 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* WORKFLOW LOOP (THE INTELLIGENT WORKFLOW) */}
-        <section className="w-full bg-surface border-y border-border-default py-14 px-4 sm:px-6 lg:px-12">
+        {/* 4-STEP INTELLIGENT WORKFLOW */}
+        <section className="w-full py-16 px-4 sm:px-6 lg:px-12 border-b border-border-default bg-surface-container-low">
           <div className="max-w-7xl mx-auto">
-            <div className="mb-10 text-center sm:text-left">
-              <span className="text-[11px] font-bold tracking-wider text-text-muted uppercase">
-                METHODOLOGY
+            <div className="text-center max-w-2xl mx-auto mb-12">
+              <span className="text-xs font-bold uppercase tracking-wider text-primary mb-2 block">
+                METHODOLOGY &amp; WORKFLOW
               </span>
-              <h2 className="text-2xl sm:text-3xl font-semibold text-text-primary mt-1 mb-2">
-                The Intelligent Workflow
+              <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-text-primary">
+                How Modern ATS Optimization Works
               </h2>
-              <p className="text-xs sm:text-sm text-text-muted max-w-xl">
-                From master career history to job-specific tailoring in four disciplined steps.
+              <p className="text-xs sm:text-sm text-text-muted mt-2">
+                A structured, four-step pipeline that preserves factual integrity while maximizing parser visibility.
               </p>
             </div>
 
-            {/* 4 Compact Step Cards in Horizontal Sequence */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-border-default border border-border-default rounded-xl overflow-hidden">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {steps.map((step) => {
-                const Icon = step.icon;
+                const IconComponent = step.icon;
                 return (
-                  <div key={step.num} className="bg-surface p-6 flex flex-col justify-between">
-                    <div>
-                      <div className="flex items-center justify-between mb-4">
-                        <span className="text-sm font-bold text-primary">{step.num}</span>
-                        <Icon className="h-4 w-4 text-text-muted" />
+                  <div
+                    key={step.num}
+                    className="p-5 bg-surface rounded-xl border border-border-default flex flex-col justify-between shadow-xs space-y-4"
+                  >
+                    <div className="space-y-2.5">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xl font-bold font-mono text-primary/40">
+                          {step.num}
+                        </span>
+                        <div className="h-8 w-8 rounded-lg bg-surface-container-low border border-border-default flex items-center justify-center text-primary">
+                          <IconComponent className="h-4 w-4" />
+                        </div>
                       </div>
-                      <h3 className="text-base font-semibold text-text-primary mb-2">
-                        {step.title}
-                      </h3>
-                      <p className="text-xs text-text-muted leading-relaxed">
-                        {step.desc}
-                      </p>
+                      <h3 className="text-sm font-semibold text-text-primary">{step.title}</h3>
+                      <p className="text-xs text-text-muted leading-relaxed">{step.desc}</p>
                     </div>
-                    <div className="mt-6 pt-3.5 border-t border-border-default/60 text-[11px] text-text-muted">
-                      {step.badge}
+
+                    <div className="pt-3 border-t border-border-default">
+                      <span className="text-[10px] font-medium text-primary bg-primary-fixed/30 px-2 py-0.5 rounded inline-block">
+                        {step.badge}
+                      </span>
                     </div>
                   </div>
                 );
@@ -391,137 +440,219 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* EDITORIAL FEATURE GRID */}
-        <section className="w-full py-14 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto">
-          <div className="mb-10 text-center sm:text-left">
-            <span className="text-[11px] font-bold tracking-wider text-text-muted uppercase">
-              CORE CAPABILITIES
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-semibold text-text-primary mt-1 mb-2">
-              Engineered for Candidate Calibration
-            </h2>
-            <p className="text-xs sm:text-sm text-text-muted max-w-xl">
-              Every feature exists to eliminate human friction and machine parsing errors.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {features.map((f, idx) => {
-              const Icon = f.icon;
-              return (
-                <div
-                  key={idx}
-                  className="bg-surface border border-border-default rounded-xl p-6 sm:p-7 flex flex-col justify-between hover:border-text-muted/60 transition-colors"
-                >
-                  <div>
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="text-[10px] font-bold text-text-muted tracking-wider uppercase">
-                        {f.category}
-                      </span>
-                      <Icon className="h-5 w-5 text-primary" />
-                    </div>
-                    <h3 className="text-base font-semibold text-text-primary mb-2">
-                      {f.title}
-                    </h3>
-                    <p className="text-xs text-text-muted leading-relaxed">
-                      {f.desc}
-                    </p>
-                  </div>
-                  <div className="mt-5 pt-3.5 border-t border-border-default flex items-center gap-2 text-xs text-text-primary">
-                    <Check className="h-3.5 w-3.5 text-status-success shrink-0" />
-                    <span>{f.proof}</span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </section>
-
-        {/* PRACTICAL COMPARISON TABLE */}
-        <section className="w-full bg-surface border-t border-border-default py-14 px-4 sm:px-6 lg:px-12">
-          <div className="max-w-5xl mx-auto">
-            <div className="mb-8 text-center sm:text-left">
-              <span className="text-[11px] font-bold tracking-wider text-text-muted uppercase">
-                THE DIFFERENCE
+        {/* 4-CARD CORE CAPABILITIES GRID */}
+        <section className="w-full py-16 px-4 sm:px-6 lg:px-12 border-b border-border-default bg-surface">
+          <div className="max-w-7xl mx-auto">
+            <div className="max-w-2xl mb-12">
+              <span className="text-xs font-bold uppercase tracking-wider text-primary mb-2 block">
+                ENGINEERED ARCHITECTURE
               </span>
-              <h2 className="text-2xl sm:text-3xl font-semibold text-text-primary mt-1">
-                Standard AI Resume Tools vs. Resumist
+              <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-text-primary">
+                Built to Outperform Generic Resume Builders
               </h2>
-            </div>
-
-            <div className="border border-border-default rounded-xl overflow-hidden bg-surface">
-              <div className="grid grid-cols-12 bg-surface-container-low border-b border-border-default p-3.5 text-[11px] font-bold text-text-muted tracking-wider uppercase">
-                <div className="col-span-4 sm:col-span-3">CRITERIA</div>
-                <div className="col-span-4 sm:col-span-4 text-text-muted">GENERIC AI GENERATORS</div>
-                <div className="col-span-4 sm:col-span-5 text-primary">RESUMIST EDITORIAL</div>
-              </div>
-
-              {/* Row 1 */}
-              <div className="grid grid-cols-12 border-b border-border-default p-3.5 text-xs items-center">
-                <div className="col-span-4 sm:col-span-3 font-medium text-text-primary">Content Quality</div>
-                <div className="col-span-4 sm:col-span-4 text-text-muted text-[11px] sm:text-xs">Fluffy buzzwords, generic claims, fabricated metrics</div>
-                <div className="col-span-4 sm:col-span-5 text-text-primary text-[11px] sm:text-xs font-medium flex items-center gap-1.5">
-                  <Check className="h-3.5 w-3.5 text-status-success shrink-0" />
-                  <span>Evidence-based STAR framing from your raw logs</span>
-                </div>
-              </div>
-
-              {/* Row 2 */}
-              <div className="grid grid-cols-12 border-b border-border-default p-3.5 text-xs items-center bg-surface-container-low/30">
-                <div className="col-span-4 sm:col-span-3 font-medium text-text-primary">Layout Format</div>
-                <div className="col-span-4 sm:col-span-4 text-text-muted text-[11px] sm:text-xs">Multi-column templates with nested tables that choke ATS OCR</div>
-                <div className="col-span-4 sm:col-span-5 text-text-primary text-[11px] sm:text-xs font-medium flex items-center gap-1.5">
-                  <Check className="h-3.5 w-3.5 text-status-success shrink-0" />
-                  <span>Editorial single-column hierarchy approved by recruiters</span>
-                </div>
-              </div>
-
-              {/* Row 3 */}
-              <div className="grid grid-cols-12 border-b border-border-default p-3.5 text-xs items-center">
-                <div className="col-span-4 sm:col-span-3 font-medium text-text-primary">Targeting Precision</div>
-                <div className="col-span-4 sm:col-span-4 text-text-muted text-[11px] sm:text-xs">Blind keyword stuffing without contextual semantic relevance</div>
-                <div className="col-span-4 sm:col-span-5 text-text-primary text-[11px] sm:text-xs font-medium flex items-center gap-1.5">
-                  <Check className="h-3.5 w-3.5 text-status-success shrink-0" />
-                  <span>Semantic gap diagnostic scoring against the actual JD</span>
-                </div>
-              </div>
-
-              {/* Row 4 */}
-              <div className="grid grid-cols-12 p-3.5 text-xs items-center bg-surface-container-low/30">
-                <div className="col-span-4 sm:col-span-3 font-medium text-text-primary">Data Sovereignty</div>
-                <div className="col-span-4 sm:col-span-4 text-text-muted text-[11px] sm:text-xs">Data shared with third-party LLM training pipelines</div>
-                <div className="col-span-4 sm:col-span-5 text-text-primary text-[11px] sm:text-xs font-medium flex items-center gap-1.5">
-                  <Check className="h-3.5 w-3.5 text-status-success shrink-0" />
-                  <span>Zero AI training on your personal career history</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* FINAL ACTION BANNER */}
-        <section className="w-full py-14 px-4 sm:px-6 lg:px-12 max-w-7xl mx-auto">
-          <div className="bg-surface border border-border-default rounded-xl p-6 sm:p-10 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
-            <div className="max-w-xl text-center md:text-left">
-              <h2 className="text-xl sm:text-2xl font-semibold text-text-primary tracking-tight mb-2">
-                Ready to submit a resume that gets interviews?
-              </h2>
-              <p className="text-xs sm:text-sm text-text-muted leading-relaxed">
-                Join senior operators, engineers, and product leaders who rely on Resumist for rigorous career document management.
+              <p className="text-xs sm:text-sm text-text-muted mt-2">
+                Every component is calibrated for machine parsing compliance and executive readability.
               </p>
             </div>
-            <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto shrink-0">
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {features.map((feat, idx) => {
+                const IconComponent = feat.icon;
+                return (
+                  <div
+                    key={idx}
+                    className="p-6 bg-surface-container-low rounded-xl border border-border-default flex flex-col justify-between space-y-4 shadow-xs"
+                  >
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-bold tracking-wider text-text-muted uppercase">
+                          {feat.category}
+                        </span>
+                        <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-surface border border-border-default text-primary">
+                          {feat.stat}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2.5">
+                        <div className="h-8 w-8 rounded-lg bg-surface border border-border-default flex items-center justify-center text-primary shrink-0">
+                          <IconComponent className="h-4 w-4" />
+                        </div>
+                        <h3 className="text-base font-semibold text-text-primary">{feat.title}</h3>
+                      </div>
+                      <p className="text-xs text-text-muted leading-relaxed">{feat.desc}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        {/* COMPARISON CRITERIA LEDGER */}
+        <section className="w-full py-16 px-4 sm:px-6 lg:px-12 border-b border-border-default bg-surface-container-low">
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center max-w-2xl mx-auto mb-10">
+              <span className="text-xs font-bold uppercase tracking-wider text-primary mb-2 block">
+                BENCHMARK COMPARISON
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-text-primary">
+                Resumist vs. Generic Resume Builders
+              </h2>
+              <p className="text-xs sm:text-sm text-text-muted mt-2">
+                Why standard graphic resume builders fail modern applicant screening systems.
+              </p>
+            </div>
+
+            <div className="bg-surface rounded-xl border border-border-default overflow-hidden shadow-xs">
+              <div className="grid grid-cols-12 bg-surface-container-low border-b border-border-default px-4 sm:px-6 py-3 text-xs font-semibold text-text-muted uppercase tracking-wider">
+                <div className="col-span-4">Evaluation Dimension</div>
+                <div className="col-span-4 text-primary">Resumist Editorial Standard</div>
+                <div className="col-span-4 text-text-muted">Generic AI Builders</div>
+              </div>
+
+              <div className="divide-y divide-border-default text-xs">
+                {comparisonRows.map((row, i) => (
+                  <div key={i} className="grid grid-cols-12 px-4 sm:px-6 py-3.5 items-center gap-2">
+                    <div className="col-span-4 font-semibold text-text-primary">{row.dimension}</div>
+                    <div className="col-span-4 text-primary font-medium flex items-center gap-1.5">
+                      <Check className="h-3.5 w-3.5 text-status-success shrink-0" />
+                      <span>{row.resumist}</span>
+                    </div>
+                    <div className="col-span-4 text-text-muted">{row.generic}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ANSWER-FIRST FREQUENTLY ASKED QUESTIONS (SEO / AEO / GEO) */}
+        <section className="w-full py-16 px-4 sm:px-6 lg:px-12 border-b border-border-default bg-surface">
+          <div className="max-w-4xl mx-auto space-y-8">
+            <div className="text-center max-w-2xl mx-auto">
+              <span className="text-xs font-bold uppercase tracking-wider text-primary mb-2 block">
+                SEARCH &amp; ANSWER ENGINE DIRECT ANSWERS
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-text-primary">
+                Frequently Asked Questions
+              </h2>
+              <p className="text-xs sm:text-sm text-text-muted mt-2">
+                Direct, factual answers to common questions about ATS screening, resume formatting, and tailoring.
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              {faqs.map((faq, idx) => (
+                <details
+                  key={idx}
+                  className="group bg-surface-container-low rounded-xl border border-border-default p-5 transition-colors [&_summary::-webkit-details-marker]:hidden"
+                >
+                  <summary className="flex items-center justify-between cursor-pointer font-semibold text-sm text-text-primary gap-4">
+                    <div className="flex items-center gap-2.5">
+                      <HelpCircle className="h-4 w-4 text-primary shrink-0" />
+                      <span>{faq.question}</span>
+                    </div>
+                    <span className="text-text-muted text-lg transition-transform group-open:rotate-45">
+                      +
+                    </span>
+                  </summary>
+                  <div className="mt-3.5 pt-3 border-t border-border-default text-xs text-text-muted leading-relaxed">
+                    {faq.answer}
+                  </div>
+                </details>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* TOPICAL EXPLORATION DIRECTORY (INTERNAL LINKING) */}
+        <section className="w-full py-12 px-4 sm:px-6 lg:px-12 border-b border-border-default bg-surface-container-low">
+          <div className="max-w-5xl mx-auto space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-text-primary flex items-center gap-2">
+                  <BookOpen className="h-4 w-4 text-primary" />
+                  <span>Explore ATS &amp; Career Document Resources</span>
+                </h3>
+                <p className="text-xs text-text-muted mt-0.5">
+                  Deep-dive guides, templates, and specialized tools.
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+              <Link
+                href="/ats-resume-builder"
+                className="p-3.5 bg-surface rounded-xl border border-border-default hover:border-primary transition group"
+              >
+                <div className="font-semibold text-text-primary group-hover:text-primary mb-1">
+                  ATS Resume Builder →
+                </div>
+                <p className="text-[11px] text-text-muted">
+                  How enterprise ATS screening works and step-by-step compliant construction.
+                </p>
+              </Link>
+
+              <Link
+                href="/resume-ats-checker"
+                className="p-3.5 bg-surface rounded-xl border border-border-default hover:border-primary transition group"
+              >
+                <div className="font-semibold text-text-primary group-hover:text-primary mb-1">
+                  ATS Score Checker →
+                </div>
+                <p className="text-[11px] text-text-muted">
+                  Diagnostic scoring rubric for keyword parity, content, and layout safety.
+                </p>
+              </Link>
+
+              <Link
+                href="/resume-job-matcher"
+                className="p-3.5 bg-surface rounded-xl border border-border-default hover:border-primary transition group"
+              >
+                <div className="font-semibold text-text-primary group-hover:text-primary mb-1">
+                  Job Matcher &amp; Tailor →
+                </div>
+                <p className="text-[11px] text-text-muted">
+                  Deconstruct job descriptions and close keyword gaps factually.
+                </p>
+              </Link>
+
+              <Link
+                href="/resume-templates"
+                className="p-3.5 bg-surface rounded-xl border border-border-default hover:border-primary transition group"
+              >
+                <div className="font-semibold text-text-primary group-hover:text-primary mb-1">
+                  ATS-Friendly Templates →
+                </div>
+                <p className="text-[11px] text-text-muted">
+                  4 verified single-column designs: Modern, Professional, Minimal, Technical.
+                </p>
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* FINAL CONVERSION BANNER */}
+        <section className="w-full py-16 px-4 sm:px-6 lg:px-12 bg-surface text-center">
+          <div className="max-w-3xl mx-auto space-y-6">
+            <h2 className="text-2xl sm:text-4xl font-semibold tracking-tight text-text-primary">
+              Ready to Upgrade Your Career Presentation?
+            </h2>
+            <p className="text-xs sm:text-sm text-text-muted max-w-xl mx-auto leading-relaxed">
+              Create your Master Career Vault, calibrate against live job specifications, and download ATS-verified PDF &amp; DOCX resumes.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
               <Link
                 href="/builder"
-                className="w-full sm:w-auto inline-flex items-center justify-center bg-primary-container text-on-primary text-xs sm:text-sm font-medium px-5 py-2.5 rounded-lg hover:bg-primary transition-colors shadow-xs"
+                className="w-full sm:w-auto inline-flex items-center justify-center bg-primary-container text-on-primary text-xs sm:text-sm font-medium px-6 py-3 rounded-xl hover:bg-primary transition-colors shadow-xs"
               >
-                Create Resume Now
+                <span>Launch Free Studio</span>
+                <ArrowRight className="h-4 w-4 ml-1.5" />
               </Link>
               <Link
-                href="/ats-analyzer"
-                className="w-full sm:w-auto inline-flex items-center justify-center bg-surface border border-border-default text-text-primary text-xs sm:text-sm font-medium px-5 py-2.5 rounded-lg hover:bg-surface-container-low transition-colors shadow-xs"
+                href="/guides/ats-friendly-resume-guide"
+                className="w-full sm:w-auto inline-flex items-center justify-center bg-surface border border-border-default text-text-primary text-xs sm:text-sm font-medium px-6 py-3 rounded-xl hover:bg-surface-container-low transition-colors shadow-xs"
               >
-                Check ATS Score
+                <span>Read 2026 ATS Guide</span>
               </Link>
             </div>
           </div>
@@ -529,26 +660,40 @@ export default function LandingPage() {
       </main>
 
       {/* EDITORIAL FOOTER */}
-      <footer className="w-full bg-surface border-t border-border-default mt-auto py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-text-muted">
-          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-center sm:text-left">
-            <p>© 2024 Resumist Editorial Workspace. All rights reserved.</p>
-            <span className="hidden sm:inline text-border-default">|</span>
-            <p>PDF & DOCX structural standard compliance certified.</p>
+      <footer className="w-full bg-surface border-t border-border-default py-10 px-4 sm:px-6 lg:px-12 text-xs text-text-muted">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-3">
+            <div className="flex h-7 w-7 items-center justify-center rounded bg-primary-container text-on-primary font-bold text-xs">
+              R
+            </div>
+            <div>
+              <span className="font-semibold text-text-primary">Resumist Editorial</span>
+              <p className="text-[11px] text-text-muted mt-0.5">
+                Precision ATS Resume Engineering &amp; Verified Career Vault
+              </p>
+            </div>
           </div>
-          <div className="flex items-center flex-wrap justify-center gap-4 sm:gap-6">
-            <Link href="/resumes" className="hover:text-text-primary transition-colors">
-              Master Profile
+
+          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[11px]">
+            <Link href="/builder" className="hover:text-text-primary transition-colors">
+              Resume Studio
             </Link>
             <Link href="/ats-analyzer" className="hover:text-text-primary transition-colors">
-              ATS Checker
-            </Link>
-            <Link href="/builder" className="hover:text-text-primary transition-colors">
-              Resume Builder
+              ATS Analyzer
             </Link>
             <Link href="/job-matcher" className="hover:text-text-primary transition-colors">
               Job Matcher
             </Link>
+            <Link href="/resume-templates" className="hover:text-text-primary transition-colors">
+              ATS Templates
+            </Link>
+            <Link href="/guides/ats-friendly-resume-guide" className="hover:text-text-primary transition-colors">
+              ATS Guide (2026)
+            </Link>
+          </div>
+
+          <div className="text-[11px] text-text-muted text-center md:text-right">
+            <span>© {new Date().getFullYear()} Resumist. Single-Column ATS Standards.</span>
           </div>
         </div>
       </footer>

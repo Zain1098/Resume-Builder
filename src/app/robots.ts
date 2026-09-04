@@ -16,6 +16,36 @@ export default function robots(): MetadataRoute.Robots {
         allow: "/",
         disallow: ["/api/", "/dashboard"],
       },
+      // Explicitly allow ChatGPT Search, OpenAI crawlers
+      {
+        userAgent: ["OAI-SearchBot", "ChatGPT-User", "GPTBot"],
+        allow: "/",
+        disallow: ["/api/", "/dashboard"],
+      },
+      // Explicitly allow Perplexity AI search crawler
+      {
+        userAgent: ["PerplexityBot"],
+        allow: "/",
+        disallow: ["/api/", "/dashboard"],
+      },
+      // Explicitly allow Anthropic Claude crawlers
+      {
+        userAgent: ["ClaudeBot", "anthropic-ai"],
+        allow: "/",
+        disallow: ["/api/", "/dashboard"],
+      },
+      // Explicitly allow Google crawlers and AI Overviews
+      {
+        userAgent: ["Googlebot", "Google-Extended"],
+        allow: "/",
+        disallow: ["/api/", "/dashboard"],
+      },
+      // Explicitly allow Microsoft Bing and Copilot search
+      {
+        userAgent: ["Bingbot"],
+        allow: "/",
+        disallow: ["/api/", "/dashboard"],
+      },
     ],
     sitemap: `${baseUrl}/sitemap.xml`,
   };

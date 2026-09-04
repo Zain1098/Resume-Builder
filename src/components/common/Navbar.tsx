@@ -113,13 +113,14 @@ export function Navbar() {
   };
 
   const navLinks = [
-    { href: "/dashboard", label: "Dashboard" },
-    { href: "/resumes", label: "My Resumes" },
     { href: "/builder", label: "Builder" },
-    { href: "/ats-analyzer", label: "ATS Analyzer" },
+    { href: "/resume-templates", label: "Templates" },
+    { href: "/ats-analyzer", label: "ATS Checker" },
     { href: "/job-matcher", label: "Job Matcher" },
     { href: "/cover-letter", label: "Cover Letter" },
     { href: "/linkedin", label: "LinkedIn" },
+    { href: "/guides/ats-friendly-resume-guide", label: "ATS Guide" },
+    { href: "/resumes", label: "My Resumes" },
   ];
 
   return (
