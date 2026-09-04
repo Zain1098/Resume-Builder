@@ -41,7 +41,7 @@ export function ThemeToggle() {
 
   if (!mounted) {
     return (
-      <div className="h-8 w-8 rounded-lg border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-850" />
+      <div className="h-8 w-8 rounded-lg border border-border-default bg-surface" />
     );
   }
 
@@ -50,12 +50,12 @@ export function ThemeToggle() {
       type="button"
       onClick={toggleTheme}
       title={theme === "light" ? "Switch to Dark Mode" : "Switch to Light Mode"}
-      className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:bg-slate-50 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 active:scale-95"
+      className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-border-default bg-surface text-text-primary shadow-xs transition hover:bg-surface-container-low active:scale-95"
     >
       {theme === "light" ? (
-        <Moon className="h-4 w-4 text-indigo-600" />
+        <Moon className="h-4 w-4 text-text-muted" />
       ) : (
-        <Sun className="h-4 w-4 text-amber-400" />
+        <Sun className="h-4 w-4 text-secondary" />
       )}
     </button>
   );

@@ -5,7 +5,6 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useResumeStore } from "@/store/useResumeStore";
 import {
-  FileText,
   Download,
   Sparkles,
   FileCode,
@@ -19,6 +18,7 @@ import {
   Layers,
   Crown,
   Share2,
+  FileText,
 } from "lucide-react";
 import confetti from "canvas-confetti";
 import { ImportExportModal } from "@/components/editor/ImportExportModal";
@@ -124,21 +124,21 @@ export function Navbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 w-full border-b border-slate-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/85 dark:border-slate-800 dark:bg-slate-900/90 print:hidden">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-3 sm:px-6 lg:px-8">
+      <header className="sticky top-0 z-40 w-full border-b border-border-default bg-surface/95 backdrop-blur supports-[backdrop-filter]:bg-surface/85 print:hidden">
+        <div className="mx-auto flex h-16 max-w-[1720px] items-center justify-between px-4 sm:px-6 lg:px-8">
           {/* Brand & Resume Selector */}
           <div className="flex items-center gap-3">
             <Link href="/" className="flex items-center gap-2.5 group">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary-container text-on-primary shadow-sm transition-transform group-hover:scale-105">
                 <FileText className="h-5 w-5" />
               </div>
               <div className="hidden sm:block">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-base font-bold tracking-tight text-slate-900 dark:text-white">
-                    CareerCraft
+                  <span className="text-base font-semibold tracking-tight text-text-primary">
+                    Resumist
                   </span>
-                  <span className="rounded-full bg-blue-100 px-2 py-0.2 text-[10px] font-bold text-blue-700 dark:bg-blue-900/50 dark:text-blue-300">
-                    ATS AI
+                  <span className="rounded bg-primary-fixed/30 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
+                    Editorial
                   </span>
                 </div>
               </div>
@@ -150,26 +150,26 @@ export function Navbar() {
                 <button
                   type="button"
                   onClick={() => setResumeMenuOpen(!resumeMenuOpen)}
-                  className="flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs font-semibold text-slate-800 hover:bg-white hover:border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 transition"
+                  className="flex items-center gap-2 rounded-lg border border-border-default bg-surface-container-low px-2.5 py-1.5 text-xs font-medium text-text-primary hover:bg-surface hover:border-text-muted/40 transition"
                   title="Switch or manage resume versions"
                 >
                   {activeDoc.isMaster ? (
-                    <Crown className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+                    <Crown className="h-3.5 w-3.5 text-amber-600 shrink-0" />
                   ) : (
-                    <Layers className="h-3.5 w-3.5 text-blue-500 shrink-0" />
+                    <Layers className="h-3.5 w-3.5 text-primary shrink-0" />
                   )}
                   <span className="max-w-[110px] sm:max-w-[150px] truncate">
                     {activeDoc.title}
                   </span>
-                  <span className="hidden sm:inline rounded bg-emerald-100 px-1.5 py-0.2 text-[10px] font-bold text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300">
-                    {activeDoc.atsScore} ATS
+                  <span className="hidden sm:inline rounded bg-status-success/15 px-1.5 py-0.5 text-[10px] font-semibold text-status-success">
+                    {activeDoc.atsScore}% ATS
                   </span>
-                  <ChevronDown className="h-3 w-3 text-slate-400" />
+                  <ChevronDown className="h-3 w-3 text-text-muted" />
                 </button>
 
                 {resumeMenuOpen && (
-                  <div className="absolute left-0 top-full mt-1.5 w-72 rounded-xl border border-slate-200 bg-white p-2 shadow-2xl dark:border-slate-800 dark:bg-slate-900 z-50">
-                    <div className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                  <div className="absolute left-0 top-full mt-1.5 w-72 rounded-xl border border-border-default bg-surface p-2 shadow-xl z-50">
+                    <div className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-text-muted">
                       Select Resume Version
                     </div>
                     <div className="max-h-60 overflow-y-auto space-y-1">
@@ -185,31 +185,31 @@ export function Navbar() {
                             }}
                             className={`flex w-full items-center justify-between rounded-lg p-2 text-left text-xs transition ${
                               isCurrent
-                                ? "bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 font-bold"
-                                : "text-slate-700 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800"
+                                ? "bg-surface-container-low text-primary font-semibold border border-primary/20"
+                                : "text-text-primary hover:bg-surface-container-low"
                             }`}
                           >
                             <div className="flex items-center gap-2 truncate">
                               {doc.isMaster && (
-                                <Crown className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+                                <Crown className="h-3.5 w-3.5 text-amber-600 shrink-0" />
                               )}
                               <span className="truncate">{doc.title}</span>
                             </div>
                             <div className="flex items-center gap-1.5 shrink-0">
-                              <span className="text-[10px] font-semibold text-slate-500">
+                              <span className="text-[10px] text-text-muted">
                                 {doc.atsScore}%
                               </span>
-                              {isCurrent && <Check className="h-3.5 w-3.5 text-blue-600" />}
+                              {isCurrent && <Check className="h-3.5 w-3.5 text-primary" />}
                             </div>
                           </button>
                         );
                       })}
                     </div>
-                    <div className="mt-2 pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                    <div className="mt-2 pt-2 border-t border-border-default flex items-center justify-between">
                       <button
                         type="button"
                         onClick={handleCreateNew}
-                        className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-700 p-1 dark:text-blue-400"
+                        className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline p-1"
                       >
                         <Plus className="h-3.5 w-3.5" />
                         <span>New Resume</span>
@@ -217,7 +217,7 @@ export function Navbar() {
                       <Link
                         href="/resumes"
                         onClick={() => setResumeMenuOpen(false)}
-                        className="text-xs font-semibold text-slate-500 hover:text-slate-900 dark:hover:text-white p-1"
+                        className="text-xs font-medium text-text-muted hover:text-text-primary p-1"
                       >
                         Manage All →
                       </Link>
@@ -229,17 +229,17 @@ export function Navbar() {
           </div>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden xl:flex items-center gap-1">
+          <nav className="hidden xl:flex items-center gap-6">
             {navLinks.map((link) => {
               const isActive = pathname === link.href;
               return (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+                  className={`text-xs font-medium transition-colors pb-1 border-b-2 ${
                     isActive
-                      ? "bg-slate-100 text-blue-600 dark:bg-slate-800 dark:text-blue-400"
-                      : "text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800"
+                      ? "text-text-primary font-semibold border-primary-container"
+                      : "text-text-muted hover:text-text-primary border-transparent"
                   }`}
                 >
                   {link.label}
@@ -249,26 +249,26 @@ export function Navbar() {
           </nav>
 
           {/* Actions & Utilities */}
-          <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className="flex items-center gap-2 sm:gap-2.5">
             {/* Mobile / Tablet Tab Switcher (Only visible in /builder) */}
             {pathname === "/builder" && (
-              <div className="flex lg:hidden rounded-lg bg-slate-100 p-0.5 dark:bg-slate-800">
+              <div className="flex lg:hidden rounded-lg bg-surface-container-low p-0.5 border border-border-default">
                 <button
                   onClick={() => setPreviewTab("edit")}
-                  className={`rounded-md px-2.5 py-1 text-xs font-semibold transition ${
+                  className={`rounded-md px-2.5 py-1 text-xs font-medium transition ${
                     previewTab === "edit"
-                      ? "bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white"
-                      : "text-slate-600 dark:text-slate-400"
+                      ? "bg-surface text-text-primary shadow-xs font-semibold"
+                      : "text-text-muted"
                   }`}
                 >
                   Edit
                 </button>
                 <button
                   onClick={() => setPreviewTab("preview")}
-                  className={`rounded-md px-2.5 py-1 text-xs font-semibold transition ${
+                  className={`rounded-md px-2.5 py-1 text-xs font-medium transition ${
                     previewTab === "preview"
-                      ? "bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white"
-                      : "text-slate-600 dark:text-slate-400"
+                      ? "bg-surface text-text-primary shadow-xs font-semibold"
+                      : "text-text-muted"
                   }`}
                 >
                   Preview
@@ -280,18 +280,18 @@ export function Navbar() {
             <button
               onClick={() => setRoleModalOpen(true)}
               title="Tailored role presets"
-              className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 shadow-sm transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
+              className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-border-default bg-surface px-2.5 py-1.5 text-xs font-medium text-text-primary hover:bg-surface-container-low transition"
             >
-              <Sparkles className="h-3.5 w-3.5 text-amber-500" />
+              <Sparkles className="h-3.5 w-3.5 text-secondary" />
               <span>Presets</span>
             </button>
 
             <button
               onClick={() => setModalOpen(true)}
               title="Backup JSON"
-              className="hidden md:inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 shadow-sm transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
+              className="hidden md:inline-flex items-center gap-1.5 rounded-lg border border-border-default bg-surface px-2.5 py-1.5 text-xs font-medium text-text-primary hover:bg-surface-container-low transition"
             >
-              <FileCode className="h-3.5 w-3.5 text-blue-500" />
+              <FileCode className="h-3.5 w-3.5 text-text-muted" />
               <span>Backup</span>
             </button>
 
@@ -303,60 +303,60 @@ export function Navbar() {
                 type="button"
                 onClick={() => setDownloadMenuOpen(!downloadMenuOpen)}
                 disabled={isExporting}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 px-3.5 py-2 text-xs font-semibold text-white shadow-md shadow-blue-500/25 transition hover:from-blue-700 hover:to-indigo-700 active:scale-95 disabled:opacity-50"
+                className="inline-flex items-center gap-1.5 rounded-lg bg-primary-container text-on-primary px-3.5 py-1.5 text-xs font-medium hover:bg-primary transition shadow-xs disabled:opacity-50"
               >
                 {isExporting ? (
                   <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
                     <span className="hidden sm:inline">Exporting...</span>
                   </>
                 ) : (
                   <>
                     <Download className="h-3.5 w-3.5" />
-                    <span>Download</span>
+                    <span>Export</span>
                     <ChevronDown className="h-3 w-3" />
                   </>
                 )}
               </button>
 
               {downloadMenuOpen && (
-                <div className="absolute right-0 top-full mt-1.5 w-60 rounded-xl border border-slate-200 bg-white p-1.5 shadow-2xl dark:border-slate-800 dark:bg-slate-900 z-50">
-                  <div className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                    Export Options
+                <div className="absolute right-0 top-full mt-1.5 w-60 rounded-xl border border-border-default bg-surface p-1.5 shadow-xl z-50">
+                  <div className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-text-muted">
+                    Export Format
                   </div>
                   <button
                     type="button"
                     onClick={() => handleDownloadPdf("vector")}
-                    className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-xs font-semibold text-slate-800 hover:bg-blue-50 hover:text-blue-700 dark:text-slate-200 dark:hover:bg-slate-800"
+                    className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-xs font-medium text-text-primary hover:bg-surface-container-low transition"
                   >
-                    <Download className="h-4 w-4 text-blue-600" />
+                    <Download className="h-4 w-4 text-primary" />
                     <div>
-                      <div>Vector PDF (ATS Standard)</div>
-                      <div className="text-[10px] font-normal text-slate-400">100% selectable text for ATS</div>
+                      <div className="font-semibold">Vector PDF (ATS Standard)</div>
+                      <div className="text-[10px] text-text-muted">100% clean selectable text layer</div>
                     </div>
                   </button>
 
                   <button
                     type="button"
                     onClick={handleDownloadDocx}
-                    className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-xs font-semibold text-slate-800 hover:bg-blue-50 hover:text-blue-700 dark:text-slate-200 dark:hover:bg-slate-800"
+                    className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-xs font-medium text-text-primary hover:bg-surface-container-low transition"
                   >
-                    <FileDown className="h-4 w-4 text-indigo-600" />
+                    <FileDown className="h-4 w-4 text-secondary" />
                     <div>
-                      <div>Word Document (.DOCX)</div>
-                      <div className="text-[10px] font-normal text-slate-400">Editable Microsoft Word format</div>
+                      <div className="font-semibold">Word Document (.DOCX)</div>
+                      <div className="text-[10px] text-text-muted">Clean single-table Word document</div>
                     </div>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => handleDownloadPdf("canvas")}
-                    className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-xs font-semibold text-slate-800 hover:bg-blue-50 hover:text-blue-700 dark:text-slate-200 dark:hover:bg-slate-800"
+                    className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-xs font-medium text-text-primary hover:bg-surface-container-low transition"
                   >
-                    <Share2 className="h-4 w-4 text-emerald-600" />
+                    <Share2 className="h-4 w-4 text-status-success" />
                     <div>
-                      <div>High-Res Canvas Snapshot</div>
-                      <div className="text-[10px] font-normal text-slate-400">Visual PDF rendering</div>
+                      <div className="font-semibold">High-Res Canvas Snapshot</div>
+                      <div className="text-[10px] text-text-muted">Visual print fidelity</div>
                     </div>
                   </button>
                 </div>
@@ -367,7 +367,7 @@ export function Navbar() {
             <button
               type="button"
               onClick={() => setMobileDrawerOpen(!mobileDrawerOpen)}
-              className="rounded-lg p-2 text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800 xl:hidden"
+              className="rounded-lg p-2 text-text-muted hover:text-text-primary hover:bg-surface-container-low xl:hidden transition"
               aria-label="Toggle navigation menu"
             >
               {mobileDrawerOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -377,8 +377,8 @@ export function Navbar() {
 
         {/* Mobile Slide-out Drawer */}
         {mobileDrawerOpen && (
-          <div className="xl:hidden border-t border-slate-200 bg-white px-4 py-3 shadow-lg dark:border-slate-800 dark:bg-slate-900 space-y-1">
-            <div className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+          <div className="xl:hidden border-t border-border-default bg-surface px-4 py-3 shadow-lg space-y-1">
+            <div className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-text-muted">
               Navigation
             </div>
             {navLinks.map((link) => (
@@ -386,23 +386,23 @@ export function Navbar() {
                 key={link.href}
                 href={link.href}
                 onClick={() => setMobileDrawerOpen(false)}
-                className={`block rounded-lg px-3 py-2 text-xs font-semibold ${
+                className={`block rounded-lg px-3 py-2 text-xs font-medium transition ${
                   pathname === link.href
-                    ? "bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300"
-                    : "text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                    ? "bg-surface-container-low text-primary font-semibold"
+                    : "text-text-primary hover:bg-surface-container-low"
                 }`}
               >
                 {link.label}
               </Link>
             ))}
-            <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex gap-2">
+            <div className="pt-2 border-t border-border-default flex gap-2">
               <button
                 type="button"
                 onClick={() => {
                   setRoleModalOpen(true);
                   setMobileDrawerOpen(false);
                 }}
-                className="flex-1 rounded-lg border border-slate-200 py-2 text-center text-xs font-semibold text-slate-700 dark:border-slate-700 dark:text-slate-300"
+                className="flex-1 rounded-lg border border-border-default bg-surface py-2 text-center text-xs font-medium text-text-primary hover:bg-surface-container-low"
               >
                 Role Presets
               </button>
@@ -412,7 +412,7 @@ export function Navbar() {
                   setModalOpen(true);
                   setMobileDrawerOpen(false);
                 }}
-                className="flex-1 rounded-lg border border-slate-200 py-2 text-center text-xs font-semibold text-slate-700 dark:border-slate-700 dark:text-slate-300"
+                className="flex-1 rounded-lg border border-border-default bg-surface py-2 text-center text-xs font-medium text-text-primary hover:bg-surface-container-low"
               >
                 JSON Backup
               </button>

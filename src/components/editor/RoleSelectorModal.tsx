@@ -42,15 +42,15 @@ export function RoleSelectorModal({ isOpen, onClose }: RoleSelectorModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm">
-      <div className="relative w-full max-w-3xl rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl dark:border-slate-800 dark:bg-slate-900 max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs animate-in fade-in duration-150">
+      <div className="relative w-full max-w-3xl rounded-xl border border-border-default bg-surface p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between pb-4 border-b border-border-default">
           <div>
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <span>Choose a Role Template</span>
+            <h3 className="text-base font-semibold text-text-primary flex items-center gap-2">
+              <span>Choose Industry Role Archetype</span>
             </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
-              Select an industry-tailored sample profile to jumpstart your resume instantly.
+            <p className="text-xs text-text-muted mt-0.5">
+              Select an industry-tailored verified profile to jumpstart your resume instantly.
             </p>
           </div>
           <button
@@ -58,46 +58,46 @@ export function RoleSelectorModal({ isOpen, onClose }: RoleSelectorModalProps) {
               setPendingPreset(null);
               onClose();
             }}
-            className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800 dark:hover:text-slate-200"
+            className="rounded-lg p-1.5 text-text-muted hover:text-text-primary hover:bg-surface-container-low transition"
           >
-            <X className="h-5 w-5" />
+            <X className="h-4 w-4" />
           </button>
         </div>
 
         {/* Master Profile Protection Confirmation Dialog */}
         {pendingPreset && (
-          <div className="my-4 rounded-xl border border-amber-300 bg-amber-50/80 p-4 dark:border-amber-800 dark:bg-amber-950/40 space-y-3">
+          <div className="my-4 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 space-y-3">
             <div className="flex items-start gap-3">
               <ShieldAlert className="h-5 w-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
               <div>
-                <h4 className="text-xs font-bold text-amber-900 dark:text-amber-200">
-                  Master Career Profile Protection
+                <h4 className="text-xs font-semibold text-text-primary">
+                  Master Career Vault Protection
                 </h4>
-                <p className="text-xs text-amber-800 dark:text-amber-300 mt-1">
-                  You are currently editing your <strong>Master Career Profile</strong> (&quot;{activeDoc.title}&quot;). Overwriting it will replace your master archive with the sample data for &quot;{pendingPreset.title}&quot;.
+                <p className="text-xs text-text-muted mt-1 leading-relaxed">
+                  You are currently editing your <strong className="text-text-primary">Master Career Vault</strong> (&quot;{activeDoc.title}&quot;). Overwriting it will replace your master records with the sample archetype for &quot;{pendingPreset.title}&quot;.
                 </p>
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center justify-end gap-2 pt-2 border-t border-amber-200 dark:border-amber-900/60">
+            <div className="flex flex-wrap items-center justify-end gap-2 pt-2 border-t border-border-default">
               <button
                 type="button"
                 onClick={() => setPendingPreset(null)}
-                className="rounded-lg px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-white/60 dark:text-slate-300"
+                className="rounded-xl border border-border-default bg-surface px-3 py-1.5 text-xs font-medium text-text-primary hover:bg-surface-container-low transition"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={handleOverwrite}
-                className="rounded-lg border border-red-300 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-100 dark:border-red-900/80 dark:bg-red-950/50 dark:text-red-300"
+                className="rounded-xl border border-status-error/40 bg-status-error/15 px-3 py-1.5 text-xs font-medium text-status-error hover:bg-status-error/25 transition"
               >
                 Overwrite Master
               </button>
               <button
                 type="button"
                 onClick={handleCreateAsNewVersion}
-                className="rounded-lg bg-blue-600 px-3.5 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-blue-700"
+                className="rounded-xl bg-primary-container text-on-primary px-3.5 py-1.5 text-xs font-medium hover:bg-primary transition shadow-xs"
               >
                 Create as New Version (Recommended)
               </button>
@@ -109,31 +109,31 @@ export function RoleSelectorModal({ isOpen, onClose }: RoleSelectorModalProps) {
           {PRESET_PROFILES.map((p) => (
             <div
               key={p.id}
-              className="group relative flex flex-col justify-between rounded-xl border border-slate-200 p-4 transition hover:border-blue-500 hover:shadow-md dark:border-slate-800 dark:hover:border-blue-500 dark:bg-slate-850 bg-white"
+              className="group relative flex flex-col justify-between rounded-xl border border-border-default bg-surface p-4 transition hover:border-primary-container shadow-xs"
             >
               <div>
                 <div className="flex items-center justify-between">
                   <span className="text-2xl">{p.icon}</span>
-                  <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+                  <span className="rounded-md bg-surface-container-low border border-border-default px-2 py-0.5 text-[10px] font-semibold text-text-muted">
                     {p.category}
                   </span>
                 </div>
-                <h4 className="mt-2 text-sm font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition">
+                <h4 className="mt-2 text-sm font-semibold text-text-primary group-hover:text-primary transition">
                   {p.title}
                 </h4>
-                <p className="mt-1 text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                <p className="mt-1 text-xs text-text-muted leading-relaxed">
                   {p.description}
                 </p>
               </div>
 
-              <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
-                <span className="text-[11px] text-slate-400 font-medium">
+              <div className="mt-4 pt-3 border-t border-border-default flex items-center justify-between">
+                <span className="text-[11px] text-text-muted font-medium">
                   {p.data.styling.template.toUpperCase()} • {p.data.experiences.length} Experiences
                 </span>
                 <button
                   type="button"
                   onClick={() => handleSelectProfile(p)}
-                  className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400"
+                  className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
                 >
                   <span>Load Profile</span>
                   <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />

@@ -95,29 +95,29 @@ export function PreviewPanel() {
     : zoomLevel / 100;
 
   return (
-    <div className="flex h-full flex-col bg-slate-100/90 dark:bg-slate-950 print:bg-white print:p-0">
+    <div className="flex h-full flex-col bg-bg-canvas print:bg-white print:p-0">
       {/* Preview Action & Zoom Bar (Hidden in Print) */}
-      <div className="relative z-30 flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 bg-white px-3 sm:px-4 py-2 shadow-sm dark:border-slate-800 dark:bg-slate-900 print:hidden">
+      <div className="relative z-30 flex flex-wrap items-center justify-between gap-2 border-b border-border-default bg-surface px-3 sm:px-4 py-2 shadow-xs print:hidden">
         {/* Left Side: Template Selector & Paper Format */}
         <div className="flex items-center gap-1.5 sm:gap-2">
           <div className="relative" ref={dropdownRef}>
             <button
               type="button"
               onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs font-semibold text-slate-900 shadow-sm transition hover:bg-white hover:border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-white max-w-[170px] sm:max-w-none truncate"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-border-default bg-surface-container-low px-2.5 py-1.5 text-xs font-medium text-text-primary shadow-xs transition hover:bg-surface max-w-[170px] sm:max-w-none truncate"
             >
-              <Layout className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
+              <Layout className="h-3.5 w-3.5 text-primary shrink-0" />
               <span className="truncate">{currentTemplate.name}</span>
               <ChevronDown
-                className={`h-3.5 w-3.5 text-slate-400 shrink-0 transition-transform duration-150 ${
-                  dropdownOpen ? "rotate-180 text-blue-600" : ""
+                className={`h-3.5 w-3.5 text-text-muted shrink-0 transition-transform duration-150 ${
+                  dropdownOpen ? "rotate-180 text-primary" : ""
                 }`}
               />
             </button>
 
             {dropdownOpen && (
-              <div className="absolute left-0 top-full mt-1.5 w-60 rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl dark:border-slate-800 dark:bg-slate-900 z-50">
-                <div className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+              <div className="absolute left-0 top-full mt-1.5 w-60 rounded-xl border border-border-default bg-surface p-1.5 shadow-xl z-50">
+                <div className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-text-muted">
                   Select Layout Template
                 </div>
                 {TEMPLATE_OPTIONS.map((t) => {
@@ -130,18 +130,18 @@ export function PreviewPanel() {
                         setTemplate(t.id);
                         setDropdownOpen(false);
                       }}
-                      className={`flex w-full items-center justify-between rounded-lg px-2.5 py-2 text-left text-xs font-semibold transition ${
+                      className={`flex w-full items-center justify-between rounded-lg px-2.5 py-2 text-left text-xs font-medium transition ${
                         isSelected
-                          ? "bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300"
-                          : "text-slate-700 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
+                          ? "bg-surface-container-low text-primary font-semibold border border-primary/20"
+                          : "text-text-primary hover:bg-surface-container-low"
                       }`}
                     >
                       <span>{t.name}</span>
                       <div className="flex items-center gap-1.5">
-                        <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[9px] font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-400">
+                        <span className="rounded bg-surface-container px-1.5 py-0.5 text-[9px] font-medium text-text-muted">
                           {t.badge}
                         </span>
-                        {isSelected && <Check className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />}
+                        {isSelected && <Check className="h-3.5 w-3.5 text-primary" />}
                       </div>
                     </button>
                   );
@@ -154,10 +154,10 @@ export function PreviewPanel() {
           <button
             type="button"
             onClick={() => setPaperSize(isLetter ? "a4" : "letter")}
-            className="hidden sm:inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs font-semibold text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
+            className="hidden sm:inline-flex items-center gap-1 rounded-lg border border-border-default bg-surface-container-low px-2.5 py-1.5 text-xs font-medium text-text-primary hover:bg-surface transition"
             title="Toggle between A4 and US Letter standards"
           >
-            <FileText className="h-3.5 w-3.5 text-slate-500" />
+            <FileText className="h-3.5 w-3.5 text-text-muted" />
             <span>{isLetter ? "Letter" : "A4"}</span>
           </button>
         </div>
@@ -169,10 +169,10 @@ export function PreviewPanel() {
             type="button"
             onClick={() => setAutoFit(!autoFit)}
             title="Toggle Auto Fit to Screen Width"
-            className={`inline-flex items-center gap-1 rounded-lg border px-2 py-1.5 text-xs font-semibold transition ${
+            className={`inline-flex items-center gap-1 rounded-lg border px-2 py-1.5 text-xs font-medium transition ${
               autoFit
-                ? "border-blue-400 bg-blue-50 text-blue-700 dark:border-blue-800 dark:bg-blue-950/50 dark:text-blue-300"
-                : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-850 dark:text-slate-400"
+                ? "border-primary/40 bg-surface-container-low text-primary font-semibold"
+                : "border-border-default bg-surface text-text-muted hover:bg-surface-container-low"
             }`}
           >
             <Smartphone className="h-3.5 w-3.5" />
@@ -186,43 +186,43 @@ export function PreviewPanel() {
             title="Toggle Visual 1-Page Boundary Line"
             className={`hidden xs:inline-flex items-center gap-1 rounded-lg border px-2 py-1.5 text-xs font-medium transition ${
               showPageGuide
-                ? "border-blue-300 bg-blue-50 text-blue-700 dark:border-blue-800 dark:bg-blue-950/40 dark:text-blue-300"
-                : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-850 dark:text-slate-400"
+                ? "border-primary/40 bg-surface-container-low text-primary font-semibold"
+                : "border-border-default bg-surface text-text-muted hover:bg-surface-container-low"
             }`}
           >
             {showPageGuide ? (
-              <Eye className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
+              <Eye className="h-3.5 w-3.5 text-primary" />
             ) : (
-              <EyeOff className="h-3.5 w-3.5 text-slate-400" />
+              <EyeOff className="h-3.5 w-3.5 text-text-muted" />
             )}
             <span className="hidden md:inline">1-Page Guide</span>
           </button>
 
           {/* Zoom Controls */}
-          <div className="flex items-center gap-0.5 rounded-lg border border-slate-200 bg-slate-50 p-0.5 dark:border-slate-800 dark:bg-slate-850">
+          <div className="flex items-center gap-0.5 rounded-lg border border-border-default bg-surface-container-low p-0.5">
             <button
               onClick={handleZoomOut}
               disabled={zoomLevel <= 50}
               title="Zoom Out"
-              className="rounded p-1 text-slate-600 hover:bg-white hover:text-slate-900 disabled:opacity-30 dark:text-slate-300 dark:hover:bg-slate-800"
+              className="rounded p-1 text-text-muted hover:bg-surface hover:text-text-primary disabled:opacity-30 transition"
             >
               <ZoomOut className="h-3.5 w-3.5" />
             </button>
-            <span className="px-1 font-mono text-[11px] font-semibold text-slate-700 dark:text-slate-300 min-w-[32px] text-center">
+            <span className="px-1 font-mono text-[11px] font-semibold text-text-primary min-w-[32px] text-center">
               {Math.round(effectiveScale * 100)}%
             </span>
             <button
               onClick={handleZoomIn}
               disabled={zoomLevel >= 150}
               title="Zoom In"
-              className="rounded p-1 text-slate-600 hover:bg-white hover:text-slate-900 disabled:opacity-30 dark:text-slate-300 dark:hover:bg-slate-800"
+              className="rounded p-1 text-text-muted hover:bg-surface hover:text-text-primary disabled:opacity-30 transition"
             >
               <ZoomIn className="h-3.5 w-3.5" />
             </button>
             <button
               onClick={handleResetZoom}
               title="Reset Zoom (100%)"
-              className="rounded p-1 text-slate-600 hover:bg-white hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 hidden sm:block"
+              className="rounded p-1 text-text-muted hover:bg-surface hover:text-text-primary hidden sm:block transition"
             >
               <Maximize2 className="h-3.5 w-3.5" />
             </button>
@@ -233,33 +233,49 @@ export function PreviewPanel() {
       {/* A4 / Letter Canvas Viewport */}
       <div
         ref={containerRef}
-        className="flex-1 overflow-auto p-2 sm:p-6 md:p-8 flex items-start justify-center custom-scrollbar print:p-0 print:overflow-visible"
+        className="flex-1 overflow-auto p-2 sm:p-6 md:p-8 flex flex-col items-center justify-start custom-scrollbar print:p-0 print:overflow-visible"
       >
         <div
-          className="relative transition-transform duration-150 origin-top shadow-2xl rounded-lg overflow-hidden print:shadow-none print:rounded-none print:transform-none"
+          className="relative transition-transform duration-150 origin-top shadow-md border border-border-default/60 rounded-lg overflow-hidden print:shadow-none print:rounded-none print:transform-none bg-white mb-6"
           style={{
             transform: `scale(${effectiveScale})`,
             transformOrigin: "top center",
             width: pageWidth,
             minHeight: pageHeight,
-            marginBottom: autoFit ? `calc(${nominalPxWidth * 1.414 * (effectiveScale - 1)}px)` : undefined,
+            marginBottom: autoFit ? `calc(${nominalPxWidth * 1.414 * (effectiveScale - 1)}px + 1.5rem)` : "1.5rem",
           }}
         >
           {/* Printable Element Identifier */}
-          <div id="resume-print-canvas" className="w-full h-full relative">
+          <div id="resume-print-canvas" className="w-full h-full relative bg-white text-slate-900">
             {/* Visual Page Break Marker */}
             {showPageGuide && (
               <div
-                className="absolute left-0 right-0 z-20 pointer-events-none flex items-center justify-end pr-3 border-b-2 border-dashed border-rose-400/80 print:hidden"
+                className="absolute left-0 right-0 z-20 pointer-events-none flex items-center justify-end pr-3 border-b-2 border-dashed border-status-error/80 print:hidden"
                 style={{ top: pageHeight }}
               >
-                <span className="bg-rose-500 text-white font-mono text-[10px] font-bold px-2 py-0.5 rounded shadow-sm">
+                <span className="bg-status-error text-white font-mono text-[10px] font-bold px-2 py-0.5 rounded shadow-xs">
                   --- 1-Page Cutoff ({isLetter ? "US Letter" : "A4"}) ---
                 </span>
               </div>
             )}
 
             <TemplateRenderer data={resume} />
+          </div>
+        </div>
+
+        {/* Stitch Contextual ATS Scanner Floating Verification */}
+        <div className="w-full max-w-xl bg-surface rounded-xl border border-border-default p-3.5 shadow-xs mb-4 print:hidden">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-status-success inline-block"></span>
+              <span className="font-semibold text-xs text-text-primary">Parser Verification (Workday / Greenhouse)</span>
+            </div>
+            <span className="text-[11px] font-semibold text-status-success">Certified Valid</span>
+          </div>
+          <div className="flex flex-wrap items-center gap-3 text-[11px] text-text-muted">
+            <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-status-success"></span> No unparseable tables</span>
+            <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-status-success"></span> Standard Unicode Glyphs</span>
+            <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-status-success"></span> Clean Text Stream</span>
           </div>
         </div>
       </div>

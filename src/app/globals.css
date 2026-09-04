@@ -2,21 +2,81 @@
 
 @variant dark (&:where(.dark, .dark *));
 
+@theme {
+  --color-bg-canvas: var(--bg-canvas);
+  --color-surface: var(--surface);
+  --color-surface-container-lowest: var(--surface-container-lowest);
+  --color-surface-container-low: var(--surface-container-low);
+  --color-surface-container: var(--surface-container);
+  --color-surface-container-high: var(--surface-container-high);
+  --color-surface-container-highest: var(--surface-container-highest);
+  --color-text-primary: var(--text-primary);
+  --color-text-muted: var(--text-muted);
+  --color-border-default: var(--border-default);
+  --color-primary: var(--primary);
+  --color-primary-container: var(--primary-container);
+  --color-on-primary: var(--on-primary);
+  --color-primary-fixed: var(--primary-fixed);
+  --color-secondary: var(--secondary);
+  --color-status-success: var(--status-success);
+  --color-status-warning: var(--status-warning);
+  --color-status-error: var(--status-error);
+}
+
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
+  --bg-canvas: #F7F5F0;
+  --surface: #FFFFFF;
+  --surface-container-lowest: #FFFFFF;
+  --surface-container-low: #F6F3EF;
+  --surface-container: #F0EDEA;
+  --surface-container-high: #EBE8E4;
+  --surface-container-highest: #E5E2DE;
+  --text-primary: #20201E;
+  --text-muted: #6F6B63;
+  --border-default: #DEDAD2;
+  --primary: #154539;
+  --primary-container: #2F5D50;
+  --on-primary: #FFFFFF;
+  --primary-fixed: #BCEDDC;
+  --secondary: #904C2A;
+  --status-success: #2D6A4F;
+  --status-warning: #B86200;
+  --status-error: #B42318;
+  
+  --background: #F7F5F0;
+  --foreground: #20201E;
   color-scheme: light;
 }
 
 html.dark {
-  --background: #090d16;
-  --foreground: #f1f5f9;
+  --bg-canvas: #121413;
+  --surface: #1A1D1B;
+  --surface-container-lowest: #141715;
+  --surface-container-low: #1E2220;
+  --surface-container: #242926;
+  --surface-container-high: #2B312E;
+  --surface-container-highest: #333A36;
+  --text-primary: #F3F0ED;
+  --text-muted: #9E9A92;
+  --border-default: #2D3531;
+  --primary: #4E8775;
+  --primary-container: #2F5D50;
+  --on-primary: #FFFFFF;
+  --primary-fixed: #1F3F34;
+  --secondary: #D4805A;
+  --status-success: #3E8B67;
+  --status-warning: #E08A28;
+  --status-error: #E04848;
+
+  --background: #121413;
+  --foreground: #F3F0ED;
   color-scheme: dark;
 }
 
 body {
-  background-color: var(--background);
-  color: var(--foreground);
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
+  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   -webkit-font-smoothing: antialiased;
   transition: background-color 0.2s ease, color 0.2s ease;
@@ -31,11 +91,40 @@ body {
   background: transparent;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: var(--border-default);
   border-radius: 9999px;
 }
-html.dark .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #334155;
+
+/* Global Form & Editorial Element Defaults */
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="url"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+textarea,
+select {
+  background-color: var(--surface-container-low);
+  color: var(--text-primary);
+  border-color: var(--border-default);
+  border-radius: 0.5rem;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  background-color: var(--surface);
+  border-color: var(--primary);
+  outline: none;
+  box-shadow: 0 0 0 1px var(--primary);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-muted);
+  opacity: 0.7;
 }
 
 /* A4 Paper Dimensions */
@@ -47,9 +136,9 @@ html.dark .custom-scrollbar::-webkit-scrollbar-thumb {
 
 /* Dark mode surface color helper */
 html.dark .dark-surface {
-  background-color: #0f172a;
-  border-color: #1e293b;
-  color: #f8fafc;
+  background-color: var(--surface);
+  border-color: var(--border-default);
+  color: var(--text-primary);
 }
 
 /* Print Optimization for PDF Export */

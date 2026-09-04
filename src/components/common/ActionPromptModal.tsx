@@ -50,29 +50,29 @@ export function ActionPromptModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm animate-in fade-in duration-150">
-      <div className="relative w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl dark:border-slate-800 dark:bg-slate-900">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs animate-in fade-in duration-150">
+      <div className="relative w-full max-w-md rounded-xl border border-border-default bg-surface p-6 shadow-2xl">
         <div className="flex items-start justify-between pb-3">
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-3">
             {isDestructive ? (
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-red-100 text-red-600 dark:bg-red-950/60 dark:text-red-400">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-status-error/15 text-status-error border border-status-error/20">
                 <AlertTriangle className="h-5 w-5" />
               </div>
             ) : mode === "confirm" ? (
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-600 dark:bg-amber-950/60 dark:text-amber-400">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-status-warning/15 text-status-warning border border-status-warning/20">
                 <HelpCircle className="h-5 w-5" />
               </div>
             ) : (
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary-container/15 text-primary border border-primary-container/20">
                 <Check className="h-5 w-5" />
               </div>
             )}
             <div>
-              <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+              <h3 className="text-sm font-semibold text-text-primary">
                 {title}
               </h3>
               {description && (
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">
+                <p className="text-xs text-text-muted mt-0.5 leading-relaxed">
                   {description}
                 </p>
               )}
@@ -81,7 +81,7 @@ export function ActionPromptModal({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800 dark:hover:text-slate-200"
+            className="rounded-lg p-1.5 text-text-muted hover:text-text-primary hover:bg-surface-container-low transition"
           >
             <X className="h-4 w-4" />
           </button>
@@ -91,7 +91,7 @@ export function ActionPromptModal({
           {mode === "prompt" && (
             <div className="space-y-1.5">
               {inputLabel && (
-                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                <label className="block text-xs font-semibold text-text-muted">
                   {inputLabel}
                 </label>
               )}
@@ -101,27 +101,27 @@ export function ActionPromptModal({
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 placeholder={inputPlaceholder}
-                className="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs text-slate-900 focus:border-blue-500 focus:outline-none dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                className="w-full rounded-xl border border-border-default bg-surface px-3.5 py-2 text-xs text-text-primary focus:border-primary-container focus:outline-none transition-colors placeholder:text-text-muted"
               />
             </div>
           )}
 
-          <div className="mt-5 flex items-center justify-end gap-2 border-t border-slate-100 pt-4 dark:border-slate-800">
+          <div className="mt-5 flex items-center justify-end gap-2 border-t border-border-default pt-4">
             {mode !== "alert" && (
               <button
                 type="button"
                 onClick={onClose}
-                className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 transition"
+                className="rounded-xl border border-border-default bg-surface px-4 py-2 text-xs font-medium text-text-primary hover:bg-surface-container-low transition"
               >
                 {cancelText}
               </button>
             )}
             <button
               type="submit"
-              className={`rounded-xl px-4 py-2 text-xs font-semibold text-white shadow-sm transition active:scale-95 ${
+              className={`rounded-xl px-4 py-2 text-xs font-medium shadow-xs transition active:scale-[0.98] ${
                 isDestructive
-                  ? "bg-red-600 hover:bg-red-700 shadow-red-500/20"
-                  : "bg-blue-600 hover:bg-blue-700 shadow-blue-500/20"
+                  ? "bg-status-error text-white hover:bg-status-error/90"
+                  : "bg-primary-container text-on-primary hover:bg-primary"
               }`}
             >
               {confirmText}

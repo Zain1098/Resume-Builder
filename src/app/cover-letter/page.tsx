@@ -5,12 +5,12 @@ import { Navbar } from "@/components/common/Navbar";
 import { useResumeStore } from "@/store/useResumeStore";
 import { generateCoverLetter, CoverLetterTone } from "@/lib/aiService";
 import {
-  FileText,
   Sparkles,
   Copy,
   Check,
   Download,
   Printer,
+  Layers,
 } from "lucide-react";
 import confetti from "canvas-confetti";
 
@@ -33,10 +33,12 @@ export default function CoverLetterPage() {
 
   if (!isMounted) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-slate-950">
+      <div className="flex min-h-screen items-center justify-center bg-bg-canvas">
         <div className="flex flex-col items-center gap-3">
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
-          <p className="text-xs font-semibold text-slate-500">Loading Cover Letter Generator...</p>
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary-container border-t-transparent" />
+          <p className="text-xs font-semibold text-text-muted tracking-wide">
+            Loading Cover Letter Studio...
+          </p>
         </div>
       </div>
     );
@@ -78,149 +80,169 @@ export default function CoverLetterPage() {
   const wordCount = letterContent.trim().split(/\s+/).filter(Boolean).length;
 
   return (
-    <div className="flex min-h-screen flex-col bg-slate-50 dark:bg-slate-950">
+    <div className="flex min-h-screen flex-col bg-bg-canvas text-text-primary">
       <Navbar />
 
-      <main className="flex-1 mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300 mb-2">
-              <FileText className="h-4 w-4" />
-              <span>AI Application Document Suite</span>
+      <main className="flex-1 w-full pb-16">
+        {/* Top Context Subheader */}
+        <div className="w-full bg-surface border-b border-border-default px-4 sm:px-6 lg:px-12 py-6">
+          <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center gap-2 text-text-muted text-[11px] font-semibold uppercase tracking-wider">
+                <span>Workspace</span>
+                <span className="text-border-default">/</span>
+                <span>{resume.personalInfo.fullName || "Candidate"}</span>
+                <span className="text-border-default">/</span>
+                <span className="text-primary font-semibold">Cover Letter Studio</span>
+              </div>
+              <div className="flex items-baseline gap-3 mt-1">
+                <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-text-primary">
+                  Targeted Cover Letter Studio
+                </h1>
+                <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-surface-container-low text-text-muted border border-border-default">
+                  Grounded in Active Vault
+                </span>
+              </div>
+              <p className="text-xs sm:text-sm text-text-muted max-w-3xl mt-0.5">
+                Generate an executive, factually grounded cover letter directly synced with your verified career ledger. Fact-checks prevent AI hallucinations or unwarranted seniority claims.
+              </p>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-              Targeted Cover Letter Generator
-            </h1>
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-0.5">
-              Create a job-tailored, factually grounded cover letter aligned with your resume experience.
-            </p>
           </div>
         </div>
 
-        {/* Workspace: 2-column on desktop */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Controls Column (5 cols) */}
-          <div className="lg:col-span-5 space-y-5">
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900 space-y-4">
-              <h2 className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
-                1. Target Job Details
-              </h2>
+        {/* Workspace Container */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 pt-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            {/* Controls Column (5 cols) */}
+            <div className="lg:col-span-5 space-y-5">
+              <div className="bg-surface rounded-xl border border-border-default p-5 shadow-xs space-y-4">
+                <div className="flex items-center justify-between border-b border-border-default pb-3">
+                  <h2 className="text-xs font-bold uppercase tracking-wider text-text-primary">
+                    1. Target Opportunity
+                  </h2>
+                  <span className="text-[11px] text-text-muted">Optional Context</span>
+                </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">
-                  Paste Job Posting (Optional)
-                </label>
-                <textarea
-                  rows={5}
-                  value={jobText}
-                  onChange={(e) => setJobText(e.target.value)}
-                  placeholder="Paste job posting here to auto-extract company name and target role requirements..."
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-900 focus:border-blue-500 focus:bg-white focus:outline-none dark:border-slate-700 dark:bg-slate-800 dark:text-white leading-relaxed"
-                />
+                <div>
+                  <label className="block text-xs font-semibold text-text-muted mb-1.5">
+                    Paste Job Posting or Role Description
+                  </label>
+                  <textarea
+                    rows={5}
+                    value={jobText}
+                    onChange={(e) => setJobText(e.target.value)}
+                    placeholder="Paste job posting here to auto-extract company requirements, core tone, and role demands..."
+                    className="w-full rounded-xl border border-border-default bg-surface p-3 text-xs text-text-primary focus:border-primary-container focus:outline-none leading-relaxed transition-colors placeholder:text-text-muted"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-text-muted mb-2">
+                    2. Editorial Tone &amp; Style
+                  </label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {(["professional", "confident", "concise", "traditional"] as CoverLetterTone[]).map(
+                      (t) => (
+                        <button
+                          key={t}
+                          type="button"
+                          onClick={() => setTone(t)}
+                          className={`rounded-xl border p-2.5 text-left text-xs font-medium capitalize transition shadow-xs ${
+                            tone === t
+                              ? "border-primary-container bg-primary-container text-on-primary"
+                              : "border-border-default bg-surface text-text-primary hover:bg-surface-container-low"
+                          }`}
+                        >
+                          {t}
+                        </button>
+                      )
+                    )}
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleGenerate}
+                  disabled={isGenerating}
+                  className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-primary-container text-on-primary py-2.5 text-xs sm:text-sm font-medium hover:bg-primary active:scale-[0.98] disabled:opacity-50 transition shadow-xs"
+                >
+                  <Sparkles className="h-4 w-4" />
+                  <span>{isGenerating ? "Synthesizing Letter..." : "Generate AI Cover Letter"}</span>
+                </button>
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">
-                  2. Writing Tone &amp; Style
-                </label>
-                <div className="grid grid-cols-2 gap-2">
-                  {(["professional", "confident", "concise", "traditional"] as CoverLetterTone[]).map(
-                    (t) => (
+              {/* Grounding Source Context Pill */}
+              <div className="rounded-xl border border-border-default bg-surface p-4 shadow-xs text-xs text-text-muted space-y-1">
+                <div className="flex items-center gap-1.5 text-text-primary font-semibold">
+                  <Layers className="h-3.5 w-3.5 text-primary" />
+                  <span>Verified Grounding Source:</span>
+                </div>
+                <p className="leading-relaxed">
+                  Active Profile: <strong className="text-text-primary">{resume.personalInfo.fullName || "Candidate"}</strong> ({resume.experiences.length} logged roles, {resume.skillCategories.flatMap((c) => c.skills).length} competencies). Verifiable metrics are strictly preserved.
+                </p>
+              </div>
+            </div>
+
+            {/* Letter Editor Column (7 cols) */}
+            <div className="lg:col-span-7">
+              <div className="bg-surface rounded-xl border border-border-default p-6 shadow-xs flex flex-col justify-between min-h-[560px]">
+                <div>
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-border-default gap-3 mb-4">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-semibold text-text-primary uppercase tracking-wider">
+                        Document Draft
+                      </span>
+                      <span className="text-[11px] text-text-muted">
+                        ({wordCount} words)
+                      </span>
+                    </div>
+
+                    <div className="flex items-center flex-wrap gap-1.5">
                       <button
-                        key={t}
                         type="button"
-                        onClick={() => setTone(t)}
-                        className={`rounded-xl border p-2.5 text-left text-xs font-semibold capitalize transition ${
-                          tone === t
-                            ? "border-blue-600 bg-blue-50/70 text-blue-700 dark:border-blue-500 dark:bg-blue-950/40 dark:text-blue-300 ring-2 ring-blue-600/20"
-                            : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
-                        }`}
+                        onClick={handleCopy}
+                        className="inline-flex items-center gap-1 rounded-xl border border-border-default bg-surface px-2.5 py-1.5 text-xs font-medium text-text-primary hover:bg-surface-container-low transition shadow-xs"
                       >
-                        {t}
+                        {copied ? (
+                          <>
+                            <Check className="h-3.5 w-3.5 text-status-success" />
+                            <span className="text-status-success">Copied</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="h-3.5 w-3.5 text-text-muted" />
+                            <span>Copy</span>
+                          </>
+                        )}
                       </button>
-                    )
-                  )}
-                </div>
-              </div>
 
-              <button
-                type="button"
-                onClick={handleGenerate}
-                disabled={isGenerating}
-                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 py-3 text-xs font-semibold text-white shadow-md shadow-blue-500/20 hover:bg-blue-700 active:scale-95 disabled:opacity-50 transition"
-              >
-                <Sparkles className="h-4 w-4 text-amber-300" />
-                <span>{isGenerating ? "Generating Letter..." : "Generate AI Cover Letter"}</span>
-              </button>
-            </div>
+                      <button
+                        type="button"
+                        onClick={handleDownloadTxt}
+                        className="inline-flex items-center gap-1 rounded-xl border border-border-default bg-surface px-2.5 py-1.5 text-xs font-medium text-text-primary hover:bg-surface-container-low transition shadow-xs"
+                      >
+                        <Download className="h-3.5 w-3.5 text-text-muted" />
+                        <span>Download .TXT</span>
+                      </button>
 
-            {/* Resume Source Context Pill */}
-            <div className="rounded-xl border border-slate-200 bg-slate-50/60 p-3.5 dark:border-slate-800 dark:bg-slate-900/50 text-xs text-slate-500">
-              <span className="font-semibold text-slate-700 dark:text-slate-300">Grounding Source: </span>
-              <span>{resume.personalInfo.fullName || "Current Resume"} ({resume.experiences.length} experience entries, {resume.skillCategories.flatMap((c) => c.skills).length} skills). Facts and dates are preserved.</span>
-            </div>
-          </div>
-
-          {/* Letter Editor Column (7 cols) */}
-          <div className="lg:col-span-7 space-y-3">
-            <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900 flex flex-col justify-between min-h-[560px]">
-              <div>
-                <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800 mb-4">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
-                      Editable Document
-                    </span>
-                    <span className="text-[10px] text-slate-400 font-mono">
-                      ({wordCount} words)
-                    </span>
+                      <button
+                        type="button"
+                        onClick={() => window.print()}
+                        className="inline-flex items-center gap-1 rounded-xl border border-border-default bg-surface px-2.5 py-1.5 text-xs font-medium text-text-primary hover:bg-surface-container-low transition shadow-xs"
+                      >
+                        <Printer className="h-3.5 w-3.5 text-text-muted" />
+                        <span>Print</span>
+                      </button>
+                    </div>
                   </div>
 
-                  <div className="flex items-center gap-1.5">
-                    <button
-                      type="button"
-                      onClick={handleCopy}
-                      className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
-                    >
-                      {copied ? (
-                        <>
-                          <Check className="h-3 w-3 text-emerald-500" />
-                          <span>Copied</span>
-                        </>
-                      ) : (
-                        <>
-                          <Copy className="h-3 w-3" />
-                          <span>Copy</span>
-                        </>
-                      )}
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={handleDownloadTxt}
-                      className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
-                    >
-                      <Download className="h-3 w-3" />
-                      <span>Download .TXT</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => window.print()}
-                      className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
-                    >
-                      <Printer className="h-3 w-3" />
-                      <span>Print</span>
-                    </button>
-                  </div>
+                  <textarea
+                    rows={20}
+                    value={letterContent}
+                    onChange={(e) => setLetterContent(e.target.value)}
+                    className="w-full resize-y rounded-xl border border-border-default bg-surface-container-low p-4 font-sans text-xs sm:text-sm text-text-primary focus:border-primary-container focus:outline-none leading-relaxed transition-colors"
+                  />
                 </div>
-
-                <textarea
-                  rows={20}
-                  value={letterContent}
-                  onChange={(e) => setLetterContent(e.target.value)}
-                  className="w-full resize-y rounded-xl border border-slate-200 bg-slate-50 p-4 font-sans text-xs sm:text-sm text-slate-900 focus:border-blue-500 focus:bg-white focus:outline-none dark:border-slate-700 dark:bg-slate-950 dark:text-white leading-relaxed"
-                />
               </div>
             </div>
           </div>

@@ -37,13 +37,13 @@ export function AccordionSection({
 }: AccordionSectionProps) {
   return (
     <div
-      className={`overflow-hidden rounded-xl border bg-white shadow-sm transition-all duration-200 dark:bg-slate-900 ${
+      className={`overflow-hidden rounded-xl border bg-surface shadow-xs transition-all duration-200 ${
         isVisible
-          ? "border-slate-200 dark:border-slate-800"
-          : "border-dashed border-amber-300/80 bg-amber-50/20 dark:border-amber-800/60 dark:bg-amber-950/10"
+          ? "border-border-default"
+          : "border-dashed border-status-warning/60 bg-status-warning/5"
       }`}
     >
-      <div className="flex w-full items-center justify-between px-4 py-3.5 sm:px-5 sm:py-4">
+      <div className="flex w-full items-center justify-between px-4 py-3 sm:px-5 sm:py-3.5">
         {/* Left Side: Icon, Title, Subtitle, Status */}
         <button
           type="button"
@@ -51,12 +51,12 @@ export function AccordionSection({
           className="flex flex-1 items-center gap-3 text-left transition group min-w-0"
         >
           <div
-            className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-colors ${
+            className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-colors ${
               !isVisible
-                ? "bg-slate-200 text-slate-400 dark:bg-slate-800 dark:text-slate-500"
+                ? "bg-surface-container text-text-muted"
                 : isOpen
-                ? "bg-blue-600 text-white shadow-sm shadow-blue-500/30"
-                : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300"
+                ? "bg-primary-container text-on-primary"
+                : "bg-surface-container-low text-text-primary"
             }`}
           >
             <Icon className="h-4 w-4" />
@@ -66,25 +66,25 @@ export function AccordionSection({
               <h3
                 className={`text-sm font-semibold truncate ${
                   isVisible
-                    ? "text-slate-900 dark:text-white"
-                    : "text-slate-500 dark:text-slate-400 line-through decoration-slate-400"
+                    ? "text-text-primary"
+                    : "text-text-muted line-through decoration-text-muted/60"
                 }`}
               >
                 {title}
               </h3>
               {badgeCount !== undefined && badgeCount > 0 && (
-                <span className="inline-flex items-center rounded-full bg-blue-50 px-2 py-0.2 text-[11px] font-semibold text-blue-600 dark:bg-blue-950/60 dark:text-blue-400">
+                <span className="inline-flex items-center rounded-full bg-primary-fixed/30 px-2 py-0.5 text-[10px] font-semibold text-primary">
                   {badgeCount}
                 </span>
               )}
               {!isVisible && (
-                <span className="inline-flex items-center rounded-full bg-amber-100 px-2 py-0.2 text-[10px] font-bold text-amber-800 dark:bg-amber-950/60 dark:text-amber-300">
+                <span className="inline-flex items-center rounded-full bg-status-warning/15 px-2 py-0.5 text-[10px] font-semibold text-status-warning">
                   Hidden
                 </span>
               )}
             </div>
             {subtitle && (
-              <p className="text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">
+              <p className="text-xs text-text-muted truncate mt-0.5">
                 {subtitle}
               </p>
             )}
@@ -103,7 +103,7 @@ export function AccordionSection({
                 onMoveUp();
               }}
               title="Move section up"
-              className="rounded p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700 disabled:opacity-20 disabled:hover:bg-transparent dark:hover:bg-slate-800 dark:hover:text-slate-200 transition"
+              className="rounded p-1 text-text-muted hover:bg-surface-container-low hover:text-text-primary disabled:opacity-20 disabled:hover:bg-transparent transition"
             >
               <ChevronUp className="h-4 w-4" />
             </button>
@@ -119,13 +119,13 @@ export function AccordionSection({
                 onMoveDown();
               }}
               title="Move section down"
-              className="rounded p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700 disabled:opacity-20 disabled:hover:bg-transparent dark:hover:bg-slate-800 dark:hover:text-slate-200 transition"
+              className="rounded p-1 text-text-muted hover:bg-surface-container-low hover:text-text-primary disabled:opacity-20 disabled:hover:bg-transparent transition"
             >
               <ChevronDown className="h-4 w-4" />
             </button>
           )}
 
-          {/* Visibility Eye Toggle */}
+          {/* Visibility Toggle */}
           {onToggleVisibility && (
             <button
               type="button"
@@ -133,34 +133,31 @@ export function AccordionSection({
                 e.stopPropagation();
                 onToggleVisibility();
               }}
-              title={isVisible ? "Hide section from resume output" : "Show section on resume output"}
+              title={isVisible ? "Hide section in resume" : "Show section in resume"}
               className={`rounded p-1 transition ${
                 isVisible
-                  ? "text-slate-400 hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800 dark:hover:text-slate-200"
-                  : "text-amber-600 bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/60 dark:text-amber-400"
+                  ? "text-text-muted hover:bg-surface-container-low hover:text-text-primary"
+                  : "text-status-warning bg-status-warning/10 hover:bg-status-warning/20"
               }`}
             >
               {isVisible ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
             </button>
           )}
 
-          {/* Accordion Toggle Chevron */}
+          {/* Chevron */}
           <button
             type="button"
             onClick={onToggle}
-            className="rounded p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800 dark:hover:text-slate-200 transition ml-1"
+            className="rounded p-1 text-text-muted hover:bg-surface-container-low hover:text-text-primary transition ml-1"
           >
-            <ChevronDown
-              className={`h-5 w-5 transition-transform duration-200 ${
-                isOpen ? "rotate-180 text-blue-600" : ""
-              }`}
-            />
+            {isOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
           </button>
         </div>
       </div>
 
+      {/* Accordion Body */}
       {isOpen && (
-        <div className="border-t border-slate-100 px-5 py-4 dark:border-slate-800/80">
+        <div className="border-t border-border-default p-4 sm:p-5 bg-surface">
           {children}
         </div>
       )}
