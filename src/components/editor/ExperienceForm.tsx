@@ -35,15 +35,15 @@ export function ExperienceForm() {
   return (
     <div className="space-y-4">
       {/* Bullet Style Picker Bar */}
-      <div className="flex items-center justify-between p-2.5 rounded-xl border border-slate-200/80 bg-slate-50 dark:border-slate-800 dark:bg-slate-850">
-        <div className="flex items-center gap-1.5 text-[11px] font-semibold text-slate-700 dark:text-slate-300">
+      <div className="flex items-center justify-between p-2.5 rounded-xl border border-border-default bg-surface-container-low">
+        <div className="flex items-center gap-1.5 text-[11px] font-semibold text-text-primary">
           <Sparkles className="h-3.5 w-3.5 text-amber-500" />
           <span>AI Bullet Improver Mode:</span>
         </div>
         <select
           value={activeStyle}
           onChange={(e) => setActiveStyle(e.target.value as BulletStyle)}
-          className="rounded-lg border border-slate-200 bg-white px-2 py-1 text-[11px] font-medium text-slate-800 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+          className="rounded-lg border border-border-default bg-surface px-2 py-1 text-[11px] font-medium text-text-primary"
         >
           <option value="achievement">Achievement-Focused</option>
           <option value="technical">Technical Rigor</option>

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useResumeStore } from "@/store/useResumeStore";
 import { PRESET_PROFILES, PresetProfile } from "@/data/presetProfiles";
 import { X, ArrowRight, ShieldAlert } from "lucide-react";
@@ -13,6 +13,18 @@ interface RoleSelectorModalProps {
 export function RoleSelectorModal({ isOpen, onClose }: RoleSelectorModalProps) {
   const { importResume, getActiveResume, createResumeFromData } = useResumeStore();
   const [pendingPreset, setPendingPreset] = useState<PresetProfile | null>(null);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setPendingPreset(null);
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
@@ -128,7 +140,7 @@ export function RoleSelectorModal({ isOpen, onClose }: RoleSelectorModalProps) {
 
               <div className="mt-4 pt-3 border-t border-border-default flex items-center justify-between">
                 <span className="text-[11px] text-text-muted font-medium">
-                  {p.data.styling.template.toUpperCase()} • {p.data.experiences.length} Experiences
+                  {p.data.styling.template.toUpperCase()} • {p.data.experiences.length} {p.data.experiences.length === 1 ? "Experience" : "Experiences"}
                 </span>
                 <button
                   type="button"

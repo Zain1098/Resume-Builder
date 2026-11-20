@@ -13,13 +13,20 @@ import {
 
 export function LinkedInClient() {
   const { resume } = useResumeStore();
-  const [targetJob, setTargetJob] = useState(resume.personalInfo.jobTitle || "");
+  const [targetJob, setTargetJob] = useState("");
+  const [hasEditedJob, setHasEditedJob] = useState(false);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (isMounted && !hasEditedJob && resume.personalInfo.jobTitle) {
+      setTargetJob(resume.personalInfo.jobTitle);
+    }
+  }, [isMounted, hasEditedJob, resume.personalInfo.jobTitle]);
 
   if (!isMounted) {
     return (
@@ -53,7 +60,10 @@ export function LinkedInClient() {
           <input
             type="text"
             value={targetJob}
-            onChange={(e) => setTargetJob(e.target.value)}
+            onChange={(e) => {
+              setHasEditedJob(true);
+              setTargetJob(e.target.value);
+            }}
             placeholder="e.g. Senior Full Stack Engineer / Distributed Systems Architect"
             className="w-full rounded-xl border border-border-default bg-surface px-3.5 py-2 text-xs text-text-primary focus:border-primary-container focus:outline-none transition-colors placeholder:text-text-muted"
           />

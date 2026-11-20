@@ -37,8 +37,6 @@ export function Navbar() {
     switchResume,
     createResume,
     resume,
-    previewTab,
-    setPreviewTab,
   } = useResumeStore();
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -88,7 +86,7 @@ export function Navbar() {
       setIsExporting(true);
       setDownloadMenuOpen(false);
       const filename = `${resume.personalInfo.fullName.replace(/\s+/g, "_") || "Resume"}_CV.pdf`;
-      const success = await exportResumeToPdf("resume-print-canvas", filename, mode);
+      const success = await exportResumeToPdf("resume-print-canvas", filename, mode, resume);
 
       if (success) {
         confetti({
@@ -97,8 +95,8 @@ export function Navbar() {
           origin: { y: 0.6 },
         });
       }
-    } catch {
-      window.print();
+    } catch (err) {
+      console.error("PDF export error:", err);
     } finally {
       setIsExporting(false);
     }
@@ -141,19 +139,19 @@ export function Navbar() {
   return (
     <>
       <header className="sticky top-0 z-40 w-full border-b border-border-default bg-surface/95 backdrop-blur supports-[backdrop-filter]:bg-surface/85 print:hidden">
-        <div className="mx-auto flex h-16 max-w-[1720px] items-center justify-between px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto flex h-16 max-w-[1720px] items-center justify-between gap-2 px-3 sm:px-6 lg:px-8 min-w-0">
           {/* Brand & Resume Selector */}
-          <div className="flex items-center gap-3">
-            <Link href="/" className="flex items-center gap-2.5 group">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary-container text-on-primary shadow-sm transition-transform group-hover:scale-105">
-                <FileText className="h-5 w-5" />
+          <div className="flex items-center gap-1.5 sm:gap-3 min-w-0 shrink">
+            <Link href="/" className="flex items-center gap-2 group shrink-0">
+              <div className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-lg bg-primary-container text-on-primary shadow-sm transition-transform group-hover:scale-105">
+                <FileText className="h-4 w-4 sm:h-5 sm:w-5" />
               </div>
               <div className="hidden sm:block">
                 <div className="flex items-center gap-1.5">
                   <span className="text-base font-semibold tracking-tight text-text-primary">
                     Resumist
                   </span>
-                  <span className="rounded bg-primary-fixed/30 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
+                  <span className="hidden 2xl:inline rounded bg-primary-fixed/30 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
                     Editorial
                   </span>
                 </div>
@@ -162,11 +160,11 @@ export function Navbar() {
 
             {/* Active Resume Selector Dropdown */}
             {activeDoc && (
-              <div className="relative" ref={resumeMenuRef}>
+              <div className="relative min-w-0" ref={resumeMenuRef}>
                 <button
                   type="button"
                   onClick={() => setResumeMenuOpen(!resumeMenuOpen)}
-                  className="flex items-center gap-2 rounded-lg border border-border-default bg-surface-container-low px-2.5 py-1.5 text-xs font-medium text-text-primary hover:bg-surface hover:border-text-muted/40 transition"
+                  className="flex items-center gap-1.5 sm:gap-2 rounded-lg border border-border-default bg-surface-container-low px-2 sm:px-2.5 py-1.5 text-xs font-medium text-text-primary hover:bg-surface hover:border-text-muted/40 transition max-w-[105px] sm:max-w-[210px]"
                   title="Switch or manage resume versions"
                 >
                   {activeDoc.isMaster ? (
@@ -174,13 +172,13 @@ export function Navbar() {
                   ) : (
                     <Layers className="h-3.5 w-3.5 text-primary shrink-0" />
                   )}
-                  <span className="max-w-[110px] sm:max-w-[150px] truncate">
+                  <span className="truncate">
                     {activeDoc.title}
                   </span>
-                  <span className="hidden sm:inline rounded bg-status-success/15 px-1.5 py-0.5 text-[10px] font-semibold text-status-success">
+                  <span className="hidden sm:inline rounded bg-status-success/15 px-1.5 py-0.5 text-[10px] font-semibold text-status-success shrink-0">
                     {activeDoc.atsScore}% ATS
                   </span>
-                  <ChevronDown className="h-3 w-3 text-text-muted" />
+                  <ChevronDown className="h-3 w-3 text-text-muted shrink-0" />
                 </button>
 
                 {resumeMenuOpen && (
@@ -245,14 +243,14 @@ export function Navbar() {
           </div>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden xl:flex items-center gap-6">
+          <nav className="hidden xl:flex items-center gap-3.5 2xl:gap-5 shrink-0">
             {navLinks.map((link) => {
               const isActive = pathname === link.href;
               return (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`text-xs font-medium transition-colors pb-1 border-b-2 ${
+                  className={`whitespace-nowrap text-xs font-medium transition-colors pb-1 border-b-2 ${
                     isActive
                       ? "text-text-primary font-semibold border-primary-container"
                       : "text-text-muted hover:text-text-primary border-transparent"
@@ -265,51 +263,25 @@ export function Navbar() {
           </nav>
 
           {/* Actions & Utilities */}
-          <div className="flex items-center gap-2 sm:gap-2.5">
-            {/* Mobile / Tablet Tab Switcher (Only visible in /builder) */}
-            {pathname === "/builder" && (
-              <div className="flex lg:hidden rounded-lg bg-surface-container-low p-0.5 border border-border-default">
-                <button
-                  onClick={() => setPreviewTab("edit")}
-                  className={`rounded-md px-2.5 py-1 text-xs font-medium transition ${
-                    previewTab === "edit"
-                      ? "bg-surface text-text-primary shadow-xs font-semibold"
-                      : "text-text-muted"
-                  }`}
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => setPreviewTab("preview")}
-                  className={`rounded-md px-2.5 py-1 text-xs font-medium transition ${
-                    previewTab === "preview"
-                      ? "bg-surface text-text-primary shadow-xs font-semibold"
-                      : "text-text-muted"
-                  }`}
-                >
-                  Preview
-                </button>
-              </div>
-            )}
-
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             {/* Quick Modals */}
             <button
               onClick={() => setRoleModalOpen(true)}
               title="Tailored role presets"
-              className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-border-default bg-surface px-2.5 py-1.5 text-xs font-medium text-text-primary hover:bg-surface-container-low transition"
+              className="hidden md:inline-flex items-center gap-1.5 rounded-lg border border-border-default bg-surface px-2.5 py-1.5 text-xs font-medium text-text-primary hover:bg-surface-container-low transition whitespace-nowrap"
             >
               <Sparkles className="h-3.5 w-3.5 text-secondary" />
-              <span>Presets</span>
+              <span className="hidden 2xl:inline">Presets</span>
             </button>
 
             <button
               onClick={() => setModalOpen(true)}
               title="Import Resume (PDF, JSON, Text) or Backup"
-              className="inline-flex items-center gap-1.5 rounded-lg border border-border-default bg-surface px-2.5 py-1.5 text-xs font-medium text-text-primary hover:bg-surface-container-low hover:border-primary-container transition shadow-xs"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-border-default bg-surface px-2 sm:px-2.5 py-1.5 text-xs font-medium text-text-primary hover:bg-surface-container-low hover:border-primary-container transition shadow-xs whitespace-nowrap"
             >
               <Upload className="h-3.5 w-3.5 text-primary" />
-              <span className="hidden sm:inline">Import / Backup</span>
-              <span className="sm:hidden">Import</span>
+              <span className="hidden 2xl:inline">Import / Backup</span>
+              <span className="hidden sm:inline 2xl:hidden">Import</span>
             </button>
 
             <ThemeToggle />
@@ -320,7 +292,7 @@ export function Navbar() {
                 type="button"
                 onClick={() => setDownloadMenuOpen(!downloadMenuOpen)}
                 disabled={isExporting}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-primary-container text-on-primary px-3.5 py-1.5 text-xs font-medium hover:bg-primary transition shadow-xs disabled:opacity-50"
+                className="inline-flex items-center gap-1 sm:gap-1.5 rounded-lg bg-primary-container text-on-primary px-2.5 sm:px-3 py-1.5 text-xs font-medium hover:bg-primary transition shadow-xs disabled:opacity-50 whitespace-nowrap"
               >
                 {isExporting ? (
                   <>
@@ -330,7 +302,7 @@ export function Navbar() {
                 ) : (
                   <>
                     <Download className="h-3.5 w-3.5" />
-                    <span>Export</span>
+                    <span className="hidden xs:inline sm:inline">Export</span>
                     <ChevronDown className="h-3 w-3" />
                   </>
                 )}
@@ -360,7 +332,7 @@ export function Navbar() {
                   >
                     <FileDown className="h-4 w-4 text-secondary" />
                     <div>
-                      <div className="font-semibold">Word Document (.DOCX)</div>
+                      <div className="font-semibold">Word Document (.DOC)</div>
                       <div className="text-[10px] text-text-muted">Clean single-table Word document</div>
                     </div>
                   </button>

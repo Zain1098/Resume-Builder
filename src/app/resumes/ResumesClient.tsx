@@ -162,7 +162,7 @@ export function ResumesClient() {
             </p>
           </div>
 
-          <div className="flex items-center gap-2.5 shrink-0 self-start md:self-center">
+          <div className="flex flex-wrap items-center gap-2.5 self-start md:self-center">
             <button
               onClick={() => setComparing(!comparing)}
               className={`inline-flex items-center gap-1.5 rounded-xl border px-3.5 py-2 text-xs font-medium transition shadow-xs ${

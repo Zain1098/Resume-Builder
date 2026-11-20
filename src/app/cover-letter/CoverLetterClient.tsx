@@ -64,7 +64,7 @@ export function CoverLetterClient() {
   };
 
   const handleDownloadTxt = () => {
-    const blob = new Blob([letterContent], { type: "text/plain" });
+    const blob = new Blob([letterContent], { type: "text/plain;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -72,7 +72,7 @@ export function CoverLetterClient() {
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
 
   const wordCount = letterContent.trim().split(/\s+/).filter(Boolean).length;
@@ -173,7 +173,7 @@ export function CoverLetterClient() {
                 <span>Verified Grounding Source:</span>
               </div>
               <p className="leading-relaxed">
-                Active Profile: <strong className="text-text-primary">{resume.personalInfo.fullName || "Candidate"}</strong> ({resume.experiences.length} logged roles, {resume.skillCategories.flatMap((c) => c.skills).length} competencies). Verifiable metrics are strictly preserved.
+                Active Profile: <strong className="text-text-primary">{resume.personalInfo.fullName || "Candidate"}</strong> ({resume.experiences.length} {resume.experiences.length === 1 ? "logged role" : "logged roles"}, {resume.skillCategories.flatMap((c) => c.skills).length} competencies). Verifiable metrics are strictly preserved.
               </p>
             </div>
           </div>

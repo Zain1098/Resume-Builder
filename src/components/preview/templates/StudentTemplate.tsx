@@ -22,6 +22,9 @@ export function StudentTemplate({ data }: TemplateProps) {
       ? "font-mono"
       : "font-sans";
 
+  const ensureUrl = (url: string) =>
+    url.startsWith("http://") || url.startsWith("https://") ? url : `https://${url}`;
+
   return (
     <div className={`w-full bg-white text-slate-900 ${fontClass} p-8 sm:p-10 leading-relaxed`} style={{ minHeight: "1050px" }}>
       {/* Header */}
@@ -40,10 +43,18 @@ export function StudentTemplate({ data }: TemplateProps) {
             {personalInfo.phone && <span>{personalInfo.phone}</span>}
             {personalInfo.phone && personalInfo.email && <span>•</span>}
             {personalInfo.email && <span className="font-medium">{personalInfo.email}</span>}
+            {personalInfo.website && (
+              <>
+                <span>•</span>
+                <a href={ensureUrl(personalInfo.website)} target="_blank" rel="noreferrer" className="underline text-blue-600">
+                  Portfolio
+                </a>
+              </>
+            )}
             {personalInfo.github && (
               <>
                 <span>•</span>
-                <a href={personalInfo.github} target="_blank" rel="noreferrer" className="underline text-blue-600">
+                <a href={ensureUrl(personalInfo.github)} target="_blank" rel="noreferrer" className="underline text-blue-600">
                   GitHub
                 </a>
               </>
@@ -51,7 +62,7 @@ export function StudentTemplate({ data }: TemplateProps) {
             {personalInfo.linkedin && (
               <>
                 <span>•</span>
-                <a href={personalInfo.linkedin} target="_blank" rel="noreferrer" className="underline text-blue-600">
+                <a href={ensureUrl(personalInfo.linkedin)} target="_blank" rel="noreferrer" className="underline text-blue-600">
                   LinkedIn
                 </a>
               </>

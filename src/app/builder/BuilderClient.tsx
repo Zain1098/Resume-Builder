@@ -28,7 +28,17 @@ export function BuilderClient() {
 
   useEffect(() => {
     setIsMounted(true);
-  }, []);
+    const syncResponsiveView = () => {
+      if (window.innerWidth < 1024) {
+        setActiveView((prev) => (prev === "split" ? (previewTab === "preview" ? "preview" : "editor") : prev));
+      } else {
+        setActiveView((prev) => (prev === "outline" ? "split" : prev));
+      }
+    };
+    syncResponsiveView();
+    window.addEventListener("resize", syncResponsiveView);
+    return () => window.removeEventListener("resize", syncResponsiveView);
+  }, [previewTab]);
 
   // Sync mobile view with previewTab (e.g. from Navbar Edit/Preview buttons)
   useEffect(() => {

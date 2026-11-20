@@ -429,8 +429,9 @@ export function parseResumeFromText(rawText: string): ResumeData {
   const githubMatch = cleanText.match(githubRegex);
   if (githubMatch) github = githubMatch[0].startsWith("http") ? githubMatch[0] : `https://${githubMatch[0]}`;
 
-  // Find website (excluding linkedin and github)
-  const allUrls = cleanText.match(new RegExp(urlRegex, "g")) || [];
+  // Find website (excluding linkedin, github, and email domains)
+  const textWithoutEmails = cleanText.replace(emailRegex, " ");
+  const allUrls = textWithoutEmails.match(new RegExp(urlRegex, "g")) || [];
   for (const u of allUrls) {
     if (!u.includes("linkedin") && !u.includes("github") && !u.includes("gmail") && !u.includes("yahoo")) {
       website = u.startsWith("http") ? u : `https://${u}`;
@@ -585,17 +586,32 @@ export function parseResumeFromText(rawText: string): ResumeData {
       const isCurrent = /present|current/i.test(end);
 
       // Line before date or line of date often contains Title or Company
-      const remainder = line.replace(dateRegex, "").replace(/[|,•]/g, "").trim();
-      const pos = remainder;
+      const remainder = line
+        .replace(dateRegex, "")
+        .replace(/\(\s*\)|\[\s*\]/g, "")
+        .replace(/[|,•\-–—]+$/, "")
+        .replace(/^[|,•\-–—]+/, "")
+        .trim();
+      let pos = remainder;
       let comp = "";
 
-      if (i > 0 && !expLines[i - 1].startsWith("•") && !expLines[i - 1].startsWith("-")) {
+      const atMatch = remainder.match(/^(.+?)\s+(?:at|@)\s+(.+)$/i);
+      const dashMatch = remainder.match(/^(.+?)\s*[|\-–—]\s*(.+)$/);
+      if (atMatch) {
+        pos = atMatch[1].trim();
+        comp = atMatch[2].trim();
+      } else if (dashMatch) {
+        pos = dashMatch[1].trim();
+        comp = dashMatch[2].trim();
+      }
+
+      if (!comp && i > 0 && !expLines[i - 1].startsWith("•") && !expLines[i - 1].startsWith("-")) {
         comp = expLines[i - 1];
       }
 
       currentExp = {
         position: pos || "Role",
-        company: comp || "Company",
+        company: comp || "",
         startDate: start,
         endDate: end,
         current: isCurrent,

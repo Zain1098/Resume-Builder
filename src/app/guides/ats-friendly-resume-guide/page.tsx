@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "How to Make an ATS-Friendly Resume in 2026: The Complete Technical Guide | Resumist",
+  title: "How to Make an ATS-Friendly Resume in 2026: The Complete Technical Guide",
   description:
     "Master ATS resume compliance for Workday, Greenhouse, Taleo, and Lever. Learn parsing mechanics, single-column layouts, the Google XYZ formula, and keyword matching.",
   alternates: {

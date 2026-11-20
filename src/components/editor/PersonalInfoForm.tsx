@@ -61,8 +61,8 @@ export function PersonalInfoForm() {
   return (
     <div className="space-y-4">
       {/* Profile Photo / Avatar Upload Section */}
-      <div className="flex items-center gap-4 p-3 rounded-xl border border-slate-200/80 bg-slate-50/50 dark:border-slate-800 dark:bg-slate-850/50">
-        <div className="relative flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-dashed border-slate-300 bg-white overflow-hidden dark:border-slate-700 dark:bg-slate-800 shadow-sm">
+      <div className="flex items-center gap-4 p-3 rounded-xl border border-border-default bg-surface-container-low">
+        <div className="relative flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-dashed border-border-default bg-surface overflow-hidden shadow-sm">
           {info.avatarUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img

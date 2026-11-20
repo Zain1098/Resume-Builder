@@ -89,7 +89,7 @@ export default async function Image() {
               color: "#FFFFFF",
             }}
           >
-            AI ATS Resume Builder &amp; Verified Career Vault
+            AI ATS Resume Builder &amp; Master Career Vault
           </h1>
           <p
             style={{
@@ -100,7 +100,7 @@ export default async function Image() {
               maxWidth: "880px",
             }}
           >
-            Workday, Greenhouse &amp; Lever certified diagnostic scoring. Extract keyword gaps, factual bullet point tailoring with STAR/XYZ frameworks, and clean PDF/DOCX exports.
+            ATS-friendly diagnostic scoring formatted for Workday, Greenhouse &amp; Lever. Extract keyword gaps, factual bullet point tailoring with STAR/XYZ frameworks, and clean PDF/Word exports.
           </p>
         </div>
 

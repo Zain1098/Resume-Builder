@@ -39,7 +39,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Resumist — AI ATS Resume Builder, Score Checker & Job Tailor",
     description:
-      "Transform your career search with certified ATS resume scoring, job description keyword gap matching, and clean PDF/Word exports.",
+      "Transform your career search with ATS-ready resume scoring, job description keyword gap matching, and clean PDF/Word exports.",
     url: siteUrl,
     siteName: "Resumist",
     type: "website",
@@ -99,7 +99,7 @@ export default function LandingPage() {
       num: "03",
       title: "ATS Gap Analysis",
       desc: "Real-time diagnostic comparison highlighting missing competencies, soft phrase traps, and phrasing mismatches.",
-      badge: "Verified parsing engine benchmarks",
+      badge: "Structured parsing engine heuristics",
       icon: ArrowLeftRight,
     },
     {
@@ -116,8 +116,8 @@ export default function LandingPage() {
       category: "SEMANTIC ANALYSIS",
       icon: ShieldCheck,
       title: "Context-Aware ATS Diagnostic",
-      desc: "Scores against real ATS parsing engines (Workday, Greenhouse, Lever). Pinpoints keyword density, missing technical terminology, and structural formatting errors before you apply.",
-      stat: "100% Parser Compliant",
+      desc: "Scores structure and keywords for common ATS parsers (Workday, Greenhouse, Lever). Pinpoints keyword density, missing technical terminology, and structural formatting errors before you apply.",
+      stat: "Single-Column Parser Safe",
     },
     {
       category: "CAREER REPOSITORY",
@@ -136,8 +136,8 @@ export default function LandingPage() {
     {
       category: "MACHINE READABLE",
       icon: FileText,
-      title: "Deterministic Vector PDF & DOCX",
-      desc: "Single-column layouts without nested tables, canvas rasters, or non-standard fonts that break applicant tracking parsers. Guaranteed human and machine readable.",
+      title: "Deterministic Vector PDF & Word",
+      desc: "Single-column layouts without nested tables, canvas rasters, or non-standard fonts that break applicant tracking parsers. Engineered to be human and machine readable.",
       stat: "Clean Selectable Text",
     },
   ];
@@ -201,7 +201,7 @@ export default function LandingPage() {
             {/* Editorial Badge */}
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-low border border-border-default text-text-muted text-xs font-semibold mb-6">
               <span className="w-2 h-2 rounded-full bg-primary" />
-              <span>EDITORIAL CAREER WORKSPACE • ATS PARSER CERTIFIED</span>
+              <span>EDITORIAL CAREER WORKSPACE • ATS-COMPATIBLE STRUCTURE</span>
             </div>
 
             {/* Headline */}
@@ -271,7 +271,7 @@ export default function LandingPage() {
                     <span>Download Clean PDF</span>
                   </div>
                   <p className="text-text-muted text-[11px] leading-relaxed">
-                    Export certified single-column vector PDF or portable career ledger JSON.
+                    Export clean single-column vector PDF or portable career ledger JSON.
                   </p>
                 </div>
               </div>
@@ -281,15 +281,15 @@ export default function LandingPage() {
             <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-text-muted text-xs">
               <span className="inline-flex items-center gap-1.5">
                 <CheckCircle2 className="h-4 w-4 text-status-success" />
-                Single-Column Vector PDF &amp; DOCX
+                Single-Column Vector PDF &amp; Word
               </span>
               <span className="inline-flex items-center gap-1.5">
                 <CheckCircle2 className="h-4 w-4 text-status-success" />
-                Workday &amp; Greenhouse Verified
+                Formatted for Workday &amp; Greenhouse Parsers
               </span>
               <span className="inline-flex items-center gap-1.5">
                 <CheckCircle2 className="h-4 w-4 text-status-success" />
-                Zero Hallucinations Guarantee
+                Fact-Grounded to Your Vault
               </span>
             </div>
           </div>
@@ -629,7 +629,7 @@ export default function LandingPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
               <Link
-                href="/ats-resume-builder"
+                href="/builder"
                 className="p-3.5 bg-surface rounded-xl border border-border-default hover:border-primary transition group"
               >
                 <div className="font-semibold text-text-primary group-hover:text-primary mb-1">
@@ -641,7 +641,7 @@ export default function LandingPage() {
               </Link>
 
               <Link
-                href="/resume-ats-checker"
+                href="/ats-analyzer"
                 className="p-3.5 bg-surface rounded-xl border border-border-default hover:border-primary transition group"
               >
                 <div className="font-semibold text-text-primary group-hover:text-primary mb-1">
@@ -653,7 +653,7 @@ export default function LandingPage() {
               </Link>
 
               <Link
-                href="/resume-job-matcher"
+                href="/job-matcher"
                 className="p-3.5 bg-surface rounded-xl border border-border-default hover:border-primary transition group"
               >
                 <div className="font-semibold text-text-primary group-hover:text-primary mb-1">
@@ -672,7 +672,7 @@ export default function LandingPage() {
                   ATS-Friendly Templates →
                 </div>
                 <p className="text-[11px] text-text-muted">
-                  4 verified single-column designs: Modern, Professional, Minimal, Technical.
+                  Single-column designs: Modern, Classic, Minimalist, Tech, Executive &amp; Student.
                 </p>
               </Link>
             </div>
@@ -686,7 +686,7 @@ export default function LandingPage() {
               Ready to Upgrade Your Career Presentation?
             </h2>
             <p className="text-xs sm:text-sm text-text-muted max-w-xl mx-auto leading-relaxed">
-              Create your Master Career Vault, calibrate against live job specifications, and download ATS-verified PDF &amp; DOCX resumes.
+              Create your Master Career Vault, align against live job specifications, and download ATS-ready PDF &amp; Word resumes.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
               <Link

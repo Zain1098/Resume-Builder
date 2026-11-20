@@ -119,9 +119,10 @@ export function FirstTimeOnboardingModal({
         {/* 3 Action Cards */}
         <div className="mt-5 space-y-3">
           {/* Option 1: Upload Existing Resume */}
-          <div
+          <button
+            type="button"
             onClick={handleChooseImport}
-            className="group flex cursor-pointer items-start gap-4 rounded-xl border border-primary/40 bg-primary-fixed/10 p-4 hover:border-primary hover:bg-primary-fixed/20 transition"
+            className="w-full text-left group flex cursor-pointer items-start gap-4 rounded-xl border border-primary/40 bg-primary-fixed/10 p-4 hover:border-primary hover:bg-primary-fixed/20 transition"
           >
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary-container text-on-primary shadow-xs">
               <Upload className="h-5 w-5" />
@@ -140,12 +141,13 @@ export function FirstTimeOnboardingModal({
               </p>
             </div>
             <ArrowRight className="h-4 w-4 text-text-muted group-hover:text-primary group-hover:translate-x-0.5 transition shrink-0 mt-1" />
-          </div>
+          </button>
 
           {/* Option 2: Explore Pre-Filled Sample */}
-          <div
+          <button
+            type="button"
             onClick={handleChooseSample}
-            className="group flex cursor-pointer items-start gap-4 rounded-xl border border-border-default bg-surface p-4 hover:border-border-default/80 hover:bg-surface-container-low transition"
+            className="w-full text-left group flex cursor-pointer items-start gap-4 rounded-xl border border-border-default bg-surface p-4 hover:border-border-default/80 hover:bg-surface-container-low transition"
           >
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-surface-container-high text-text-primary">
               <FileText className="h-5 w-5" />
@@ -159,12 +161,13 @@ export function FirstTimeOnboardingModal({
               </p>
             </div>
             <ArrowRight className="h-4 w-4 text-text-muted group-hover:text-primary group-hover:translate-x-0.5 transition shrink-0 mt-1" />
-          </div>
+          </button>
 
           {/* Option 3: Clean Blank Slate */}
-          <div
+          <button
+            type="button"
             onClick={handleChooseBlank}
-            className="group flex cursor-pointer items-start gap-4 rounded-xl border border-border-default bg-surface p-4 hover:border-border-default/80 hover:bg-surface-container-low transition"
+            className="w-full text-left group flex cursor-pointer items-start gap-4 rounded-xl border border-border-default bg-surface p-4 hover:border-border-default/80 hover:bg-surface-container-low transition"
           >
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-surface-container-high text-text-primary">
               <PlusCircle className="h-5 w-5" />
@@ -178,7 +181,7 @@ export function FirstTimeOnboardingModal({
               </p>
             </div>
             <ArrowRight className="h-4 w-4 text-text-muted group-hover:text-primary group-hover:translate-x-0.5 transition shrink-0 mt-1" />
-          </div>
+          </button>
         </div>
 
         {/* Footer tip */}

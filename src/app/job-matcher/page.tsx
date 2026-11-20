@@ -177,10 +177,10 @@ export default function JobMatcherPage() {
               <ArrowRight className="h-3.5 w-3.5" />
             </Link>
             <Link
-              href="/resume-job-matcher"
+              href="/guides/ats-friendly-resume-guide"
               className="text-text-muted hover:text-text-primary transition-colors"
             >
-              Read In-Depth Job Matching Guide →
+              Read In-Depth ATS Resume Guide →
             </Link>
           </div>
         </div>

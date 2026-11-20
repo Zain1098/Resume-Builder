@@ -336,7 +336,9 @@ export function calculateAtsScore(
   const keywordMatch = totalKw > 0 ? Math.round((matchedKeywords.length / totalKw) * 100) : 80;
 
   if (missingKeywords.length > 0) {
-    suggestions.push(`Missing ${missingKeywords.length} target keyword(s): ${missingKeywords.slice(0, 4).join(", ")}.`);
+    const displayed = missingKeywords.slice(0, 4).join(", ");
+    const extra = missingKeywords.length > 4 ? ` (+${missingKeywords.length - 4} more)` : "";
+    suggestions.push(`Missing ${missingKeywords.length} target keyword(s): ${displayed}${extra}.`);
   }
 
   // ==========================================

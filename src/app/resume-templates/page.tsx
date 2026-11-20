@@ -12,14 +12,14 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "ATS-Friendly Resume Templates — Tested Single-Column Layouts (2026) | Resumist",
+  title: "ATS-Friendly Resume Templates — Single-Column Layouts (2026)",
   description:
-    "Explore 4 ATS-tested single-column resume templates designed for Workday, Greenhouse, Taleo, and Lever. Built with clean text layers and guaranteed parser compatibility.",
+    "Explore ATS-friendly single-column resume templates formatted for Workday, Greenhouse, Taleo, and Lever. Built with clean text layers and parser-safe structure.",
   alternates: {
     canonical: "https://resumist.app/resume-templates",
   },
   openGraph: {
-    title: "ATS-Friendly Resume Templates — Tested Single-Column Layouts (2026) | Resumist",
+    title: "ATS-Friendly Resume Templates — Single-Column Layouts (2026) | Resumist",
     description:
       "Explore 4 ATS-tested single-column resume templates designed for Workday, Greenhouse, Taleo, and Lever.",
     url: "https://resumist.app/resume-templates",

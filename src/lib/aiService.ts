@@ -216,23 +216,49 @@ export async function generateCoverLetter(
   tone: CoverLetterTone = "professional"
 ): Promise<string> {
   const fullName = resume.personalInfo.fullName || "Applicant";
-  const role = resume.personalInfo.jobTitle || "Candidate";
-  const companyMatch = jobText.match(/(at|with|joining)\s+([A-Z][a-zA-Z0-9&.\s]{2,20})\b/);
-  const companyName = companyMatch ? companyMatch[2].trim() : "your team";
+
+  // Extract target role from job description if present, else fall back to resume jobTitle
+  const roleLineMatch = jobText.match(/(?:role|position|title|hiring(?:\s+a|\s+an|\s+for)?)\s*[:\-]?\s*([A-Z][a-zA-Z0-9\s/&-]{3,50})/i);
+  const firstLineRole = jobText.trim().split("\n")[0]?.trim();
+  const rawExtractedRole =
+    roleLineMatch?.[1]?.split(/[,.\n|@]/)[0]?.trim() ||
+    (firstLineRole && firstLineRole.length > 3 && firstLineRole.length < 55 && !firstLineRole.includes(".")
+      ? firstLineRole
+      : "");
+  const extractedRole = rawExtractedRole
+    .replace(/\s+(?:to|with|for|at|who|that|in)\s+.*$/i, "")
+    .trim();
+  const role = extractedRole || resume.personalInfo.jobTitle || "Candidate";
+
+  // Extract company name from common job posting formats
+  const explicitCompanyMatch = jobText.match(/(?:company|organization|employer)\s*[:\-]\s*([A-Z][a-zA-Z0-9&.\s-]{1,35})/i);
+  const hiringCompanyMatch = jobText.match(/([A-Z][a-zA-Z0-9&.]{1,25})\s+(?:is hiring|is looking|is seeking)/);
+  const atCompanyMatch = jobText.match(/\b(?:at|with|joining|join)\s+([A-Z][a-zA-Z0-9&.]{1,25}(?:\s+[A-Z][a-zA-Z0-9&.]{1,20})?)/);
+  const rawCompany =
+    explicitCompanyMatch?.[1] ||
+    hiringCompanyMatch?.[1] ||
+    atCompanyMatch?.[1] ||
+    "";
+  const companyName = rawCompany ? rawCompany.split(/[,.\n|]/)[0].trim() : "your team";
 
   const topSkills = resume.skillCategories.flatMap((c) => c.skills).slice(0, 4).join(", ");
   const latestExp = resume.experiences[0];
 
   const toneIntros: Record<CoverLetterTone, string> = {
-    professional: `I am writing to express my strong interest in the ${role} position at ${companyName}. With extensive experience delivering robust technical solutions and driving measurable product growth, I am eager to bring my expertise to your engineering team.`,
-    confident: `As an experienced ${role} with a proven track record of solving high-stakes architectural challenges, I am thrilled about the opportunity to join ${companyName} and accelerate your technical roadmap.`,
-    concise: `I am applying for the ${role} opening at ${companyName}. Having built high-performance software across complex stacks, I am prepared to make an immediate impact on your key initiatives.`,
-    traditional: `Please accept this letter and accompanying resume as my formal application for the ${role} role at ${companyName}. With a solid foundation in ${topSkills}, I believe my background aligns closely with your organizational goals.`
+    professional: `I am writing to express my strong interest in the ${role} position at ${companyName}. With hands-on experience delivering robust technical solutions and measurable product outcomes, I am eager to bring my expertise to your engineering team.`,
+    confident: `As a dedicated ${role} with a proven track record of solving complex technical challenges, I am excited about the opportunity to join ${companyName} and contribute immediately to your engineering roadmap.`,
+    concise: `I am applying for the ${role} opening at ${companyName}. Having built reliable software across modern stacks, I am prepared to make an immediate impact on your key initiatives.`,
+    traditional: `Please accept this letter and accompanying resume as my formal application for the ${role} role at ${companyName}. With a solid foundation in ${topSkills || "modern software engineering"}, I believe my background aligns closely with your organizational goals.`
   };
 
+  const rawFirstBullet = latestExp?.bulletPoints?.find((b) => b.trim().length > 0)?.trim() || "";
+  const formattedBullet = rawFirstBullet
+    ? (rawFirstBullet.charAt(0).toLowerCase() + rawFirstBullet.slice(1)).replace(/\.+$/, "")
+    : "spearheaded core engineering efforts";
+
   const expParagraph = latestExp
-    ? `In my most recent role as ${latestExp.position} at ${latestExp.company}, I ${latestExp.bulletPoints[0] || "spearheaded core engineering efforts"}. This experience solidified my ability to collaborate cross-functionally and deliver reliable, scalable software on schedule.`
-    : `Throughout my career, I have cultivated hands-on mastery in ${topSkills}, consistently delivering innovative, user-focused digital solutions.`;
+    ? `In my most recent role as ${latestExp.position || "Software Engineer"} at ${latestExp.company || "my previous organization"}, I ${formattedBullet}. This experience strengthened my ability to collaborate cross-functionally and deliver reliable, scalable software on schedule.`
+    : `Throughout my career, I have cultivated hands-on mastery in ${topSkills || "modern software engineering"}, consistently delivering innovative, user-focused digital solutions.`;
 
   return `${new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
 

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ArrowRight, Search, CheckCircle2, ShieldCheck } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "AI LinkedIn Profile & Headline Studio — Recruiter Search Optimization | Resumist",
+  title: "AI LinkedIn Profile & Headline Studio — Recruiter Search Optimization",
   description:
     "Transform your resume into high-impact LinkedIn headlines, recruiter-optimized About narratives, and endorsement keywords aligned directly with your career ledger.",
   alternates: {

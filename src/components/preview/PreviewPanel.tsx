@@ -30,7 +30,7 @@ export function PreviewPanel() {
   const { resume, zoomLevel, setZoomLevel, setTemplate, setPaperSize } = useResumeStore();
   const [showPageGuide, setShowPageGuide] = useState(true);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [autoFit, setAutoFit] = useState(false);
+  const [autoFit, setAutoFit] = useState(true);
   const [containerWidth, setContainerWidth] = useState(0);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -46,19 +46,29 @@ export function PreviewPanel() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Measure container for responsive auto-fit
+  // Measure container for responsive auto-fit using ResizeObserver
   useEffect(() => {
-    const handleResize = () => {
-      if (containerRef.current) {
-        setContainerWidth(containerRef.current.clientWidth);
+    const el = containerRef.current;
+    const updateWidth = () => {
+      if (el) {
+        setContainerWidth(el.clientWidth);
       }
     };
-    handleResize();
+    updateWidth();
     if (typeof window !== "undefined" && window.innerWidth < 820) {
       setAutoFit(true);
     }
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+
+    let observer: ResizeObserver | null = null;
+    if (el && typeof ResizeObserver !== "undefined") {
+      observer = new ResizeObserver(updateWidth);
+      observer.observe(el);
+    }
+    window.addEventListener("resize", updateWidth);
+    return () => {
+      observer?.disconnect();
+      window.removeEventListener("resize", updateWidth);
+    };
   }, []);
 
   const handleZoomIn = () => {
@@ -85,14 +95,12 @@ export function PreviewPanel() {
 
   // Approximate pixel width of A4 (210mm at 96dpi ≈ 794px, Letter ≈ 816px)
   const nominalPxWidth = isLetter ? 816 : 794;
-  const paddingOffset = containerWidth < 480 ? 16 : 32;
+  const paddingOffset = containerWidth < 480 ? 16 : 48;
   const fitScaleRatio = containerWidth > paddingOffset
     ? Math.min(1, Math.max(0.35, (containerWidth - paddingOffset) / nominalPxWidth))
-    : 1;
+    : 0.72;
 
-  const effectiveScale = autoFit
-    ? (fitScaleRatio * zoomLevel) / 100
-    : zoomLevel / 100;
+  const effectiveScale = autoFit ? fitScaleRatio : zoomLevel / 100;
 
   return (
     <div className="flex h-full flex-col bg-bg-canvas print:bg-white print:p-0">
@@ -268,9 +276,9 @@ export function PreviewPanel() {
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-status-success inline-block"></span>
-              <span className="font-semibold text-xs text-text-primary">Parser Verification (Workday / Greenhouse)</span>
+              <span className="font-semibold text-xs text-text-primary">ATS Parser Readiness (Workday / Greenhouse)</span>
             </div>
-            <span className="text-[11px] font-semibold text-status-success">Certified Valid</span>
+            <span className="text-[11px] font-semibold text-status-success">Clean Structure</span>
           </div>
           <div className="flex flex-wrap items-center gap-3 text-[11px] text-text-muted">
             <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-status-success"></span> No unparseable tables</span>

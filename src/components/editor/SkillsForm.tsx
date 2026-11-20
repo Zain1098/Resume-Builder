@@ -155,23 +155,33 @@ export function SkillsForm() {
           <span>Quick Add Popular Skills:</span>
         </div>
         <div className="flex flex-wrap gap-1.5">
-          {SUGGESTED_SKILLS.map((item) => (
-            <button
-              key={item}
-              type="button"
-              onClick={() => {
-                const targetCat = categories[0]?.id;
-                if (targetCat) {
-                  addSkillToCategory(targetCat, item);
-                } else {
-                  addSkillCategory();
-                }
-              }}
-              className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-0.5 text-[11px] font-medium text-slate-600 hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-blue-950/40 dark:hover:text-blue-300 transition"
-            >
-              + {item}
-            </button>
-          ))}
+          {SUGGESTED_SKILLS.map((item) => {
+            const isAdded = categories.some((c) =>
+              c.skills.some((s) => s.toLowerCase() === item.toLowerCase())
+            );
+            return (
+              <button
+                key={item}
+                type="button"
+                disabled={isAdded}
+                onClick={() => {
+                  const targetCat = categories[0]?.id;
+                  if (targetCat) {
+                    addSkillToCategory(targetCat, item);
+                  } else {
+                    addSkillCategory();
+                  }
+                }}
+                className={`rounded-full border px-2.5 py-0.5 text-[11px] font-medium transition ${
+                  isAdded
+                    ? "border-status-success/40 bg-status-success/10 text-status-success cursor-default"
+                    : "border-border-default bg-surface-container-low text-text-muted hover:border-primary hover:bg-primary/10 hover:text-primary"
+                }`}
+              >
+                {isAdded ? `✓ ${item}` : `+ ${item}`}
+              </button>
+            );
+          })}
         </div>
       </div>
 

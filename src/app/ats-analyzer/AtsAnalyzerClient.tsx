@@ -197,7 +197,7 @@ export function AtsAnalyzerClient() {
                   ATS INDEX
                 </span>
                 <span className="text-xs font-semibold text-text-primary">
-                  Workday • Ashby • Lever Calibrated
+                  Workday • Ashby • Lever Heuristics
                 </span>
               </div>
             </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useResumeStore } from "@/store/useResumeStore";
 import {
@@ -49,6 +49,15 @@ export function ImportExportModal({ isOpen, onClose }: ImportExportModalProps) {
   const [destinationMode, setDestinationMode] = useState<"active" | "new_version">("active");
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setSuccessResult(null);
+      setError(null);
+      setTextInput("");
+      setIsProcessing(false);
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -340,7 +349,9 @@ export function ImportExportModal({ isOpen, onClose }: ImportExportModalProps) {
                   </div>
                   <div className="rounded-lg bg-surface border border-border-default p-2.5">
                     <span className="text-[10px] text-text-muted block uppercase font-semibold">Experiences</span>
-                    <span className="font-bold text-primary">{successResult.expCount} entries</span>
+                    <span className="font-bold text-primary">
+                      {successResult.expCount} {successResult.expCount === 1 ? "entry" : "entries"}
+                    </span>
                   </div>
                   <div className="rounded-lg bg-surface border border-border-default p-2.5">
                     <span className="text-[10px] text-text-muted block uppercase font-semibold">Skills Extracted</span>
