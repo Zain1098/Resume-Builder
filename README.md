@@ -1,28 +1,29 @@
-# 📄 CareerCraft — Professional ATS Resume Builder
+# 📄 Resumist — Free ATS Resume Builder & Career Vault
 
-> A production-grade, real-time interactive Resume Builder built with **Next.js 15, React 19, TypeScript, Tailwind CSS, and Zustand**.
+> A free, privacy-first, local-storage **ATS Resume Builder, Job Description Matcher, Cover Letter Studio, and LinkedIn Optimizer** built with **Next.js 15, React 19, TypeScript, Tailwind CSS v4, and Zustand**. No login, no watermarks, and no export paywalls.
 
-![CareerCraft](https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=1200&auto=format&fit=crop&q=80)
+🔗 **Live App:** [https://resume-builder-rho-hazel-32.vercel.app](https://resume-builder-rho-hazel-32.vercel.app)
 
 ---
 
 ## ✨ Key Features
 
-- **⚡ Split-Screen Interactive Workspace:** Dual-panel editing experience with real-time A4 canvas live preview.
-- **🎯 Real-Time ATS Optimization Score:** Built-in ATS compliance analyzer calculating profile completeness and actionable suggestions.
-- **🎨 4 Professional ATS-Friendly Templates:**
-  - **Modern Pro:** Clean two-column sidebar layout.
-  - **Harvard Classic:** Traditional Ivy League single-column serif format.
-  - **Minimalist Executive:** Spacious typography-focused Scandinavian design.
-  - **Developer Tech:** Compact tech stack badges, GitHub/live project links, and code highlights.
-- **💾 100% Persistent State:** Instant local storage auto-save via Zustand — never lose your work on page refresh.
-- **🖨️ High-Fidelity Vector PDF Export:** Dedicated `@media print` engine generating selectable, searchable, ATS-ready PDFs.
-- **✨ AI-Powered Polishers:**
-  - One-click Professional Summary Enhancer.
-  - Action-Verb Bullet Point Generator for quantifiable job impact.
-- **🔄 JSON Import & Export:** Portable backup and restore capabilities for seamless data portability.
-- **📱 Responsive & Mobile Optimized:** Dynamic tabbed editor/preview switcher for mobile and tablet screens.
-- **🎨 Custom Styling Engine:** Real-time color palette picker, font switchers (*Inter, Serif, Poppins, Mono*), and margin density controls.
+- **⚡ 3-Pane Interactive Resume Studio (`/builder`):** Document Outline, structured Form Editor, and real-time A4/Letter Live Preview with auto-fit scaling.
+- **🎨 6 ATS-Friendly Templates:**
+  - **Modern Pro:** Clean modern layout with structured hierarchy.
+  - **Harvard Classic:** Traditional single-column serif format.
+  - **Minimalist:** Spacious, typography-focused executive design.
+  - **Developer Tech:** Tech stack badges, GitHub, and live project links.
+  - **Leadership Executive:** Senior leadership & impact-focused layout.
+  - **Student / Graduate:** Education-first layout with Portfolio, GitHub, and LinkedIn links.
+- **🎯 ATS Score Checker (`/ats-analyzer`):** Audits keyword coverage, quantified impact, parser safety, and raw plain-text extraction.
+- **🔍 Job Description Matcher (`/job-matcher`):** Extracts required/preferred skills from any job posting, highlights missing keywords, and branches tailored resume versions.
+- **✉️ Targeted Cover Letter Studio (`/cover-letter`):** Generates factually grounded cover letters synced to your active resume and target job posting, with `.txt` export.
+- **💼 LinkedIn Profile Studio (`/linkedin`):** Generates recruiter-ready headlines, About narratives, and skill tags from your resume.
+- **🗂️ Master Career Vault (`/resumes`):** Multi-version resume management with side-by-side comparison, duplication, and JSON backup/restore.
+- **📥 PDF / JSON / Text Import:** Upload existing `.pdf`, `.json`, or `.txt` resumes to auto-populate builder fields.
+- **🖨️ Clean Selectable-Text PDF & Word Export:** Direct `jsPDF` vector PDF generation (selectable text, no print-dialog lockups) and Word `.doc` export.
+- **💾 100% Persistent Local-First State:** Auto-saves in `localStorage` via Zustand `persist` — your data stays in your browser.
 
 ---
 
@@ -32,9 +33,9 @@
 - **Library:** [React 19](https://react.dev/)
 - **Language:** [TypeScript](https://www.typescriptlang.org/)
 - **Styling:** [Tailwind CSS v4](https://tailwindcss.com/)
-- **State Management:** [Zustand](https://github.com/pmndrs/zustand) with `persist` middleware
-- **Icons:** [Lucide React](https://lucide.dev/)
-- **Confetti Celebration:** `canvas-confetti`
+- **State Management:** [Zustand](https://github.com/pmndrs/zustand) (`persist` middleware)
+- **PDF Generation & Parsing:** `jspdf`, `html2canvas`, `pdf-parse`
+- **Icons & Effects:** `lucide-react`, `canvas-confetti`
 
 ---
 
@@ -42,8 +43,8 @@
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/your-username/resume-builder.git
-cd resume-builder
+git clone https://github.com/Zain1098/Resume-Builder.git
+cd Resume-Builder
 ```
 
 ### 2. Install dependencies
@@ -56,7 +57,7 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ### 4. Build for Production
 ```bash
@@ -66,15 +67,5 @@ npm run start
 
 ---
 
-## 🌐 Deploying to Vercel
-
-This project is fully optimized for **Vercel**:
-1. Push your latest code to your GitHub repository.
-2. Import the project in your [Vercel Dashboard](https://vercel.com).
-3. Framework Preset will automatically be detected as **Next.js**.
-4. Click **Deploy**!
-
----
-
 ## 📄 License
-MIT License. Free to use and customize for your portfolio and production needs.
+MIT License. Free to use and customize.

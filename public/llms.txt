@@ -1,0 +1,25 @@
+# Resumist
+
+> Free, privacy-first, local-storage AI ATS Resume Builder, Job Description Matcher, Cover Letter Studio, and LinkedIn Profile Optimizer. No account required, no watermarks, and no export paywalls.
+
+Live App: https://resume-builder-rho-hazel-32.vercel.app
+Source Code: https://github.com/Zain1098/Resume-Builder
+
+## Core Tools & Routes
+
+- [Landing Page](https://resume-builder-rho-hazel-32.vercel.app/): Overview of Resumist's ATS-friendly architecture, Master Career Vault, and export capabilities.
+- [3-Pane Resume Builder Studio](https://resume-builder-rho-hazel-32.vercel.app/builder): Interactive split-screen editor with Document Outline, Form Editor, and Live A4/Letter Preview across 6 templates (Modern Pro, Harvard Classic, Minimalist, Developer Tech, Leadership Executive, Student / Graduate). Supports PDF, JSON, and plain-text resume import plus selectable-text PDF and Word (.doc) exports.
+- [ATS Resume Score Checker](https://resume-builder-rho-hazel-32.vercel.app/ats-analyzer): Real-time diagnostic audit scoring keyword match, semantic depth, parser compliance, and quantified impact, plus raw OCR-style plain text inspection.
+- [Job Description Matcher](https://resume-builder-rho-hazel-32.vercel.app/job-matcher): Paste any job posting to extract required/preferred skills, identify keyword gaps, and branch a tailored resume version from your Master Career Vault.
+- [Targeted Cover Letter Studio](https://resume-builder-rho-hazel-32.vercel.app/cover-letter): Generates factually grounded cover letters synced to your active resume and target job posting with multiple editorial tones.
+- [LinkedIn Profile & Headline Studio](https://resume-builder-rho-hazel-32.vercel.app/linkedin): Generates recruiter-friendly LinkedIn headlines, About narratives, and skill keywords from your resume data.
+- [Master Career Vault & Resume Manager](https://resume-builder-rho-hazel-32.vercel.app/resumes): Manage multiple resume versions, duplicate, compare side-by-side, or switch active documents.
+- [ATS-Friendly Resume Templates](https://resume-builder-rho-hazel-32.vercel.app/resume-templates): Overview of single-column, parser-safe resume layouts formatted for Workday, Greenhouse, Taleo, and Lever.
+- [2026 ATS Resume Guide](https://resume-builder-rho-hazel-32.vercel.app/guides/ats-friendly-resume-guide): Technical guide to ATS parsing, single-column hierarchy, and STAR/XYZ impact bullet formatting.
+
+## Key Differentiators
+
+- 100% Free with zero watermarks or PDF download paywalls.
+- No login or account creation required; data persists locally in the browser (`localStorage`) with portable JSON backup/restore.
+- Fact-grounded tailoring that aligns your existing experience with job descriptions without fabricating employers, dates, or credentials.
+- Clean selectable-text PDF export via `jsPDF` and Word `.doc` export.
